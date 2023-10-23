@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const ForgotPassword = () => {
   return (
-    <div className="flex justify-between items-center h-screen">
+    <div className="flex justify-between items-center h-screen text-md">
       <div className="flex justify-center items-center w-2/3">
         <Image
           src="/registerImg.png"
@@ -26,31 +26,31 @@ const ForgotPassword = () => {
           </Link>
         </div>
         <div className="text-center">
-          <h1 className="font-bold text-3xl mb-2">Forgot password?</h1>
-          <p className="text-sm font-light">
+          <h1 className="font-bold text-4xl mb-2">Forgot password?</h1>
+          <p className="font-light">
             No worries, we will send you reset instructions
           </p>
         </div>
         <div className="w-4/5">
           <form action="" className="flex flex-col gap-2 mb-40">
-            <label htmlFor="email" className="text-sm font-light">
+            <label htmlFor="email" className=" font-light">
               E-mail:
             </label>
             <input
               id="email"
               type="text"
               placeholder="Placeholder"
-              className="border w-full text-sm font-light py-2 px-4 rounded-2xl"
+              className="border w-full font-light py-2 px-4 rounded-2xl"
             />
             {/* TODO: submit form and send password reset email */}
             <button
               type="submit"
               value="Submit"
-              className="bg-fluoro-yellow text-sm font-medium px-4 py-2 rounded-2xl"
+              className="bg-fluoro-yellow font-medium px-4 py-2 rounded-2xl"
             >
               Submit
             </button>
-            <Link href="/login" className="text-xs font-light mt-3 text-center">
+            <Link href="/login" className="font-light mt-3 text-center text-xs">
               <span className="mr-2">&lt;</span>Back to login
             </Link>
           </form>

@@ -50,7 +50,7 @@ const LoginForm = () => {
     }
   });
   return (
-    <div className="flex flex-col justify-between items-center h-screen py-10 bg-white w-1/3">
+    <div className="flex flex-col justify-between items-center h-screen py-10 bg-white w-1/3 text-md">
       <div>
         <Link href="/">
           <Image
@@ -63,8 +63,8 @@ const LoginForm = () => {
         </Link>
       </div>
       <div className="text-center">
-        <h1 className="font-bold text-3xl">Welcome back!</h1>
-        <p className="text-sm font-light">Please enter your details</p>
+        <h1 className="font-bold text-4xl">Welcome back!</h1>
+        <p className="font-light text-md">Please enter your details</p>
       </div>
       <div className="w-4/5">
         <form onSubmit={onSubmit} className="flex flex-col gap-1 w-full">
@@ -73,7 +73,7 @@ const LoginForm = () => {
             name="email"
             render={({ field }) => (
               <div className="mb-3 w-full flex flex-col">
-                <label htmlFor="email" className="text-sm font-light">
+                <label htmlFor="email" className="font-light">
                   E-mail:
                 </label>
                 <input
@@ -82,7 +82,7 @@ const LoginForm = () => {
                   placeholder="Placeholder"
                   aria-label="Email"
                   aria-describedby="email"
-                  className="border w-full text-sm font-light py-2 px-4 rounded-2xl"
+                  className="border w-full font-light py-2 px-4 rounded-2xl"
                 />
               </div>
             )}
@@ -92,7 +92,7 @@ const LoginForm = () => {
             name="password"
             render={({ field }) => (
               <div className="mb-3 w-full">
-                <label htmlFor="password" className="text-sm font-light">
+                <label htmlFor="password" className="font-light">
                   Password:
                 </label>
                 <div className="relative">
@@ -102,7 +102,7 @@ const LoginForm = () => {
                     placeholder="Placeholder"
                     aria-label="Password"
                     aria-describedby="password"
-                    className="border w-full text-sm font-light py-2 px-4 rounded-2xl"
+                    className="border w-full font-light py-2 px-4 rounded-2xl"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2">
                     <EyeIcon
@@ -129,15 +129,15 @@ const LoginForm = () => {
               }
             }}  
             type="submit"
-            className="bg-fluoro-yellow text-sm font-medium px-4 py-2 rounded-2xl"
+            className="bg-fluoro-yellow font-medium px-4 py-2 rounded-2xl"
           >
             Login
           </button>
         </form>
       </div>
-      <div className="text-sm font-light">
+      <div className="font-light">
         Don`t have an account?{" "}
-        <Link href="/register" className="text-sm font-bold">
+        <Link href="/register" className="font-bold">
           Sign Up
         </Link>
       </div>

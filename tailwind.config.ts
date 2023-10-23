@@ -16,8 +16,6 @@ const config: Config = {
       fontFamily: {
         sans: ["Inter", "sans-serif"],
       },
-      fontSize: {
-        xs: '9px',}
     },
   },
   plugins: [require('flowbite/plugin')],
