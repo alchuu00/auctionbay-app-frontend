@@ -15,7 +15,7 @@ const Topbar = () => {
             <HomeIcon className="h-5 w-5" />
             <p>Auctions</p>
           </div>
-          <div className="flex gap-1 px-3 py-3 bg-black text-white rounded-full">
+          <div className="flex gap-1 px-3 py-3 bg-dark-gray text-white rounded-full">
             <UserIcon className="h-5 w-5" />
             <p>Profile</p>
           </div>
@@ -25,7 +25,7 @@ const Topbar = () => {
         <div className="p-3 rounded-full bg-fluoro-yellow">
           <PlusIcon />
         </div>
-        <div className="p-3 rounded-full bg-gray-200">
+        <div className="p-3 rounded-full bg-gray-blue">
             <UserCircleIcon className="h-5 w-5" />
         </div>
       </div>
