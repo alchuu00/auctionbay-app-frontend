@@ -13,15 +13,6 @@ export interface CreateUserFields {
   role_id: string
 }
 
-export interface UpdateUserFields {
-  first_name?: string
-  last_name?: string
-  email: string
-  password?: string
-  confirm_password?: string
-  role_id: string
-}
-
 interface Props {
   defaultValues?: UserType
 }
