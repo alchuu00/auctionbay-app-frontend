@@ -11,6 +11,7 @@ import * as API from "../api/api";
 import { useRouter } from "next/navigation";
 import ToastWarning from "./ToastWarning";
 import Image from "next/image";
+import TrashIcon from "@heroicons/react/outline/TrashIcon";
 
 interface Props {
   defaultValues?: AuctionType;
@@ -30,9 +31,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({ defaultValues }) => {
   const [showInputErrorMessage, setShowInputErrorMessage] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | undefined>(
-    undefined
-  );
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const errorFields = [
     { field: "title", message: errors.title?.message },
@@ -62,6 +61,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({ defaultValues }) => {
   const handleAdd = async (data: CreateUpdateAuctionFields) => {
     if (!file) return;
     const response = await API.createAuction(data);
+    console.log("response handleAdd:", response);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
       setApiError(response.data.message);
       setShowError(true);
@@ -72,10 +72,12 @@ const CreateUpdateAuctionForm: FC<Props> = ({ defaultValues }) => {
       // Upload auction image
       const formData = new FormData();
       formData.append("image", file, file.name);
+      console.log("file:", file);
       const fileResponse = await API.uploadAuctionImage(
         formData,
         response.data.id
       );
+      console.log("file response:", fileResponse);
       if (fileResponse.data?.statusCode === StatusCode.BAD_REQUEST) {
         setApiError(fileResponse.data.message);
         setShowError(true);
@@ -133,6 +135,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({ defaultValues }) => {
     if (target.files && target.files.length > 0) {
       const myfile = target.files[0];
       setFile(myfile);
+      console.log("myfile:", myfile);
       // set image preview
       const reader = new FileReader();
       reader.onload = () => {
@@ -144,23 +147,38 @@ const CreateUpdateAuctionForm: FC<Props> = ({ defaultValues }) => {
 
   return (
     <div className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center">
-      <h1 className="font-bold text-2xl mb-4">Add auction</h1>
       <form onSubmit={onSubmit} className="bg-white p-4 rounded-2xl">
-        <div className="mb-3 py-16 flex justify-center items-center bg-background rounded-2xl">
+        <h1 className="font-bold text-2xl mb-4">Add auction</h1>
+        <div className="mb-3 flex justify-center items-center bg-background rounded-2xl w-full h-48">
           <label
             htmlFor="image"
-            className="px-4 py-2 cursor-pointer border-2 border-dark-gray rounded-2xl"
+            className="cursor-pointer rounded-2xl w-full h-full flex justify-center items-center relative"
           >
             {imagePreview ? (
-            <Image
-              src={imagePreview}
-              alt="Selected Image"
-              width={200}
-              height={200}
-            />
-
+              <>
+                <Image
+                  src={imagePreview}
+                  alt="Selected Image"
+                  width={200}
+                  height={200}
+                  className="object-cover w-full h-full rounded-2xl"
+                />
+                {imagePreview && (
+                  <div
+                    className="bg-white rounded-md top-5 right-5 absolute px-2 py-1"
+                    onClick={() => {
+                      setImagePreview(null);
+                      setFile(null);
+                    }}
+                  >
+                    <TrashIcon className="w-5 h-5" />
+                  </div>
+                )}
+              </>
             ) : (
-              "Add image"
+              <div className="border-2 border-gray-500 px-4 py-2 rounded-2xl">
+                Add image
+              </div>
             )}
             <input
               type="file"
