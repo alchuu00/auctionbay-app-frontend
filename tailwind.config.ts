@@ -11,6 +11,7 @@ const config: Config = {
     extend: {
       colors: {
         'fluoro-yellow': '#F4FF47',
+        'fluoro-yellow-light': '#F9FF90',
         'gray-blue': '#EDF4F2',
         'dark-gray': '#272D2D',
         'background': '#F6F6F4',
