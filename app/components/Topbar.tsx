@@ -4,13 +4,14 @@ import HomeIcon from "@heroicons/react/outline/HomeIcon";
 import UserIcon from "@heroicons/react/outline/UserIcon";
 import UserCircleIcon from "@heroicons/react/outline/UserCircleIcon";
 import PlusIcon from "./PlusIcon";
-import AddAuctions from "./AddAuction"
+import AddAuctions from "./AddAuction";
 import ProfileSettings from "./ProfileSettings";
 
 const Topbar = () => {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [showAddAuctions, setShowAddAuctions] = useState<boolean>(false);
-  const [showProfileSettings, setShowProfileSettings] = useState<boolean>(false);
+  const [showProfileSettings, setShowProfileSettings] =
+    useState<boolean>(false);
 
   const handleActiveTab = (index: number) => {
     setActiveTab(index);
@@ -22,7 +23,7 @@ const Topbar = () => {
 
   const handleUpdateProfile = () => {
     setShowProfileSettings(true);
-  }
+  };
 
   return (
     <div className="flex justify-between items-center py-5 px-8">
@@ -56,12 +57,20 @@ const Topbar = () => {
         >
           <PlusIcon />
         </div>
-        <div onClick={handleUpdateProfile} className="p-3 rounded-full bg-gray-blue cursor-pointer">
+        <div
+          onClick={handleUpdateProfile}
+          className="p-3 rounded-full bg-gray-blue cursor-pointer"
+        >
           <UserCircleIcon className="h-5 w-5" />
         </div>
       </div>
-      {showAddAuctions && <AddAuctions/>}
-      {showProfileSettings && <ProfileSettings/>}
+      {showAddAuctions && (
+        <AddAuctions
+          showAddAuctions={showAddAuctions}
+          setShowAddAuctions={setShowAddAuctions}
+        />
+      )}
+      {showProfileSettings && <ProfileSettings />}
     </div>
   );
 };
