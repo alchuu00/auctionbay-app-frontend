@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, FC, useEffect, useRef } from "react";
 import CogIcon from "@heroicons/react/outline/CogIcon";
 import * as API from "../api/api";
 import ProfileSettingsForm from "./ProfileSettingsForm";
@@ -6,7 +6,13 @@ import { StatusCode } from "../constants/errorConstants";
 import authStore from "../stores/authStore";
 import { useRouter } from "next/navigation";
 
-const ProfileSettings = () => {
+interface Props {
+  showProfileSettings: boolean;
+  setShowProfileSettings: (showProfileSettings: boolean) => void;
+}
+
+const ProfileSettings: FC<Props> = ({showProfileSettings,
+  setShowProfileSettings})=> {
   const router = useRouter();
   const [apiError, setApiError] = useState("");
   const [showError, setShowError] = useState(false);
@@ -30,8 +36,21 @@ const ProfileSettings = () => {
       router.push("/");
     }
   };
+
+  useEffect(() => {
+    // When the component is mounted, add a rule to the body to hide the scrollbar
+    document.body.style.overflow = 'hidden';
+  
+    // When the component is unmounted, remove the rule from the body to show the scrollbar
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
+  //TODO: add function to hide profile settings form when user clicks outside of it
+
   return (
-    <div className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center">
+    <div className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center h-full">
       <div className="mb-4 bg-white flex flex-col justify-center items-center p-10 text-md gap-4 rounded-3xl">
         <div
           onClick={handleProfileSettingsForm}
@@ -47,7 +66,8 @@ const ProfileSettings = () => {
           Log Out
         </button>
       </div>
-      {profileSettingsForm && <ProfileSettingsForm />}
+      {profileSettingsForm && <ProfileSettingsForm profileSettingsForm={profileSettingsForm}
+          setProfileSettingsForm={setProfileSettingsForm}/>}
     </div>
   );
 };

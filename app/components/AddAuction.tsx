@@ -1,5 +1,5 @@
 import React, { FC, useState, ChangeEvent, useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { StatusCode } from "../constants/errorConstants";
 import { routes } from "../constants/routesConstants";
 import {
@@ -15,13 +15,17 @@ import TrashIcon from "@heroicons/react/outline/TrashIcon";
 
 interface Props {
   defaultValues?: AuctionType;
+  showAddAuctions: boolean;
+  setShowAddAuctions: (showAddAuctions: boolean) => void;
 }
-
-// FIXME form appears but it doesnt submit to backend
 
 // TODO style the form
 
-const CreateUpdateAuctionForm: FC<Props> = ({ defaultValues }) => {
+const CreateUpdateAuctionForm: FC<Props> = ({
+  defaultValues,
+  showAddAuctions,
+  setShowAddAuctions,
+}) => {
   const router = useRouter();
   const { handleSubmit, errors, control } = useCreateUpdateAuctionForm({
     defaultValues,
@@ -56,6 +60,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({ defaultValues }) => {
   const onSubmit = handleSubmit(async (data: CreateUpdateAuctionFields) => {
     if (!defaultValues) await handleAdd(data);
     else await handleUpdate(data);
+    setShowAddAuctions(false);
   });
 
   const handleAdd = async (data: CreateUpdateAuctionFields) => {
@@ -145,6 +150,16 @@ const CreateUpdateAuctionForm: FC<Props> = ({ defaultValues }) => {
     }
   };
 
+  useEffect(() => {
+    // When the component is mounted, add a rule to the body to hide the scrollbar
+    document.body.style.overflow = 'hidden';
+  
+    // When the component is unmounted, remove the rule from the body to show the scrollbar
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   return (
     <div className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center">
       <form onSubmit={onSubmit} className="bg-white p-4 rounded-2xl">
@@ -217,16 +232,15 @@ const CreateUpdateAuctionForm: FC<Props> = ({ defaultValues }) => {
           render={({ field }) => (
             <div className="mb-3 flex flex-col font-light gap-2 relative">
               <label htmlFor="description">Description</label>
-              <input
+              <textarea
                 {...field}
                 value={field.value}
                 name="description"
                 id="description"
                 placeholder="Write description here..."
-                type="text"
                 aria-label="Description"
                 aria-describedby="description"
-                className={`h-20 rounded-2xl border-2 border-gray-blue ${
+                className={`h-20 rounded-2xl border-2 border-gray-blue${
                   errors.description
                     ? "form-control is-invalid"
                     : "form-control"
@@ -286,7 +300,12 @@ const CreateUpdateAuctionForm: FC<Props> = ({ defaultValues }) => {
           />
         </div>
         <div className="flex gap-4 justify-end">
-          <button className="px-3 py-2 rounded-2xl bg-gray-blue">Cancel</button>
+          <button
+            onClick={() => setShowAddAuctions(false)}
+            className="px-3 py-2 rounded-2xl bg-gray-blue"
+          >
+            Cancel
+          </button>
           <button
             className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
             type="submit"

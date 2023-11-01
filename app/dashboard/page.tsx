@@ -1,58 +1,72 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Topbar from "../components/Topbar";
-import { userStorage } from "../utils/localStorage";
-import { UserType } from "../models/auth";
 import { AuctionType } from "../models/auction";
-import Tab from "../components/Tab";
 import AuctionCard from "../components/AuctionCard";
 import { useAuctions } from "../hooks/useAuction";
+import authStore from "../stores/authStore";
 
 const Dashboard = () => {
-  const [user, setUser] = useState<UserType | null>(null);
-  const [activeTab, setActiveTab] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState(1);
+  const [activeTopTab, setActiveTopTab] = useState<number>(1);
+  const [activeTab, setActiveTab] = useState(0);
 
-  const handleActiveTab = (index: number) => {
-    setActiveTab(index);
-  };
-
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const user = await userStorage.getUser();
-        setUser(user);
-      } catch (error) {
-        console.error("Error retrieving user:", error);
-      }
-    };
-
-    getUser();
-  }, []);
+  const currentUserId = authStore.userId;
 
   const auctions = useAuctions(pageNumber);
 
-  return (
-    <div>
-      <Topbar />
-      <div className="flex flex-col px-8 py-4 gap-4">
-        <h1 className="font-bold text-4xl">
-          Hello {user?.first_name} {user?.last_name} !
-        </h1>
-        <div className="w-full flex flex-col justify-center items-center">
-          <div className="w-fit flex justify-center items-center gap-4 p-1 rounded-2xl bg-gray-blue">
-          <Tab active={activeTab === 0} onClick={() => handleActiveTab(0)}>
-        My auctions
-      </Tab>
-          </div>
-          <div className="flex w-full justify-start items-start gap-4">
-          {auctions.map((auction: AuctionType, index: number) => (
-        <AuctionCard key={index} auction={auction} />
-      ))}
-          </div>
-        </div>
+  const currentDate = new Date();
+
+  const renderAuctions = (filterFunc: (auction: AuctionType) => boolean) => (
+    <div className="w-full flex justify-start items-center">
+      <div className="flex flex-wrap justify-start gap-5">
+        {auctions
+          .filter(filterFunc)
+          .sort(
+            (a, b) =>
+              new Date(b.end_date).getTime() - new Date(a.end_date).getTime()
+          )
+          .map((auction: AuctionType, index: number) => {
+            return (
+              <div key={index}>
+                <AuctionCard auction={auction} activeTab={activeTab} />
+              </div>
+            );
+          })}
       </div>
+    </div>
+  );
+
+  return (
+    <div className="mx-8 mb-8">
+      <Topbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        activeTopTab={activeTopTab}
+        setActiveTopTab={setActiveTopTab}
+      />
+      {activeTopTab === 1 && renderAuctions(() => true)}
+      {activeTopTab === 2 && (
+        <>
+          {activeTab === 0 &&
+            renderAuctions(
+              (auction: AuctionType) => auction.user.id === currentUserId
+            )}
+          {activeTab === 1 &&
+            renderAuctions(
+              (auction: AuctionType) =>
+                new Date(auction.end_date) > currentDate &&
+                auction.user.id === currentUserId
+            )}
+          {activeTab === 2 &&
+            renderAuctions(
+              (auction: AuctionType) =>
+                new Date(auction.end_date) < currentDate &&
+                auction.user.id === currentUserId
+            )}
+        </>
+      )}
     </div>
   );
 };

@@ -1,11 +1,18 @@
-import React from "react";
+import React, { FC } from "react";
 import { AuctionType } from "../models/auction";
 import Image from "next/image";
 import TrashIcon from "@heroicons/react/outline/TrashIcon";
 import PencilIcon from "@heroicons/react/outline/PencilIcon";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 
-const AuctionCard = ({ auction }: { auction: AuctionType }) => {
+//TODO: add function to edit and delete auction
+
+interface Props {
+  auction: AuctionType;
+  activeTab: number;
+}
+
+const AuctionCard:FC<Props> = ({ auction, activeTab}) => {
   const inProgress = (auction: AuctionType) => {
     if (new Date(auction.end_date) > new Date()) {
       return "In progress";
@@ -24,8 +31,10 @@ const AuctionCard = ({ auction }: { auction: AuctionType }) => {
     return null; // Return 0 if the auction has ended
   };
 
+  const showButtons = activeTab === 0 && inProgress(auction) === "In progress";
+
   return (
-    <div className="flex flex-col bg-white w-52 h-62 rounded-2xl p-2 font-light gap-1">
+    <div className="flex flex-col bg-white w-52 h-72 rounded-2xl p-2 font-light gap-1">
       <div className="flex justify-between text-xs">
         <div
           className={`rounded-full px-2 py-1 ${
@@ -37,7 +46,11 @@ const AuctionCard = ({ auction }: { auction: AuctionType }) => {
           {inProgress(auction)}
         </div>
         {countdown(auction) === null ? null : (
-          <div className="flex justify-center items-center gap-1">
+          <div className={`flex justify-center items-center gap-1 rounded-full px-2 py-1 ${
+            activeTab === 1
+              ? "bg-red-300"
+              : ""
+          }`}>
             <div>{countdown(auction)}h</div>
             <div className="w-4 h-4">
               <ClockIcon />
@@ -53,10 +66,10 @@ const AuctionCard = ({ auction }: { auction: AuctionType }) => {
           height={100}
           src={`http://localhost:8080/files/${auction.image}`}
           alt={auction.title}
-          className="object-cover w-full h-36 rounded-2xl"
+          className={`object-cover w-full rounded-2xl ${showButtons ? "h-36" : "h-44"}`}
         />
       </div>
-      <div className="flex justify-between items-center gap-1">
+      {showButtons && (<div className="flex justify-between items-center gap-1">
         <div className="bg-white border border-dark-gray px-2 py-1 rounded-xl">
           <TrashIcon className="w-4 h-4" />
         </div>
@@ -66,7 +79,8 @@ const AuctionCard = ({ auction }: { auction: AuctionType }) => {
           </div>
           <div>Edit</div>
         </div>
-      </div>
+      </div>)}
+      
     </div>
   );
 };
