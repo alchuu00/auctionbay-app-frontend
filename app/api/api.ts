@@ -18,7 +18,6 @@ export async function apiRequest<D = Record<string, unknown>, R = unknown>(
       headers: options?.headers,
       withCredentials: true,
     })
-    console.log(response)
     return response
   } catch (error: any) {
     return error.response
