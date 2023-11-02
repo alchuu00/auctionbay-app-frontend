@@ -4,9 +4,9 @@ import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
 import { UserType } from '../models/auth'
 
-export interface CreateUserFields {
-  first_name?: string
-  last_name?: string
+export interface CreateUpdateUserFields {
+  first_name?: Yup.Maybe<string>
+  last_name?: Yup.Maybe<string>
   email: string
   password: string
   confirm_password: string
@@ -51,7 +51,6 @@ export const useCreateUpdateUserForm = ({ defaultValues }: Props) => {
     },
     mode: 'onSubmit',
     resolver: yupResolver(CreateUserSchema),
-
   })
 
   return {
