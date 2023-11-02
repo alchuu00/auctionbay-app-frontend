@@ -1,22 +1,31 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Topbar from "../components/Topbar";
 import { AuctionType } from "../models/auction";
 import AuctionCard from "../components/AuctionCard";
-import { useAuctions } from "../hooks/useAuction";
+import { useAuctions } from "../hooks/useFetchAuctions";
 import authStore from "../stores/authStore";
 
 const Dashboard = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [activeTopTab, setActiveTopTab] = useState<number>(1);
   const [activeTab, setActiveTab] = useState(0);
+  const [showEditButtons, setShowEditButtons] = useState(false);
 
   const currentUserId = authStore.userId;
 
   const auctions = useAuctions(pageNumber);
 
   const currentDate = new Date();
+
+  useEffect(() => {
+    if (activeTopTab === 1) {
+      setShowEditButtons(false);
+    } else if (activeTopTab === 2) {
+      setShowEditButtons(auctions.some(auction => auction.user.id === currentUserId));
+    }
+  }, [activeTopTab, auctions, currentUserId]);
 
   const renderAuctions = (filterFunc: (auction: AuctionType) => boolean) => (
     <div className="w-full flex justify-start items-center">
@@ -30,7 +39,7 @@ const Dashboard = () => {
           .map((auction: AuctionType, index: number) => {
             return (
               <div key={index}>
-                <AuctionCard auction={auction} activeTab={activeTab} />
+                <AuctionCard auction={auction} activeTab={activeTab} showEditButtons={showEditButtons}/>
               </div>
             );
           })}

@@ -15,14 +15,16 @@ import TrashIcon from "@heroicons/react/outline/TrashIcon";
 
 interface Props {
   defaultValues?: AuctionType;
-  showAddAuctions: boolean;
-  setShowAddAuctions: (showAddAuctions: boolean) => void;
+  showAddAuctionsForm: boolean;
+  setShowAddAuctionsForm: (showAddAuctions: boolean) => void;
+  isUpdateAuction: boolean;
 }
 
 const CreateUpdateAuctionForm: FC<Props> = ({
   defaultValues,
-  showAddAuctions,
-  setShowAddAuctions,
+  showAddAuctionsForm,
+  setShowAddAuctionsForm,
+  isUpdateAuction,
 }) => {
   const { handleSubmit, errors, control } = useCreateUpdateAuctionForm({
     defaultValues,
@@ -59,7 +61,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({
   const onSubmit = handleSubmit(async (data: CreateUpdateAuctionFields) => {
     if (!defaultValues) await handleAdd(data);
     else await handleUpdate(data);
-    setShowAddAuctions(false);
+    setShowAddAuctionsForm(false);
   });
 
   const handleAdd = async (data: CreateUpdateAuctionFields) => {
@@ -161,8 +163,12 @@ const CreateUpdateAuctionForm: FC<Props> = ({
 
   return (
     <div className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center">
-      <form onSubmit={onSubmit} className="bg-white p-4 rounded-2xl">
-        <h1 className="font-bold text-2xl mb-4">Add auction</h1>
+      <form onSubmit={onSubmit} className="bg-white p-4 rounded-2xl w-1/3">
+        {isUpdateAuction ? (
+          <h1 className="font-bold text-2xl mb-4">Edit auction</h1>
+        ) : (
+          <h1 className="font-bold text-2xl mb-4">Add auction</h1>
+        )}
         <div className="mb-3 flex justify-center items-center bg-background rounded-2xl w-full h-48">
           <label
             htmlFor="image"
@@ -249,38 +255,44 @@ const CreateUpdateAuctionForm: FC<Props> = ({
           )}
         />
         <div className="flex gap-4">
-          <Controller
-            control={control}
-            name="start_price"
-            render={({ field }) => (
-              <div className="mb-3 flex flex-col w-1/2 font-light gap-2 relative">
-                <label htmlFor="start_price">Start price</label>
-                <input
-                  {...field}
-                  value={field.value}
-                  name="start_price"
-                  id="start_price"
-                  placeholder="Price"
-                  type="number"
-                  aria-label="Start Price"
-                  aria-describedby="start price"
-                  className={`rounded-2xl border-2 border-gray-blue ${
-                    errors.start_price
-                      ? "form-control is-invalid"
-                      : "form-control"
-                  }`}
-                />
-                <span className="absolute top-10 right-3 text-gray-500 pointer-events-none">
-                  €
-                </span>
-              </div>
-            )}
-          />
+          {!isUpdateAuction && (
+            <Controller
+              control={control}
+              name="start_price"
+              render={({ field }) => (
+                <div className="mb-3 flex flex-col w-1/2 font-light gap-2 relative">
+                  <label htmlFor="start_price">Start price</label>
+                  <input
+                    {...field}
+                    value={field.value}
+                    name="start_price"
+                    id="start_price"
+                    placeholder="Price"
+                    type="number"
+                    aria-label="Start Price"
+                    aria-describedby="start price"
+                    className={`rounded-2xl border-2 border-gray-blue ${
+                      errors.start_price
+                        ? "form-control is-invalid"
+                        : "form-control"
+                    }`}
+                  />
+                  <span className="absolute top-10 right-3 text-gray-500 pointer-events-none">
+                    €
+                  </span>
+                </div>
+              )}
+            />
+          )}
           <Controller
             control={control}
             name="end_date"
             render={({ field }) => (
-              <div className="mb-3 flex flex-col w-1/2 font-light gap-2">
+              <div
+                className={`${
+                  isUpdateAuction ? "w-full" : "w-1/2"
+                } mb-3 flex flex-col font-light gap-2`}
+              >
                 <label htmlFor="end_date">End date</label>
                 <input
                   {...field}
@@ -299,20 +311,36 @@ const CreateUpdateAuctionForm: FC<Props> = ({
           />
         </div>
         <div className="flex gap-4 justify-end">
-          <button
-            onClick={() => setShowAddAuctions(false)}
+          {isUpdateAuction ? (<button
+            onClick={() => setShowAddAuctionsForm(false)}
+            className="px-3 py-2 rounded-2xl bg-gray-blue"
+          >
+            Discard changes
+          </button>) : (<button
+            onClick={() => setShowAddAuctionsForm(false)}
             className="px-3 py-2 rounded-2xl bg-gray-blue"
           >
             Cancel
-          </button>
-          <button
-            className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
-            type="submit"
-            onMouseUp={defaultValues ? undefined : handleFileError}
-            onClick={() => setShowInputErrorMessage(true)}
-          >
-            Start auction
-          </button>
+          </button>)}
+          {isUpdateAuction ? (
+            <button
+              className="w-100 px-3 py-2 rounded-2xl bg-dark-gray text-white"
+              type="submit"
+              onMouseUp={defaultValues ? undefined : handleFileError}
+              onClick={() => setShowInputErrorMessage(true)}
+            >
+              Edit auction
+            </button>
+          ) : (
+            <button
+              className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
+              type="submit"
+              onMouseUp={defaultValues ? undefined : handleFileError}
+              onClick={() => setShowInputErrorMessage(true)}
+            >
+              Start auction
+            </button>
+          )}
         </div>
       </form>
       <ToastWarning errorMessage={apiError} showErrorMessage={showError} />
