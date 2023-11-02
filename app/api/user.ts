@@ -1,48 +1,47 @@
-import { apiRoutes } from "../constants/apiConstatnts"
-import { CreateUserFields } from "../hooks/useCreateUser"
-import { LoginUserFields } from "../hooks/useLogin"
-import { RegisterUserFields } from "../hooks/useRegister"
-import { UserType } from "../models/auth"
-import { apiRequest } from "./api"
-
+import { apiRoutes } from "../constants/apiConstatnts";
+import { CreateUpdateUserFields } from "../hooks/useCreateUpdateUser";
+import { LoginUserFields } from "../hooks/useLogin";
+import { RegisterUserFields } from "../hooks/useRegister";
+import { UserType } from "../models/auth";
+import { apiRequest } from "./api";
 
 export const fetchUser = async () =>
-  apiRequest<undefined, UserType>('get', apiRoutes.FETCH_USER)
+  apiRequest<undefined, UserType>("get", apiRoutes.FETCH_USER);
 
 export const fetchUsers = async (pageNumber: number) =>
   apiRequest<number, UserType[]>(
-    'get',
-    `${apiRoutes.FETCH_USERS}?page=${pageNumber}`,
-  )
+    "get",
+    `${apiRoutes.FETCH_USERS}?page=${pageNumber}`
+  );
 
 export const login = async (data: LoginUserFields) =>
-  apiRequest<LoginUserFields, UserType>('post', apiRoutes.LOGIN, data)
+  apiRequest<LoginUserFields, UserType>("post", apiRoutes.LOGIN, data);
 
 export const register = async (data: RegisterUserFields) =>
-  apiRequest<RegisterUserFields, void>('post', apiRoutes.SIGNUP, data)
+  apiRequest<RegisterUserFields, void>("post", apiRoutes.SIGNUP, data);
 
 export const signout = async () =>
-  apiRequest<undefined, void>('post', apiRoutes.SIGNOUT)
+  apiRequest<undefined, void>("post", apiRoutes.SIGNOUT);
 
 export const refreshTokens = async () =>
-  apiRequest<undefined, UserType>('get', apiRoutes.REFRESH_TOKENS)
+  apiRequest<undefined, UserType>("get", apiRoutes.REFRESH_TOKENS);
 
 export const uploadAvatar = async (formData: FormData, id: string) =>
   apiRequest<FormData, void>(
-    'post',
+    "post",
     `${apiRoutes.UPLOAD_AVATAR_IMAGE}/${id}`,
-    formData,
-  )
+    formData
+  );
 
-export const createUser = async (data: CreateUserFields) =>
-  apiRequest<CreateUserFields, void>('post', apiRoutes.USERS_PREFIX, data)
+export const createUser = async (data: CreateUpdateUserFields) =>
+  apiRequest<CreateUpdateUserFields, void>("post", apiRoutes.USERS_PREFIX, data);
 
-export const updateUser = async (data: CreateUserFields, id: string) =>
-  apiRequest<CreateUserFields, void>(
-    'patch',
+export const updateUser = async (data: CreateUpdateUserFields, id: string) =>
+  apiRequest<CreateUpdateUserFields, void>(
+    "patch",
     `${apiRoutes.USERS_PREFIX}/${id}`,
-    data,
-  )
+    data
+  );
 
 export const deleteUser = async (id: string) =>
-  apiRequest<string, UserType>('delete', `${apiRoutes.USERS_PREFIX}/${id}`)
+  apiRequest<string, UserType>("delete", `${apiRoutes.USERS_PREFIX}/${id}`);
