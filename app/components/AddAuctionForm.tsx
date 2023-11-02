@@ -19,14 +19,11 @@ interface Props {
   setShowAddAuctions: (showAddAuctions: boolean) => void;
 }
 
-// TODO style the form
-
 const CreateUpdateAuctionForm: FC<Props> = ({
   defaultValues,
   showAddAuctions,
   setShowAddAuctions,
 }) => {
-  const router = useRouter();
   const { handleSubmit, errors, control } = useCreateUpdateAuctionForm({
     defaultValues,
   });
@@ -44,6 +41,8 @@ const CreateUpdateAuctionForm: FC<Props> = ({
     { field: "end_date", message: errors.end_date?.message },
     { field: "image", message: fileError ? "Please select an image" : "" },
   ];
+
+  const router = useRouter();
 
   const firstError = errorFields.find((errorField) => errorField.message);
 
@@ -152,11 +151,11 @@ const CreateUpdateAuctionForm: FC<Props> = ({
 
   useEffect(() => {
     // When the component is mounted, add a rule to the body to hide the scrollbar
-    document.body.style.overflow = 'hidden';
-  
+    document.body.style.overflow = "hidden";
+
     // When the component is unmounted, remove the rule from the body to show the scrollbar
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, []);
 
@@ -312,7 +311,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({
             onMouseUp={defaultValues ? undefined : handleFileError}
             onClick={() => setShowInputErrorMessage(true)}
           >
-            {defaultValues ? "Update auction" : "Start auction"}
+            Start auction
           </button>
         </div>
       </form>
