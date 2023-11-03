@@ -9,9 +9,8 @@ export async function apiRequest<D = Record<string, unknown>, R = unknown>(
   } & AxiosRequestConfig,
 ) {
   try {
-    // TODO: replace hard coded url with .env.development
     const response = await Axios.request<R>({
-      baseURL: "http://localhost:8080",
+      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
       url: path,
       method: method,
       data: input,
