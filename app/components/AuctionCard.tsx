@@ -4,9 +4,8 @@ import Image from "next/image";
 import TrashIcon from "@heroicons/react/outline/TrashIcon";
 import PencilIcon from "@heroicons/react/outline/PencilIcon";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
-import AddAuctionForm from "./AddAuctionForm";
-
-//TODO: add function to edit and delete auction
+import AddEditAuctionForm from "./AddEditAuctionForm";
+import * as API from "../api/api";
 
 interface Props {
   auction: AuctionType;
@@ -17,6 +16,8 @@ interface Props {
 const AuctionCard: FC<Props> = ({ auction, activeTab, showEditButtons }) => {
   const [showAddAuctionsForm, setShowAddAuctionsForm] = useState(false);
   const [isUpdateAuction, setIsUpdateAuction] = useState(true);
+  const [apiError, setApiError] = useState("");
+  const [showError, setShowError] = useState(false);
   const currentDate = new Date();
   const auctionInProgress = new Date(auction.end_date) > currentDate;
   const inProgress = (auction: AuctionType) => {
@@ -41,7 +42,13 @@ const AuctionCard: FC<Props> = ({ auction, activeTab, showEditButtons }) => {
     return null; // Return 0 if the auction has ended
   };
 
-  // if auction is in progress and user is the owner of the auction, show edit and delete buttons
+  const handleDeleteAuction = async (id: string) => {
+    try {
+      await API.deleteAuction(id);
+    } catch (error) {
+      console.error('Failed to delete auction:', error);
+    }
+  };
 
   return (
     <div className="flex flex-col bg-white w-52 h-72 rounded-2xl p-2 font-light gap-1">
@@ -74,7 +81,7 @@ const AuctionCard: FC<Props> = ({ auction, activeTab, showEditButtons }) => {
         <Image
           width={100}
           height={100}
-          src={`http://localhost:8080/files/${auction.image}`}
+          src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${auction.image}`}
           alt={auction.title}
           className={`object-cover w-full rounded-2xl ${
             showEditButtons ? "h-36" : "h-44"
@@ -83,22 +90,23 @@ const AuctionCard: FC<Props> = ({ auction, activeTab, showEditButtons }) => {
       </div>
       {showEditButtons && auctionInProgress && (
         <div className="flex justify-between items-center gap-1">
-          <div className="bg-white border border-dark-gray px-2 py-1 rounded-xl">
+          <div onClick={() => handleDeleteAuction(auction.id)} className="cursor-pointer bg-white border border-dark-gray px-2 py-1 rounded-xl">
             <TrashIcon className="w-4 h-4" />
           </div>
-          <div onClick={handleUpdateAuctionForm} className="hover:cursor-pointer flex justify-center items-center gap-1 bg-dark-gray text-white px-2 py-1 rounded-xl w-full">
+          <div
+            onClick={handleUpdateAuctionForm}
+            className="cursor-pointer flex justify-center items-center gap-1 bg-dark-gray text-white px-2 py-1 rounded-xl w-full"
+          >
             <div>
-              <PencilIcon
-                className="w-4 h-4"
-              />
+              <PencilIcon className="w-4 h-4" />
             </div>
             <div>Edit</div>
           </div>
         </div>
       )}
       {showAddAuctionsForm && (
-        <AddAuctionForm
-        showAddAuctionsForm={showAddAuctionsForm}
+        <AddEditAuctionForm
+          showAddAuctionsForm={showAddAuctionsForm}
           setShowAddAuctionsForm={setShowAddAuctionsForm}
           isUpdateAuction={isUpdateAuction}
         />
