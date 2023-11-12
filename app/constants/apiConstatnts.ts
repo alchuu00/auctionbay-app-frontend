@@ -9,4 +9,5 @@ export enum apiRoutes {
     UPLOAD_AVATAR_IMAGE = '/users/upload',
     UPLOAD_AUCTION_IMAGE = '/auctionItems/upload',
     AUCTIONS_PREFIX = '/auctionItems',
+    BIDS_PREFIX = '/bids',
   }
