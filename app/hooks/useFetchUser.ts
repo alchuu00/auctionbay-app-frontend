@@ -8,7 +8,6 @@ export const useFetchUser = () => {
         const fetchUser = async () => {
             try {
                 const userData = await API.fetchUser();
-                console.log("user data from hook", userData);
                 setUser(userData);
             } catch (error) {
                 console.error("Error fetching user data: ", error);
