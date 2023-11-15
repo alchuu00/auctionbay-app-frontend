@@ -1,15 +1,15 @@
 import React, { FC, useState, ChangeEvent, useEffect } from "react";
 import { Controller } from "react-hook-form";
-import { StatusCode } from "../constants/errorConstants";
-import { routes } from "../constants/routesConstants";
+import { StatusCode } from "../../constants/errorConstants";
+import { routes } from "../../constants/routesConstants";
 import {
   useCreateUpdateAuctionForm,
   CreateUpdateAuctionFields,
-} from "../hooks/useCreateUpdateAuction";
-import { AuctionType } from "../models/auction";
-import * as API from "../api/api";
+} from "../../hooks/useCreateUpdateAuction";
+import { AuctionType } from "../../models/auction";
+import * as API from "../../api/api";
 import { useRouter } from "next/navigation";
-import ToastWarning from "./ToastWarning";
+import ToastWarning from "../ToastWarning";
 import Image from "next/image";
 import TrashIcon from "@heroicons/react/outline/TrashIcon";
 
@@ -159,7 +159,9 @@ const CreateUpdateAuctionForm: FC<Props> = ({
 
   useEffect(() => {
     if (defaultValues?.image) {
-      setImagePreview(`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${defaultValues.image}`);
+      setImagePreview(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${defaultValues.image}`
+      );
     }
   }, [defaultValues]);
 
@@ -313,17 +315,21 @@ const CreateUpdateAuctionForm: FC<Props> = ({
           />
         </div>
         <div className="flex gap-4 justify-end">
-          {isUpdateAuction ? (<button
-            onClick={() => setShowAddAuctionsForm(false)}
-            className="px-3 py-2 rounded-2xl bg-gray-blue"
-          >
-            Discard changes
-          </button>) : (<button
-            onClick={() => setShowAddAuctionsForm(false)}
-            className="px-3 py-2 rounded-2xl bg-gray-blue"
-          >
-            Cancel
-          </button>)}
+          {isUpdateAuction ? (
+            <button
+              onClick={() => setShowAddAuctionsForm(false)}
+              className="px-3 py-2 rounded-2xl bg-gray-blue"
+            >
+              Discard changes
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowAddAuctionsForm(false)}
+              className="px-3 py-2 rounded-2xl bg-gray-blue"
+            >
+              Cancel
+            </button>
+          )}
           {isUpdateAuction ? (
             <button
               className="w-100 px-3 py-2 rounded-2xl bg-dark-gray text-white"

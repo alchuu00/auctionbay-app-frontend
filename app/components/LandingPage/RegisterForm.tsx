@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Controller, set } from "react-hook-form";
 import Link from "next/link";
-import { StatusCode } from "../constants/errorConstants";
-import { useRegisterForm, RegisterUserFields } from "../hooks/useRegister";
-import authStore from "../stores/authStore";
-import * as API from "../api/api";
+import { StatusCode } from "../../constants/errorConstants";
+import { useRegisterForm, RegisterUserFields } from "../../hooks/useRegister";
+import authStore from "../../stores/authStore";
+import * as API from "../../api/api";
 import Image from "next/image";
-import ToastWarning from "./ToastWarning";
+import ToastWarning from "../ToastWarning";
 
 const RegisterForm = () => {
   const [toggleHidden, setToggleHidden] = useState(true);
@@ -45,6 +45,7 @@ const RegisterForm = () => {
   const handleToggleHidden = () => {
     setToggleHidden(!toggleHidden);
   };
+
   const onSubmit = handleSubmit(async (data: RegisterUserFields) => {
     const response = await API.register(data);
     console.log("Register response: ", response);
@@ -175,10 +176,7 @@ const RegisterForm = () => {
             name="confirm_password"
             render={({ field }) => (
               <div className="mb-3 w-full">
-                <label
-                  htmlFor="confirm_password"
-                  className="font-light"
-                >
+                <label htmlFor="confirm_password" className="font-light">
                   Confirm Password:
                 </label>
                 <div className="relative">
@@ -222,12 +220,12 @@ const RegisterForm = () => {
         </Link>
       </div>
       {firstError && (
-  <ToastWarning
-    key={firstError.field}
-    errorMessage={firstError.message}
-    showErrorMessage={showInputErrorMessage}
-  />
-)}
+        <ToastWarning
+          key={firstError.field}
+          errorMessage={firstError.message}
+          showErrorMessage={showInputErrorMessage}
+        />
+      )}
       <ToastWarning
         errorMessage={apiError}
         showErrorMessage={showResponseErrorMessage}

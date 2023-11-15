@@ -1,18 +1,23 @@
 import React, { useState, FC, useEffect, useRef } from "react";
 import CogIcon from "@heroicons/react/outline/CogIcon";
-import * as API from "../api/api";
+import * as API from "../../api/api";
 import ProfileSettingsForm from "./ProfileSettingsForm";
-import { StatusCode } from "../constants/errorConstants";
-import authStore from "../stores/authStore";
+import { StatusCode } from "../../constants/errorConstants";
+import authStore from "../../stores/authStore";
 import { useRouter } from "next/navigation";
+import { UserType } from "../../models/auth";
 
 interface Props {
+  user: UserType;
   showProfileSettings: boolean;
   setShowProfileSettings: (showProfileSettings: boolean) => void;
 }
 
-const ProfileSettingsLogout: FC<Props> = ({showProfileSettings,
-  setShowProfileSettings})=> {
+const ProfileSettingsLogout: FC<Props> = ({
+  user,
+  showProfileSettings,
+  setShowProfileSettings,
+}) => {
   const router = useRouter();
   const [apiError, setApiError] = useState("");
   const [showError, setShowError] = useState(false);
@@ -39,21 +44,24 @@ const ProfileSettingsLogout: FC<Props> = ({showProfileSettings,
 
   useEffect(() => {
     // When the component is mounted, add a rule to the body to hide the scrollbar
-    document.body.style.overflow = 'hidden';
-  
+    document.body.style.overflow = "hidden";
+
     // When the component is unmounted, remove the rule from the body to show the scrollbar
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, []);
 
   return (
-    <div onClick={(event) => {
-      // Closes profile settings when user clicks outside of the component
-      if (event.target === event.currentTarget) {
-        setShowProfileSettings(false);
-      }
-    }} className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center h-full">
+    <div
+      onClick={(event) => {
+        // Closes profile settings when user clicks outside of the component
+        if (event.target === event.currentTarget) {
+          setShowProfileSettings(false);
+        }
+      }}
+      className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center h-full"
+    >
       <div className="mb-4 bg-white flex flex-col justify-center items-center p-10 text-md gap-4 rounded-3xl">
         <div
           onClick={handleProfileSettingsForm}
@@ -69,8 +77,13 @@ const ProfileSettingsLogout: FC<Props> = ({showProfileSettings,
           Log Out
         </button>
       </div>
-      {profileSettingsForm && <ProfileSettingsForm profileSettingsForm={profileSettingsForm}
-          setProfileSettingsForm={setProfileSettingsForm}/>}
+      {profileSettingsForm && (
+        <ProfileSettingsForm
+          user={user}
+          profileSettingsForm={profileSettingsForm}
+          setProfileSettingsForm={setProfileSettingsForm}
+        />
+      )}
     </div>
   );
 };

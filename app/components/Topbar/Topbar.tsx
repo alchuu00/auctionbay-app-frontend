@@ -5,11 +5,11 @@ import UserIcon from "@heroicons/react/outline/UserIcon";
 import UserCircleIcon from "@heroicons/react/outline/UserCircleIcon";
 import PlusIcon from "./PlusIcon";
 import AddAuctionsForm from "./AddEditAuctionForm";
-import ProfileSettingsLogout from "./ProfileSettingsLogout";
-import { UserType } from "../models/auth";
+import ProfileSettingsLogout from "../ProfileSettings/ProfileSettingsLogout";
+import { UserType } from "../../models/auth";
 import Tab from "./Tab";
 import Image from "next/image";
-import { useFetchUser } from "../hooks/useFetchUser";
+import { useFetchUser } from "../../hooks/useFetchUser";
 
 interface Props {
   activeTab: number;
@@ -54,7 +54,7 @@ const Topbar: FC<Props> = ({
       <div className="flex items-center">
         <div className="flex justify-between items-center w-screen">
           <div className="flex gap-6">
-            <Logo />
+            <Logo user={user} />
             <div className="flex gap-1 bg-white rounded-full p-1">
               <div
                 className={`flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
@@ -151,6 +151,7 @@ const Topbar: FC<Props> = ({
       )}
       {showProfileSettings && (
         <ProfileSettingsLogout
+          user={user}
           showProfileSettings={showProfileSettings}
           setShowProfileSettings={setShowProfileSettings}
         />

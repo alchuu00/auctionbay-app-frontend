@@ -10,11 +10,11 @@ export interface CreateUpdateUserFields {
   email: string
   password: string
   confirm_password: string
-  role_id: string
+  new_password?: Yup.Maybe<string>
 }
 
 interface Props {
-  defaultValues?: UserType
+  defaultValues?: UserType | null
 }
 
 export const useCreateUpdateUserForm = ({ defaultValues }: Props) => {
@@ -31,9 +31,13 @@ export const useCreateUpdateUserForm = ({ defaultValues }: Props) => {
     confirm_password: Yup.string()
       .oneOf([Yup.ref('password'), ""], 'Passwords do not match')
       .required('Passwords do not match'),
-    role_id: Yup.string().required('Role field is required'),
+      new_password: Yup.string()
+      .matches(
+        /^(?=.*\d)[A-Za-z.\s_-]+[\w~@#$%^&*+=`|{}:;!.?"()[\]-]{6,}/,
+        'Password must have at least one number, lower or upper case letter and it has to be longer than 5 characters.',
+      )
+      .required(),
   })
-
 
   const {
     handleSubmit,
@@ -46,7 +50,7 @@ export const useCreateUpdateUserForm = ({ defaultValues }: Props) => {
       email: '',
       password: '',
       confirm_password: '',
-      role_id: '',
+      new_password: '',
       ...defaultValues,
     },
     mode: 'onSubmit',

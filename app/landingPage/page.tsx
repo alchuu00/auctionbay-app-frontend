@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/LandingPage/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -10,10 +10,14 @@ const LandingPage = () => {
       <div className="flex flex-col gap-2 justify-end items-center mt-5">
         <h1 className="text-6xl font-bold">E-auctions made easy!</h1>
         <p className="font-light text-md text-center">
-          Simple way for selling your unused products, or<br/>getting a
-          deal on product you want!
+          Simple way for selling your unused products, or
+          <br />
+          getting a deal on product you want!
         </p>
-        <Link href="/login" className="bg-fluoro-yellow text-md font-medium px-4 py-2 rounded-2xl">
+        <Link
+          href="/login"
+          className="bg-fluoro-yellow text-md font-medium px-4 py-2 rounded-2xl"
+        >
           Start bidding
         </Link>
       </div>

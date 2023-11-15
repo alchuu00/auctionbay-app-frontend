@@ -2,6 +2,7 @@ import { apiRoutes } from "../constants/apiConstatnts";
 import { CreateUpdateUserFields } from "../hooks/useCreateUpdateUser";
 import { LoginUserFields } from "../hooks/useLogin";
 import { RegisterUserFields } from "../hooks/useRegister";
+import { UpdateUserFields } from "../hooks/useUpdateUser";
 import { UserType } from "../models/auth";
 import { apiRequest } from "./api";
 
@@ -36,8 +37,8 @@ export const uploadAvatar = async (formData: FormData, id: string) =>
 export const createUser = async (data: CreateUpdateUserFields) =>
   apiRequest<CreateUpdateUserFields, void>("post", apiRoutes.USERS_PREFIX, data);
 
-export const updateUser = async (data: CreateUpdateUserFields, id: string) =>
-  apiRequest<CreateUpdateUserFields, void>(
+export const updateUser = async (data: UpdateUserFields, id: string) =>
+  apiRequest<UpdateUserFields, void>(
     "patch",
     `${apiRoutes.USERS_PREFIX}/${id}`,
     data

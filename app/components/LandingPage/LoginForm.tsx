@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import Link from "next/link";
-import { StatusCode } from "../constants/errorConstants";
-import authStore from "../stores/authStore";
-import * as API from "../api/api";
+import { StatusCode } from "../../constants/errorConstants";
+import authStore from "../../stores/authStore";
+import * as API from "../../api/api";
 import Image from "next/image";
-import { useLoginForm, LoginUserFields } from "../hooks/useLogin";
+import { useLoginForm, LoginUserFields } from "../../hooks/useLogin";
 import "react-toastify/dist/ReactToastify.css";
-import ToastWarning from "./ToastWarning";
+import ToastWarning from "../ToastWarning";
 
 const LoginForm = () => {
   const [toggleHidden, setToggleHidden] = useState(true);
@@ -126,7 +126,7 @@ const LoginForm = () => {
               } else if (errors) {
                 setShowInputErrorMessage(true);
               }
-            }}  
+            }}
             type="submit"
             className="bg-fluoro-yellow font-medium px-4 py-2 rounded-2xl"
           >

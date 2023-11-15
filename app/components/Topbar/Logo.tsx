@@ -1,16 +1,16 @@
 import Link from "next/link";
 import React, { FC } from "react";
 import Image from "next/image";
-import { UserType } from "../models/auth";
+import { UserType } from "../../models/auth";
 
 interface Props {
   user: UserType | null;
 }
 
-const Logo: FC<Props> = ({user}) => {
+const Logo: FC<Props> = ({ user }) => {
   return (
     <div>
-      <Link href={user ? '/dashboard' : '/'}>
+      <Link href={user ? "/dashboard" : "/"}>
         <Image
           src="/logo.png"
           alt="Logo"
