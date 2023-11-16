@@ -14,7 +14,7 @@ export interface UpdateUserFields {
 }
 
 interface Props {
-  defaultValues?: UserType | null;
+  defaultValues?: UpdateUserFields | null;
 }
 
 export const useUpdateUserForm = ({ defaultValues }: Props) => {

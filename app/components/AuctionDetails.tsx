@@ -11,7 +11,7 @@ import { BidType } from "../models/bid";
 import * as API from "../api/api";
 import { StatusCode } from "../constants/errorConstants";
 import ToastWarning from "./ToastWarning";
-import { Controller } from "react-hook-form";
+import { Controller, set } from "react-hook-form";
 import { useFetchUser } from "../hooks/useFetchUser";
 import { useFetchBids } from "../hooks/useFetchBids";
 
@@ -22,10 +22,12 @@ interface Props {
 
 // TODO show auction status
 
+// TODO set bid field to start_price or highest bid 
+
 const AuctionDetails: React.FC<Props> = ({ auction, defaultValues }) => {
   const [apiError, setApiError] = useState("");
   const [showError, setShowError] = useState(false);
-  const [bid, setBid] = useState(0);
+  const [highestBid, setCurrentBid] = useState(auction.start_price);
   const { handleSubmit, errors, control } = useCreateUpdateBidFields({
     defaultValues,
   });
@@ -44,6 +46,8 @@ const AuctionDetails: React.FC<Props> = ({ auction, defaultValues }) => {
             ...bids.data.map((bid) => bid.bid_amount)
           )
         : auction.start_price;
+
+        setCurrentBid(highestBid);
 
     if (bidValue <= highestBid) {
       setApiError("Your bid must be higher than the current highest bid.");
@@ -117,9 +121,10 @@ const AuctionDetails: React.FC<Props> = ({ auction, defaultValues }) => {
                         aria-label="Bid"
                         aria-describedby="Bid"
                         className="rounded-2xl w-24"
+                        value={Math.max(auction.start_price, highestBid)}
                         onChange={(e) => {
                           field.onChange(e);
-                          setBid(Number(e.target.value));
+                          setCurrentBid(Number(e.target.value));
                         }}
                       />
                       <button
@@ -139,80 +144,52 @@ const AuctionDetails: React.FC<Props> = ({ auction, defaultValues }) => {
           <div className="font-bold text-2xl w-full mb-4">
             Bidding history({bids && bids.data && bids.data.length + 1})
           </div>
-          <div className="w-full flex flex-col">
-            {bids &&
-              bids.data.map((bid, index) => (
-                <div
-                  key={index}
-                  className="flex justify-between items-center py-2 border-b border-gray-blue w-full"
-                >
-                  <div className="flex justify-start items-center gap-3 w-full">
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${bid.bidder.avatar}`}
-                      className="rounded-full"
-                      alt=""
-                      height={30}
-                      width={30}
-                    />
-                    <div>
-                      {bid.bidder.first_name} {bid.bidder.last_name}
+          {bids && (
+            <div className="w-full flex flex-col">
+              {bids &&
+                bids.data.map((bid, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center py-2 border-b border-gray-blue w-full"
+                  >
+                    <div className="flex justify-start items-center gap-3 w-full">
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${bid.bidder.avatar}`}
+                        className="rounded-full"
+                        alt=""
+                        height={30}
+                        width={30}
+                      />
+                      <div>
+                        {bid.bidder.first_name} {bid.bidder.last_name}
+                      </div>
+                    </div>
+                    <div className="flex justify-end items-center text-right w-full gap-5">
+                      <div className="text-right">
+                        {`${new Date(bid.created_at).toLocaleTimeString(
+                          "en-US",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,
+                          }
+                        )} ${new Date(bid.created_at).toLocaleDateString(
+                          "de-DE",
+                          {
+                            day: "numeric",
+                            month: "numeric",
+                            year: "numeric",
+                          }
+                        )}`}
+                      </div>
+                      <div className="rounded-full px-4 py-1 bg-fluoro-yellow w-fit text-center">
+                        {bid.bid_amount} €
+                      </div>
                     </div>
                   </div>
-                  <div className="flex justify-end items-center text-right w-full gap-5">
-                    <div className="text-right">
-                      {`${new Date(bid.created_at).toLocaleTimeString("en-US", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: false,
-                      })} ${new Date(bid.created_at).toLocaleDateString(
-                        "de-DE",
-                        {
-                          day: "numeric",
-                          month: "numeric",
-                          year: "numeric",
-                        }
-                      )}`}
-                    </div>
-                    <div className="rounded-full px-4 py-1 bg-fluoro-yellow w-fit text-center">
-                      {bid.bid_amount} €
-                    </div>
-                  </div>
-                </div>
-              ))}
-            <div className="flex justify-between items-center py-2 border-b border-gray-blue w-full">
-              <div className="flex justify-start items-center gap-3 w-full">
-                <Image
-                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${auction.user.avatar}`}
-                  className="rounded-full"
-                  alt=""
-                  height={30}
-                  width={30}
-                />
-                <div>
-                  {auction.user.first_name} {auction.user.last_name}
-                </div>
-              </div>
-              <div className="flex justify-end items-center text-right w-full gap-5">
-                <div className="text-right">
-                  {`${new Date(auction.created_at).toLocaleTimeString("en-US", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
-                  })} ${new Date(auction.created_at).toLocaleDateString(
-                    "de-DE",
-                    {
-                      day: "numeric",
-                      month: "numeric",
-                      year: "numeric",
-                    }
-                  )}`}
-                </div>
-                <div className="rounded-full px-4 py-1 bg-fluoro-yellow w-fit text-center">
-                  {auction.start_price} €
-                </div>
-              </div>
+                ))}
             </div>
-          </div>
+          )}
         </div>
       </div>
       {apiError && (

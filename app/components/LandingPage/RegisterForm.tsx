@@ -13,7 +13,8 @@ import Image from "next/image";
 import ToastWarning from "../ToastWarning";
 
 const RegisterForm = () => {
-  const [toggleHidden, setToggleHidden] = useState(true);
+  const [toggleHiddenPassword, setToggleHiddenPassword] = useState(true);
+  const [toggleHiddenConfirmPassword, setToggleHiddenConfirmPassword] = useState(true);
   const { handleSubmit, errors, control } = useRegisterForm();
   const [showInputErrorMessage, setShowInputErrorMessage] = useState(false);
   const [showResponseErrorMessage, setShowResponseErrorMessage] =
@@ -42,8 +43,12 @@ const RegisterForm = () => {
     };
   }, [showInputErrorMessage, showResponseErrorMessage]);
 
-  const handleToggleHidden = () => {
-    setToggleHidden(!toggleHidden);
+  const handleToggleHiddenPassword = () => {
+    setToggleHiddenPassword(!toggleHiddenPassword);
+  };
+  
+  const handleToggleHiddenConfirmPassword = () => {
+    setToggleHiddenConfirmPassword(!toggleHiddenConfirmPassword);
   };
 
   const onSubmit = handleSubmit(async (data: RegisterUserFields) => {
@@ -155,7 +160,7 @@ const RegisterForm = () => {
                 <div className="relative">
                   <input
                     {...field}
-                    type={toggleHidden ? "password" : "text"}
+                    type={toggleHiddenPassword ? "password" : "text"}
                     placeholder="Placeholder"
                     aria-label="Password"
                     aria-describedby="password"
@@ -164,7 +169,7 @@ const RegisterForm = () => {
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2">
                     <EyeIcon
                       className="h-5 w-5 text-gray-400 cursor-pointer"
-                      onClick={handleToggleHidden}
+                      onClick={handleToggleHiddenPassword}
                     />
                   </div>
                 </div>
@@ -182,7 +187,7 @@ const RegisterForm = () => {
                 <div className="relative">
                   <input
                     {...field}
-                    type={toggleHidden ? "password" : "text"}
+                    type={toggleHiddenConfirmPassword ? "password" : "text"}
                     placeholder="Placeholder"
                     aria-label="Confirm Password"
                     aria-describedby="confirm password"
@@ -191,7 +196,7 @@ const RegisterForm = () => {
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2">
                     <EyeIcon
                       className="h-5 w-5 text-gray-400 cursor-pointer"
-                      onClick={handleToggleHidden}
+                      onClick={handleToggleHiddenConfirmPassword}
                     />
                   </div>
                 </div>

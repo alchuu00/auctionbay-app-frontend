@@ -9,7 +9,6 @@ import { Controller } from "react-hook-form";
 import UserCircleIcon from "@heroicons/react/outline/UserCircleIcon";
 import { userStorage } from "../../utils/userStorage";
 import { UpdateUserFields, useUpdateUserForm } from "../../hooks/useUpdateUser";
-import ChangePasswordForm from "./ChangePasswordForm";
 import { UserType } from "@/app/models/auth";
 import EyeIcon from "@heroicons/react/outline/EyeIcon";
 
@@ -21,6 +20,8 @@ interface Props {
 
 // FIXME there is something wrong with email and new_password fields
 
+// FIXME don't want to autofill password form data
+
 const ProfileSettingsForm: FC<Props> = ({
   user,
   profileSettingsForm,
@@ -31,12 +32,22 @@ const ProfileSettingsForm: FC<Props> = ({
   const [isPasswordChangeForm, setIsPasswordChangeForm] = useState(false);
   const [isProfilePictureChangeForm, setIsProfilePictureChangeForm] =
     useState(false);
-  const [toggleHidden, setToggleHidden] = useState(true);
+    const [toggleHiddenCurrent, setToggleHiddenCurrent] = useState(true);
+    const [toggleHiddenNew, setToggleHiddenNew] = useState(true);
+    const [toggleHiddenConfirm, setToggleHiddenConfirm] = useState(true);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
-  const handleToggleHidden = () => {
-    setToggleHidden(!toggleHidden);
+  const handleToggleHiddenCurrent = () => {
+    setToggleHiddenCurrent(!toggleHiddenCurrent);
+  };
+  
+  const handleToggleHiddenNew = () => {
+    setToggleHiddenNew(!toggleHiddenNew);
+  };
+  
+  const handleToggleHiddenConfirm = () => {
+    setToggleHiddenConfirm(!toggleHiddenConfirm);
   };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -50,10 +61,7 @@ const ProfileSettingsForm: FC<Props> = ({
   });
 
   console.log("errors", errors);
-
-  // FIXME form submission not working
-  // FIXME autofill password form data
-  // FIXME avatar not uploading
+  console.log("user", user);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
@@ -67,11 +75,11 @@ const ProfileSettingsForm: FC<Props> = ({
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(myfile);
-  
+
       // create FormData
       const formData = new FormData();
       formData.append("avatar", myfile);
-  
+
       // upload file to server
       const response = await API.uploadAvatar(formData, user.data.id as string);
       console.log("upload avatar response", response);
@@ -89,9 +97,9 @@ const ProfileSettingsForm: FC<Props> = ({
   }, []);
 
   const handleUpdate = async (data: UpdateUserFields) => {
-    // Exclude avatar from data
+    // Exclude avatar from data so it prevents calling API.updateUser
     const { avatar, ...rest } = data;
-  
+
     const response = await API.updateUser(rest, user.data.id as string);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
       setApiError(response.data.message);
@@ -104,7 +112,7 @@ const ProfileSettingsForm: FC<Props> = ({
       router.push(`${routes.DASHBOARD_PREFIX}`);
     }
   };
-  
+
   const onSubmit = handleSubmit(async (data: UpdateUserFields) => {
     console.log("submitting data:", data);
     console.log("Calling handleUpdate...");
@@ -147,29 +155,34 @@ const ProfileSettingsForm: FC<Props> = ({
             className="flex flex-col gap-2 w-[500px]"
           >
             {isPasswordChangeForm ? (
-              <><Controller
-                name="password"
-                control={control}
-                render={({ field }) => (
-                  <div className="mb-3 w-full">
-                    <label htmlFor="current-password" className="font-light">
-                      Current password:
-                    </label>
-                    <div className="relative">
-                      <input
-                        {...field}
-                        type={toggleHidden ? "password" : "text"}
-                        aria-label="Current Password"
-                        aria-describedby="current password"
-                        className="border w-full font-light py-2 px-4 rounded-2xl" />
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                        <EyeIcon
-                          className="h-5 w-5 text-gray-400 cursor-pointer"
-                          onClick={handleToggleHidden} />
+              <>
+                <Controller
+                  name="password"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="mb-3 w-full">
+                      <label htmlFor="current-password" className="font-light">
+                        Current password:
+                      </label>
+                      <div className="relative">
+                        <input
+                          {...field}
+                          type={toggleHiddenCurrent ? "password" : "text"}
+                          aria-label="Current Password"
+                          aria-describedby="current password"
+                          className="border w-full font-light py-2 px-4 rounded-2xl"
+                        />
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-2">
+                          <EyeIcon
+                            className="h-5 w-5 text-gray-400 cursor-pointer"
+                            onClick={handleToggleHiddenCurrent}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )} /><Controller
+                  )}
+                />
+                <Controller
                   name="new_password"
                   control={control}
                   render={({ field }) => (
@@ -180,18 +193,22 @@ const ProfileSettingsForm: FC<Props> = ({
                       <div className="relative">
                         <input
                           {...field}
-                          type={toggleHidden ? "password" : "text"}
+                          type={toggleHiddenNew ? "password" : "text"}
                           aria-label="New Password"
                           aria-describedby="new password"
-                          className="border w-full font-light py-2 px-4 rounded-2xl" />
+                          className="border w-full font-light py-2 px-4 rounded-2xl"
+                        />
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2">
                           <EyeIcon
                             className="h-5 w-5 text-gray-400 cursor-pointer"
-                            onClick={handleToggleHidden} />
+                            onClick={handleToggleHiddenNew}
+                          />
                         </div>
                       </div>
                     </div>
-                  )} /><Controller
+                  )}
+                />
+                <Controller
                   name="confirm_password"
                   control={control}
                   render={({ field }) => (
@@ -202,18 +219,22 @@ const ProfileSettingsForm: FC<Props> = ({
                       <div className="relative">
                         <input
                           {...field}
-                          type={toggleHidden ? "password" : "text"}
+                          type={toggleHiddenConfirm ? "password" : "text"}
                           aria-label="Repeat Password"
                           aria-describedby="repeat password"
-                          className="border w-full font-light py-2 px-4 rounded-2xl" />
+                          className="border w-full font-light py-2 px-4 rounded-2xl"
+                        />
                         <div className="absolute inset-y-0 right-0 flex items-center pr-2">
                           <EyeIcon
                             className="h-5 w-5 text-gray-400 cursor-pointer"
-                            onClick={handleToggleHidden} />
+                            onClick={handleToggleHiddenConfirm}
+                          />
                         </div>
                       </div>
                     </div>
-                  )} /></>
+                  )}
+                />
+              </>
             ) : isProfilePictureChangeForm ? (
               <>
                 <div className="rounded-2xl flex flex-col justify-center items-center relative gap-4">
@@ -285,7 +306,6 @@ const ProfileSettingsForm: FC<Props> = ({
                         </label>
                         <input
                           {...field}
-                          value={field.value === null ? "" : field.value}
                           type="text"
                           aria-label="First Name"
                           aria-describedby="first name"
@@ -304,7 +324,6 @@ const ProfileSettingsForm: FC<Props> = ({
                         </label>
                         <input
                           {...field}
-                          value={field.value === null ? "" : field.value}
                           type="text"
                           aria-label="Last Name"
                           aria-describedby="last name"
@@ -324,7 +343,6 @@ const ProfileSettingsForm: FC<Props> = ({
                       </label>
                       <input
                         {...field}
-                        value={field.value || ""}
                         type="text"
                         aria-label="Email"
                         aria-describedby="email"
