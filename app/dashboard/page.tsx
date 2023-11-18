@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Topbar from "../components/Topbar/Topbar";
 import { AuctionType } from "../models/auction";
-import AuctionCard from "../components/AuctionCard";
+
 import { useAuctions } from "../hooks/useFetchAuctions";
 import AuctionDetails from "../components/AuctionDetails";
 import { useFetchUser } from "../hooks/useFetchUser";
@@ -13,16 +13,14 @@ import NoAuctions from "../components/EmptyStateAuctions/NoAuctions";
 import NoMyAuctions from "../components/EmptyStateAuctions/NoMyAuctions";
 import NoMyBids from "../components/EmptyStateAuctions/NoMyBids";
 import NoWonBids from "../components/EmptyStateAuctions/NoWonBids";
+import auctionStatus from "../utils/auctionStatus";
+import AuctionCard from "../components/AuctionCard";
 
-// TODO add error handling
+// TODO add forbidden response handling
 
-// TODO fetch auctions after updating it
-// TODO fetch auctions after deleting it
-// TODO fetch auctions after creating it
-// TODO fetch auctions on tab change
-// TODO fetch bids after placing a bid
+// FIXME status not displaying correctly (its reversed)
 
-// TODO add pagination in dashboard and in auction details bids
+// TODO update auction status when user bids on auction
 
 const Dashboard = () => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -41,7 +39,10 @@ const Dashboard = () => {
 
   const currentUserId = user?.data.id;
 
-  const auctions = useAuctions(pageNumber, [activeTopTab, activeTab]);
+  const { auctions, refetch } = useAuctions(pageNumber, [
+    activeTopTab,
+    activeTab,
+  ]);
 
   const myAuctions = auctions.filter(
     (auction) => auction.user.id === currentUserId
@@ -82,18 +83,39 @@ const Dashboard = () => {
     }
   }, [user, auctions]);
 
+  useEffect(() => {
+    refetch();
+  }, [activeTab, activeTopTab]);
+
   const renderAuctions = (filterFunc: (auction: AuctionType) => boolean) => (
     <div className="w-full flex justify-start items-center">
-      <div className="flex flex-wrap justify-start gap-5 w-full">
+      <div className="flex flex-wrap justify-start gap-5 w-screen mb-5">
         {auctions
           .filter(filterFunc)
-          .sort(
-            (a, b) =>
-              new Date(b.end_date).getTime() - new Date(a.end_date).getTime()
-          )
+          .sort((a, b) => {
+            const aEndDate = new Date(a.end_date);
+            const bEndDate = new Date(b.end_date);
+            const currentDate = new Date();
+
+            // Check if either auction has ended
+            const aEnded = aEndDate <= currentDate;
+            const bEnded = bEndDate <= currentDate;
+
+            if (aEnded && !bEnded) {
+              // If a has ended but b hasn't, a should come after b
+              return 1;
+            } else if (!aEnded && bEnded) {
+              // If b has ended but a hasn't, a should come before b
+              return -1;
+            } else {
+              // If both have ended or both haven't ended, sort by end date
+              return aEndDate.getTime() - bEndDate.getTime();
+            }
+          })
           .map((auction: AuctionType, index: number) => (
             <div key={index}>
               <AuctionCard
+                refetchAuctions={refetch}
                 isUserBidder={uniqueAuctionIds.includes(auction.id)}
                 isCurrentUserWinningBidder={isCurrentUserWinningBidder}
                 activeTopTab={activeTopTab}
@@ -134,6 +156,11 @@ const Dashboard = () => {
           />
           {showAuctionDetails && selectedAuction ? (
             <AuctionDetails
+              status={auctionStatus({
+                auction: selectedAuction,
+                isUserBidder: uniqueAuctionIds.includes(selectedAuction.id),
+                isCurrentUserWinningBidder,
+              })}
               auction={selectedAuction}
               defaultValues={{
                 bid: 0,
@@ -159,7 +186,13 @@ const Dashboard = () => {
                       <NoMyAuctions />
                     )
                   ) : activeTab === 1 ? (
-                    uniqueAuctionIds.length > 0 ? (
+                    // Checks if user has bids on any auctions in progress. If so, renders those auctions
+                    uniqueAuctionIds.length > 0 &&
+                    auctions.some(
+                      (auction: AuctionType) =>
+                        uniqueAuctionIds.includes(auction.id) &&
+                        new Date(auction.end_date) > new Date()
+                    ) ? (
                       renderAuctions(
                         (auction: AuctionType) =>
                           uniqueAuctionIds.includes(auction.id) &&
@@ -187,6 +220,20 @@ const Dashboard = () => {
           )}
         </>
       )}
+      {/* <div className="flex justify-center gap-5">
+        <button
+          className="p-2 bg-gray-200 rounded-2xl"
+          onClick={() => setPageNumber(pageNumber - 1)}
+        >
+          Previous page
+        </button>
+        <button
+          className="p-2 bg-gray-200 rounded-2xl"
+          onClick={() => setPageNumber(pageNumber + 1)}
+        >
+          Next page
+        </button>
+      </div> */}
     </div>
   );
 };
