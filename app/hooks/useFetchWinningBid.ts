@@ -2,20 +2,20 @@ import { useEffect, useState } from 'react';
 import * as API from '../api/api';
 
 export const useGetHighestBidder = (auctionId: string) => {
-    const [bids, setBids] = useState(null);
+    const [highestBidderId, setHighestBidderId] = useState(null);
 
     useEffect(() => {
-        const fetchBids = async () => {
+        const fetchHighestBidderId = async () => {
             try {
-                const bidsData = await API.getHighestBidder(auctionId);
-                setBids(bidsData);
+                const highestBidderIdData = await API.getHighestBidder(auctionId);
+                setHighestBidderId(highestBidderIdData);
             } catch (error) {
-                console.error("Error fetching bids data: ", error);
+                console.error("Error fetching highest bidder data: ", error);
             }
         };
 
-        fetchBids();
+        fetchHighestBidderId();
     }, [auctionId]);
 
-    return bids;
+    return highestBidderId;
 };
