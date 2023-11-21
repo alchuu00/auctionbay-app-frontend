@@ -1,4 +1,4 @@
-import { AuctionType } from '../models/auction';
+import { AuctionType } from "../../../app/models/auction";
 
 export const countdown = (auction: AuctionType) => {
   if (new Date(auction.end_date) > new Date()) {

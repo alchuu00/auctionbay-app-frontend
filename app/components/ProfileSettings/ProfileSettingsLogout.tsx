@@ -8,13 +8,11 @@ import { useRouter } from "next/navigation";
 import { UserType } from "../../models/auth";
 
 interface Props {
-  user: UserType;
   showProfileSettings: boolean;
   setShowProfileSettings: (showProfileSettings: boolean) => void;
 }
 
 const ProfileSettingsLogout: FC<Props> = ({
-  user,
   showProfileSettings,
   setShowProfileSettings,
 }) => {
@@ -60,26 +58,22 @@ const ProfileSettingsLogout: FC<Props> = ({
           setShowProfileSettings(false);
         }
       }}
-      className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center h-full"
-    >
+      className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center h-full">
       <div className="mb-4 bg-white flex flex-col justify-center items-center p-10 text-md gap-4 rounded-3xl">
         <div
           onClick={handleProfileSettingsForm}
-          className="flex justify-center items-center gap-2 hover:cursor-pointer"
-        >
+          className="flex justify-center items-center gap-2 hover:cursor-pointer">
           <CogIcon className="h-5 w-5" />
           Profile settings
         </div>
         <button
           onClick={signout}
-          className="px-10 py-2 border border-dark-gray rounded-full"
-        >
+          className="px-10 py-2 border border-dark-gray rounded-full">
           Log Out
         </button>
       </div>
       {profileSettingsForm && (
         <ProfileSettingsForm
-          user={user}
           profileSettingsForm={profileSettingsForm}
           setProfileSettingsForm={setProfileSettingsForm}
         />

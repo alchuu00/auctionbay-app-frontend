@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import Logo from "./Logo";
 import HomeIcon from "@heroicons/react/outline/HomeIcon";
 import UserIcon from "@heroicons/react/outline/UserIcon";
@@ -6,12 +6,12 @@ import UserCircleIcon from "@heroicons/react/outline/UserCircleIcon";
 import PlusIcon from "./PlusIcon";
 import AddAuctionsForm from "./AddEditAuctionForm";
 import ProfileSettingsLogout from "../ProfileSettings/ProfileSettingsLogout";
-import { UserType } from "../../models/auth";
 import Tab from "./Tab";
 import Image from "next/image";
-import { useFetchUser } from "../../hooks/useFetchUser";
+import { userStorage } from "@/app/stores/userStorage";
 
 interface Props {
+  refetchAuctions: () => void;
   activeTab: number;
   setActiveTab: (index: number) => void;
   activeTopTab: number;
@@ -20,6 +20,7 @@ interface Props {
 }
 
 const Topbar: FC<Props> = ({
+  refetchAuctions,
   activeTab,
   setActiveTab,
   activeTopTab,
@@ -47,21 +48,20 @@ const Topbar: FC<Props> = ({
     setShowProfileSettings(true);
   };
 
-  const user = useFetchUser();
+  const user = userStorage.getUser();
 
   return (
     <div className="flex flex-col pt-8">
       <div className="flex items-center">
         <div className="flex justify-between items-center w-screen">
           <div className="flex gap-6">
-            <Logo user={user} />
+            <Logo />
             <div className="flex gap-1 bg-white rounded-full p-1">
               <div
                 className={`flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
                   activeTopTab === 1 ? "bg-dark-gray text-white" : ""
                 }`}
-                onClick={() => handleActiveTopTab(1)}
-              >
+                onClick={() => handleActiveTopTab(1)}>
                 <HomeIcon className="h-5 w-5" />
                 <p>Auctions</p>
               </div>
@@ -69,8 +69,7 @@ const Topbar: FC<Props> = ({
                 className={`flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
                   activeTopTab === 2 ? "bg-dark-gray text-white" : ""
                 }`}
-                onClick={() => handleActiveTopTab(2)}
-              >
+                onClick={() => handleActiveTopTab(2)}>
                 <UserIcon className="h-5 w-5" />
                 <p>Profile</p>
               </div>
@@ -80,18 +79,16 @@ const Topbar: FC<Props> = ({
           <div className="flex gap-1 bg-white rounded-full justify-center items-center p-1">
             <div
               className="p-3 rounded-full bg-fluoro-yellow cursor-pointer"
-              onClick={handleAddAuctionsClick}
-            >
+              onClick={handleAddAuctionsClick}>
               <PlusIcon />
             </div>
             <div
               onClick={handleUpdateProfile}
-              className="rounded-full cursor-pointer"
-            >
-              {user?.data.avatar ? (
+              className="rounded-full cursor-pointer">
+              {user?.user.avatar ? (
                 <Image
                   alt="avatar"
-                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${user.data.avatar}`}
+                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${user?.user.avatar}`}
                   width={50}
                   height={50}
                   className="rounded-full"
@@ -113,26 +110,23 @@ const Topbar: FC<Props> = ({
           {activeTopTab === 2 && (
             <div>
               <h1 className="font-bold text-4xl">
-                Hello {user?.data.first_name} {user?.data.last_name} !
+                Hello {user?.user.first_name} {user?.user.last_name} !
               </h1>
               <div className="w-full flex flex-col justify-center items-center">
                 <div className="w-fit flex justify-center items-center gap-2 p-1 rounded-2xl bg-gray-blue">
                   <Tab
                     active={activeTab === 0}
-                    onClick={() => handleActiveTab(0)}
-                  >
+                    onClick={() => handleActiveTab(0)}>
                     My auctions
                   </Tab>
                   <Tab
                     active={activeTab === 1}
-                    onClick={() => handleActiveTab(1)}
-                  >
+                    onClick={() => handleActiveTab(1)}>
                     Bidding
                   </Tab>
                   <Tab
                     active={activeTab === 2}
-                    onClick={() => handleActiveTab(2)}
-                  >
+                    onClick={() => handleActiveTab(2)}>
                     Won
                   </Tab>
                 </div>
@@ -144,14 +138,13 @@ const Topbar: FC<Props> = ({
 
       {showAddAuctionsForm && (
         <AddAuctionsForm
-          showAddAuctionsForm={showAddAuctionsForm}
+          refetchAuctions={refetchAuctions}
           setShowAddAuctionsForm={setShowAddAuctionsForm}
           isUpdateAuction={false}
         />
       )}
       {showProfileSettings && (
         <ProfileSettingsLogout
-          user={user}
           showProfileSettings={showProfileSettings}
           setShowProfileSettings={setShowProfileSettings}
         />

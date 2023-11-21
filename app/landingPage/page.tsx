@@ -16,8 +16,7 @@ const LandingPage = () => {
         </p>
         <Link
           href="/login"
-          className="bg-fluoro-yellow text-md font-medium px-4 py-2 rounded-2xl"
-        >
+          className="bg-fluoro-yellow text-md font-medium px-4 py-2 rounded-2xl">
           Start bidding
         </Link>
       </div>
@@ -26,8 +25,7 @@ const LandingPage = () => {
         src="/landingPageImg.png"
         width={800}
         height={800}
-        alt="Hero Image"
-      ></Image>
+        alt="Hero Image"></Image>
     </div>
   );
 };

@@ -7,23 +7,21 @@ import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import AddEditAuctionForm from "./Topbar/AddEditAuctionForm";
 import * as API from "../api/api";
 import { countdown } from "../utils/countdown";
-import { useGetHighestBidder } from "../hooks/useFetchWinningBid";
+import { useFetchBidsByAuctionItemId } from "../hooks/useFetchBidsByAuctionItemId";
+import { useFetchBidsByBidderId } from "../hooks/useFetchBidsByBidderId";
+import { userStorage } from "../stores/userStorage";
 
 interface Props {
-  isUserBidder: boolean;
-  isCurrentUserWinningBidder: boolean;
+  refetchAuctions: () => void;
   activeTopTab: number | null;
-  setWinningBidderId: (id: string) => void;
   auction: AuctionType;
   activeTab: number;
   onClick?: () => void;
 }
 
 const AuctionCard: FC<Props> = ({
-  isUserBidder,
-  isCurrentUserWinningBidder,
+  refetchAuctions,
   activeTopTab,
-  setWinningBidderId,
   auction,
   activeTab,
   onClick,
@@ -31,92 +29,115 @@ const AuctionCard: FC<Props> = ({
   const [showAddAuctionsForm, setShowAddAuctionsForm] = useState(false);
   const [isUpdateAuction, setIsUpdateAuction] = useState(true);
   const [showEditButtons, setShowEditButtons] = useState(false);
+  const [highestBid, setHighestBid] = useState<number | null>(null);
+  const [bidStatus, setBidStatus] = useState<string | null>(null);
+
+  const user = userStorage.getUser();
+
   const currentDate = new Date();
-  const auctionInProgress = new Date(auction.end_date) > currentDate;
+
+  const auctionInProgress = new Date(auction.end_date) >= currentDate;
+  const auctionDone = new Date(auction.end_date) < currentDate;
 
   const handleUpdateAuctionForm = () => {
     setShowAddAuctionsForm(true);
   };
 
+  const countdownValue = countdown(auction);
+
+  const { bids } = useFetchBidsByAuctionItemId(auction.id);
+
+  const bidsByBidderId = useFetchBidsByBidderId(user.user.id);
+
+  // display status of auction
+  useEffect(() => {
+    if (
+      bidsByBidderId &&
+      bidsByBidderId.data &&
+      Array.isArray(bidsByBidderId.data)
+    ) {
+      const userBidsForThisAuction = bidsByBidderId.data.filter(
+        (bid) => bid.auction_item.id === auction.id
+      );
+
+      if (auctionDone) {
+        setBidStatus("Done");
+      } else if (userBidsForThisAuction.length === 0) {
+        setBidStatus("In progress");
+      } else {
+        setBidStatus(
+          userBidsForThisAuction[userBidsForThisAuction.length - 1].status
+        );
+      }
+
+      if (activeTopTab === 2 && activeTab === 0) {
+        if (auctionInProgress) {
+          setBidStatus("In progress");
+        } else {
+          setBidStatus("Done");
+        }
+      }
+    }
+  }, [bidsByBidderId, activeTopTab, activeTab, auctionDone, auctionInProgress]);
+
+  // set highest bid to display item price in card
+  useEffect(() => {
+    if (bids && bids.data[0] && Array.isArray(bids.data)) {
+      setHighestBid(
+        bids.data.reduce(
+          (max, bid) => Math.max(max, bid.bid_amount),
+          bids.data[0].bid_amount
+        )
+      );
+    }
+  }, [auction.id, bids]);
+
+  // handle delete auction
   const handleDeleteAuction = async (id: string) => {
     try {
       await API.deleteAuction(id);
+      refetchAuctions();
     } catch (error) {
       console.error("Failed to delete auction:", error);
     }
   };
 
-  const winningBidderId = useGetHighestBidder(auction.id);
-  if (winningBidderId) {
-    setWinningBidderId(winningBidderId?.data);
-  }
-
   useEffect(() => {
-    if (activeTab === 0 && activeTopTab === 2 && auctionInProgress) {
+    if (activeTopTab === 2 && activeTab === 0 && auctionInProgress) {
       setShowEditButtons(true);
+    } else if (activeTopTab === 1 || activeTab === 1) {
+      setShowEditButtons(false);
+    } else {
+      setShowEditButtons(false);
     }
   }, [activeTab, activeTopTab, auctionInProgress]);
-
-  const inProgress = (auction: AuctionType) => {
-    const auctionEndDate = new Date(auction.end_date);
-    const now = new Date();
-
-    if (auctionEndDate > now) {
-      if (activeTopTab === 1) {
-        if (isUserBidder) {
-          if (isCurrentUserWinningBidder && isUserBidder) {
-            return "Outbid";
-          } else if (!isCurrentUserWinningBidder && isUserBidder) {
-            return "Winning";
-          }
-        } else {
-          return "In progress";
-        }
-      } else if (activeTopTab === 2) {
-        if (activeTab === 0) {
-          return "In progress";
-        } else if (activeTab === 1) {
-          if (!isCurrentUserWinningBidder && isUserBidder) {
-            return "Outbid";
-          } else if (isCurrentUserWinningBidder && isUserBidder) {
-            return "Winning";
-          }
-        }
-      }
-    } else {
-      return "Done";
-    }
-  };
 
   return (
     <div
       onClick={onClick}
-      className="flex flex-col bg-white w-52 h-72 rounded-2xl p-2 font-light gap-1"
-    >
+      className="flex flex-col bg-white w-56 h-72 rounded-2xl p-3 font-light gap-1">
       <div className="flex justify-between text-xs">
         <div
           className={`rounded-full px-2 py-1 ${
-            inProgress(auction) === "In progress"
+            bidStatus === "In progress"
               ? "bg-fluoro-yellow-light"
-              : inProgress(auction) === "Winning"
+              : bidStatus === "Winning"
               ? "bg-fluoro-green"
-              : inProgress(auction) === "Outbid"
+              : bidStatus === "Outbid"
               ? "bg-red-300"
               : "bg-dark-gray text-white"
-          }`}
-        >
-          {inProgress(auction)}
+          }`}>
+          {bidStatus}
         </div>
-        {countdown(auction) === null ? null : (
+        {countdownValue === null ? null : (
           <div
             className={`flex justify-center items-center gap-1 rounded-full px-2 py-1 ${
-              activeTab === 1 ? "bg-red-300" : ""
-            }`}
-          >
-            {countdown(auction) <= 24 ? (
-              <div>{countdown(auction)}h</div>
+              countdownValue <= 24 ? "bg-red-300" : ""
+            }`}>
+            {countdownValue <= 24 ? (
+              <div>{countdownValue}h</div>
             ) : (
-              <div>{Math.floor(countdown(auction) / 24)} days</div>
+              <div>{Math.floor(countdownValue / 24)} days</div>
             )}
             <div className="w-4 h-4">
               <ClockIcon />
@@ -128,7 +149,9 @@ const AuctionCard: FC<Props> = ({
         <p className="truncate">{auction.title}</p>
         <p>...</p>
       </div>
-      <div className="font-medium">{auction.start_price} €</div>
+      <div className="font-medium">
+        {highestBid ? highestBid : auction.start_price} €
+      </div>
       <div className="object-cover w-full h-full rounded-2xl">
         <Image
           width={300}
@@ -144,14 +167,12 @@ const AuctionCard: FC<Props> = ({
         <div className="flex justify-between items-center gap-1">
           <div
             onClick={() => handleDeleteAuction(auction.id)}
-            className="cursor-pointer bg-white border border-dark-gray px-2 py-1 rounded-xl"
-          >
+            className="cursor-pointer bg-white border border-dark-gray px-2 py-1 rounded-xl">
             <TrashIcon className="w-4 h-4" />
           </div>
           <div
             onClick={handleUpdateAuctionForm}
-            className="cursor-pointer flex justify-center items-center gap-1 bg-dark-gray text-white px-2 py-1 rounded-xl w-full"
-          >
+            className="cursor-pointer flex justify-center items-center gap-1 bg-dark-gray text-white px-2 py-1 rounded-xl w-full">
             <div>
               <PencilIcon className="w-4 h-4" />
             </div>
@@ -161,8 +182,8 @@ const AuctionCard: FC<Props> = ({
       )}
       {showAddAuctionsForm && (
         <AddEditAuctionForm
+          refetchAuctions={refetchAuctions}
           defaultValues={auction}
-          showAddAuctionsForm={showAddAuctionsForm}
           setShowAddAuctionsForm={setShowAddAuctionsForm}
           isUpdateAuction={isUpdateAuction}
         />

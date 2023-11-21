@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {};
 
-module.exports = {images: {
-    domains: ['localhost'],
-  },}
+module.exports = {
+  images: {
+    domains: ["localhost:8080", 'localhost'],
+  },
+};

@@ -1,7 +1,7 @@
-import { yupResolver } from '@hookform/resolvers/yup';
-import { AuctionType } from '../models/auction';
-import { useForm } from 'react-hook-form';
-import * as Yup from 'yup';
+import { yupResolver } from "@hookform/resolvers/yup";
+import { AuctionType } from "../models/auction";
+import { useForm } from "react-hook-form";
+import * as Yup from "yup";
 
 export interface CreateUpdateAuctionFields {
   title: string;
@@ -16,10 +16,10 @@ interface Props {
 
 export const useCreateUpdateAuctionForm = ({ defaultValues }: Props) => {
   const CreateUpdateAuctionSchema = Yup.object().shape({
-    title: Yup.string().required('Title is required'),
-    description: Yup.string().required('Description is required'),
-    start_price: Yup.number().required('Start price is required'),
-    end_date: Yup.string().required('End date is required'),
+    title: Yup.string().required("Title is required"),
+    description: Yup.string().required("Description is required"),
+    start_price: Yup.number().required("Start price is required"),
+    end_date: Yup.string().required("End date is required"),
   });
 
   const {
@@ -28,12 +28,12 @@ export const useCreateUpdateAuctionForm = ({ defaultValues }: Props) => {
     control,
   } = useForm({
     defaultValues: {
-      title: '',
-      description: '',
-      end_date: '',
+      title: "",
+      description: "",
+      end_date: "",
       ...defaultValues,
     },
-    mode: 'onSubmit',
+    mode: "onSubmit",
     resolver: yupResolver(CreateUpdateAuctionSchema),
   });
 
@@ -42,7 +42,7 @@ export const useCreateUpdateAuctionForm = ({ defaultValues }: Props) => {
     errors,
     control,
   };
-}
+};
 
 export type CreateUpdateAuctionForm = ReturnType<
   typeof useCreateUpdateAuctionForm

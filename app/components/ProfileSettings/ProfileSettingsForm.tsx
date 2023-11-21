@@ -1,74 +1,55 @@
-import React, { ChangeEvent, FC, useEffect, useRef, useState } from "react";
+import React, {
+  ChangeEvent,
+  FC,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import * as API from "../../api/api";
 import { StatusCode } from "../../constants/errorConstants";
 import ToastWarning from "../ToastWarning";
 import { useRouter } from "next/navigation";
-import { routes } from "../../constants/routesConstants";
 import Image from "next/image";
-import { Controller } from "react-hook-form";
+import { Controller, set } from "react-hook-form";
 import UserCircleIcon from "@heroicons/react/outline/UserCircleIcon";
-import { userStorage } from "../../utils/userStorage";
+import { userStorage } from "../../stores/userStorage";
 import { UpdateUserFields, useUpdateUserForm } from "../../hooks/useUpdateUser";
-import { UserType } from "@/app/models/auth";
-import EyeIcon from "@heroicons/react/outline/EyeIcon";
+import UpdatePasswordForm from "./UpdatePasswordForm";
 
 interface Props {
-  user: UserType;
   profileSettingsForm: boolean;
   setProfileSettingsForm: (showAddAuctions: boolean) => void;
 }
 
-// FIXME there is something wrong with email and new_password fields
-
-// FIXME don't want to autofill password form data
-
 const ProfileSettingsForm: FC<Props> = ({
-  user,
   profileSettingsForm,
   setProfileSettingsForm,
 }) => {
   const [apiError, setApiError] = useState("");
-  const [showError, setShowError] = useState(false);
   const [isPasswordChangeForm, setIsPasswordChangeForm] = useState(false);
   const [isProfilePictureChangeForm, setIsProfilePictureChangeForm] =
     useState(false);
-    const [toggleHiddenCurrent, setToggleHiddenCurrent] = useState(true);
-    const [toggleHiddenNew, setToggleHiddenNew] = useState(true);
-    const [toggleHiddenConfirm, setToggleHiddenConfirm] = useState(true);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
-  const handleToggleHiddenCurrent = () => {
-    setToggleHiddenCurrent(!toggleHiddenCurrent);
-  };
-  
-  const handleToggleHiddenNew = () => {
-    setToggleHiddenNew(!toggleHiddenNew);
-  };
-  
-  const handleToggleHiddenConfirm = () => {
-    setToggleHiddenConfirm(!toggleHiddenConfirm);
-  };
-
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const router = useRouter();
+  const user = useMemo(() => userStorage.getUser(), []);
 
-  console.log("fetched user", user.data);
+  useEffect(() => {
+    console.log("user", user);
+  }, [user]);
 
-  const { handleSubmit, errors, control } = useUpdateUserForm({
-    defaultValues: user.data,
+  const { handleSubmit, control } = useUpdateUserForm({
+    defaultValues: user?.user,
   });
-
-  console.log("errors", errors);
-  console.log("user", user);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
     if (target.files && target.files.length > 0) {
       const myfile = target.files[0];
       setFile(myfile);
-      console.log("myfile:", myfile);
       // set image preview
       const reader = new FileReader();
       reader.onload = () => {
@@ -81,9 +62,16 @@ const ProfileSettingsForm: FC<Props> = ({
       formData.append("avatar", myfile);
 
       // upload file to server
-      const response = await API.uploadAvatar(formData, user.data.id as string);
-      console.log("upload avatar response", response);
+      const response = await API.uploadAvatar(
+        formData,
+        user?.user.id as string
+      );
     }
+  };
+
+  const toggleForm = () => {
+    setIsPasswordChangeForm(false);
+    setIsProfilePictureChangeForm(false);
   };
 
   useEffect(() => {
@@ -96,20 +84,24 @@ const ProfileSettingsForm: FC<Props> = ({
     };
   }, []);
 
-  const handleUpdate = async (data: UpdateUserFields) => {
+  const handleUpdate = async (data) => {
     // Exclude avatar from data so it prevents calling API.updateUser
     const { avatar, ...rest } = data;
 
-    const response = await API.updateUser(rest, user.data.id as string);
+    const response = await API.updateUser(rest, user?.user.id as string);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
       setApiError(response.data.message);
-      setShowError(true);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
       setApiError(response.data.message);
-      setShowError(true);
     } else {
-      userStorage.setUser(response.data);
-      router.push(`${routes.DASHBOARD_PREFIX}`);
+      const newUserData = {
+        ...user,
+        user: {
+          ...response.data,
+        },
+      };
+      userStorage.setUser(newUserData);
+      setProfileSettingsForm(false);
     }
   };
 
@@ -144,99 +136,14 @@ const ProfileSettingsForm: FC<Props> = ({
               )}
             </>
           )}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              console.log("Form submitted");
-              const formData = new FormData(e.target as HTMLFormElement);
-              console.log("Form data:", Object.fromEntries(formData.entries()));
-              onSubmit(e);
-            }}
-            className="flex flex-col gap-2 w-[500px]"
-          >
-            {isPasswordChangeForm ? (
-              <>
-                <Controller
-                  name="password"
-                  control={control}
-                  render={({ field }) => (
-                    <div className="mb-3 w-full">
-                      <label htmlFor="current-password" className="font-light">
-                        Current password:
-                      </label>
-                      <div className="relative">
-                        <input
-                          {...field}
-                          type={toggleHiddenCurrent ? "password" : "text"}
-                          aria-label="Current Password"
-                          aria-describedby="current password"
-                          className="border w-full font-light py-2 px-4 rounded-2xl"
-                        />
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                          <EyeIcon
-                            className="h-5 w-5 text-gray-400 cursor-pointer"
-                            onClick={handleToggleHiddenCurrent}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                />
-                <Controller
-                  name="new_password"
-                  control={control}
-                  render={({ field }) => (
-                    <div className="mb-3 w-full">
-                      <label htmlFor="new-password" className="font-light">
-                        New password:
-                      </label>
-                      <div className="relative">
-                        <input
-                          {...field}
-                          type={toggleHiddenNew ? "password" : "text"}
-                          aria-label="New Password"
-                          aria-describedby="new password"
-                          className="border w-full font-light py-2 px-4 rounded-2xl"
-                        />
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                          <EyeIcon
-                            className="h-5 w-5 text-gray-400 cursor-pointer"
-                            onClick={handleToggleHiddenNew}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                />
-                <Controller
-                  name="confirm_password"
-                  control={control}
-                  render={({ field }) => (
-                    <div className="mb-3 w-full">
-                      <label htmlFor="repeat-password" className="font-light">
-                        Repeat password:
-                      </label>
-                      <div className="relative">
-                        <input
-                          {...field}
-                          type={toggleHiddenConfirm ? "password" : "text"}
-                          aria-label="Repeat Password"
-                          aria-describedby="repeat password"
-                          className="border w-full font-light py-2 px-4 rounded-2xl"
-                        />
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                          <EyeIcon
-                            className="h-5 w-5 text-gray-400 cursor-pointer"
-                            onClick={handleToggleHiddenConfirm}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                />
-              </>
-            ) : isProfilePictureChangeForm ? (
-              <>
+
+          {isPasswordChangeForm ? (
+            <UpdatePasswordForm toggleForm={toggleForm} />
+          ) : isProfilePictureChangeForm ? (
+            <>
+              <form
+                onSubmit={onSubmit}
+                className="flex flex-col gap-2 w-[500px]">
                 <div className="rounded-2xl flex flex-col justify-center items-center relative gap-4">
                   {imagePreview ? (
                     <>
@@ -252,13 +159,12 @@ const ProfileSettingsForm: FC<Props> = ({
                         onClick={() => {
                           setImagePreview(null);
                           setFile(null);
-                        }}
-                      ></div>
+                        }}></div>
                     </>
-                  ) : user.data.avatar ? (
+                  ) : user?.user.avatar ? (
                     <Image
                       alt="avatar"
-                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${user.data.avatar}`}
+                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${user?.user.avatar}`}
                       width={50}
                       height={50}
                       className="object-cover rounded-full w-16 h-16"
@@ -278,8 +184,7 @@ const ProfileSettingsForm: FC<Props> = ({
                       if (fileInputRef.current !== null) {
                         fileInputRef.current.click();
                       }
-                    }}
-                  >
+                    }}>
                     Upload new picture
                   </button>
                   <input
@@ -292,9 +197,27 @@ const ProfileSettingsForm: FC<Props> = ({
                     className="hidden"
                   />
                 </div>
-              </>
-            ) : (
-              <>
+                <div className="flex gap-3 justify-end mt-5">
+                  <button
+                    onClick={toggleForm}
+                    type="button"
+                    className="px-3 py-2 rounded-2xl bg-gray-blue">
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
+                    onClick={toggleForm}>
+                    Save changes
+                  </button>
+                </div>
+              </form>
+            </>
+          ) : (
+            <>
+              <form
+                onSubmit={onSubmit}
+                className="flex flex-col gap-2 w-[500px]">
                 <div className="flex gap-3">
                   <Controller
                     name="first_name"
@@ -353,57 +276,34 @@ const ProfileSettingsForm: FC<Props> = ({
                 />
                 <div
                   onClick={() => setIsPasswordChangeForm(true)}
-                  className="hover:cursor-pointer w-fit"
-                >
+                  className="hover:cursor-pointer w-fit">
                   Change password
                 </div>
                 <div
                   onClick={() => setIsProfilePictureChangeForm(true)}
-                  className="hover:cursor-pointer w-fit"
-                >
+                  className="hover:cursor-pointer w-fit">
                   Change profile picture
                 </div>
-              </>
-            )}
-            <div className="flex gap-3 justify-end mt-5">
-              {isPasswordChangeForm || isProfilePictureChangeForm ? (
-                <button
-                  onClick={() => {
-                    setIsPasswordChangeForm(false);
-                    setIsProfilePictureChangeForm(false);
-                  }}
-                  type="button"
-                  className="px-3 py-2 rounded-2xl bg-gray-blue"
-                >
-                  Cancel
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setProfileSettingsForm(false)}
-                  className="px-3 py-2 rounded-2xl bg-gray-blue"
-                >
-                  Cancel
-                </button>
-              )}
-              <button
-                type="submit"
-                className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
-                onClick={() => {
-                  if (isProfilePictureChangeForm) {
-                    setIsProfilePictureChangeForm(false);
-                  } else if (isPasswordChangeForm) {
-                    setIsPasswordChangeForm(false);
-                  }
-                }}
-              >
-                Save changes
-              </button>
-            </div>
-          </form>
+                <div className="flex gap-3 justify-end mt-5">
+                  <button
+                    onClick={() => setProfileSettingsForm(false)}
+                    type="button"
+                    className="px-3 py-2 rounded-2xl bg-gray-blue">
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
+                    onClick={toggleForm}>
+                    Save changes
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
         </div>
       </div>
-      <ToastWarning errorMessage={apiError} showErrorMessage={showError} />
+      {apiError && <ToastWarning errorMessage={apiError} />}
     </div>
   );
 };

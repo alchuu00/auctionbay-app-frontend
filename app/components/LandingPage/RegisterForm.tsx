@@ -14,7 +14,8 @@ import ToastWarning from "../ToastWarning";
 
 const RegisterForm = () => {
   const [toggleHiddenPassword, setToggleHiddenPassword] = useState(true);
-  const [toggleHiddenConfirmPassword, setToggleHiddenConfirmPassword] = useState(true);
+  const [toggleHiddenConfirmPassword, setToggleHiddenConfirmPassword] =
+    useState(true);
   const { handleSubmit, errors, control } = useRegisterForm();
   const [showInputErrorMessage, setShowInputErrorMessage] = useState(false);
   const [showResponseErrorMessage, setShowResponseErrorMessage] =
@@ -32,28 +33,16 @@ const RegisterForm = () => {
 
   const firstError = errorFields.find((errorField) => errorField.message);
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setShowResponseErrorMessage(false);
-      setShowInputErrorMessage(false);
-    }, 2000); // Set timeout to 2 seconds
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [showInputErrorMessage, showResponseErrorMessage]);
-
   const handleToggleHiddenPassword = () => {
     setToggleHiddenPassword(!toggleHiddenPassword);
   };
-  
+
   const handleToggleHiddenConfirmPassword = () => {
     setToggleHiddenConfirmPassword(!toggleHiddenConfirmPassword);
   };
 
   const onSubmit = handleSubmit(async (data: RegisterUserFields) => {
     const response = await API.register(data);
-    console.log("Register response: ", response);
 
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
       setApiError(response.data.message);
@@ -61,7 +50,7 @@ const RegisterForm = () => {
       setApiError(response.data.message);
     } else {
       authStore.login(response.data);
-      router.push("/dashboard");
+      router.push("/all");
     }
   });
   return (
@@ -73,8 +62,7 @@ const RegisterForm = () => {
             alt="Logo"
             width={50}
             height={50}
-            className="rounded-full"
-          ></Image>
+            className="rounded-full"></Image>
         </Link>
       </div>
       <div className="text-center mb-5">
@@ -85,8 +73,7 @@ const RegisterForm = () => {
         <form
           onSubmit={onSubmit}
           className="flex flex-col justify-center items-center w-full"
-          noValidate
-        >
+          noValidate>
           <div className="flex gap-4 w-full">
             <Controller
               control={control}
@@ -204,16 +191,8 @@ const RegisterForm = () => {
             )}
           />
           <button
-            onClick={() => {
-              if (apiError) {
-                setShowResponseErrorMessage(true);
-              } else if (errors) {
-                setShowInputErrorMessage(true);
-              }
-            }}
             type="submit"
-            className="bg-fluoro-yellow font-medium px-4 py-2 rounded-2xl w-full"
-          >
+            className="bg-fluoro-yellow font-medium px-4 py-2 rounded-2xl w-full">
             Sign Up
           </button>
         </form>
@@ -224,17 +203,8 @@ const RegisterForm = () => {
           Log In
         </Link>
       </div>
-      {firstError && (
-        <ToastWarning
-          key={firstError.field}
-          errorMessage={firstError.message}
-          showErrorMessage={showInputErrorMessage}
-        />
-      )}
-      <ToastWarning
-        errorMessage={apiError}
-        showErrorMessage={showResponseErrorMessage}
-      />
+      {firstError && <ToastWarning errorMessage={firstError.message} />}
+      {apiError && <ToastWarning errorMessage={apiError} />}
     </div>
   );
 };

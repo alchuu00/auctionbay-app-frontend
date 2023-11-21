@@ -15,8 +15,7 @@ const Navbar = () => {
         <p className="font-light">or</p>
         <Link
           href="/register"
-          className="bg-gray-800 text-white py-2 px-4 rounded-2xl"
-        >
+          className="bg-gray-800 text-white py-2 px-4 rounded-2xl">
           Sign Up
         </Link>
       </div>

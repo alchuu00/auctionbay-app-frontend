@@ -2,6 +2,7 @@ import { apiRoutes } from "../constants/apiConstatnts";
 import { CreateUpdateUserFields } from "../hooks/useCreateUpdateUser";
 import { LoginUserFields } from "../hooks/useLogin";
 import { RegisterUserFields } from "../hooks/useRegister";
+import { UpdatePasswordFields } from "../hooks/useUpdatePassword";
 import { UpdateUserFields } from "../hooks/useUpdateUser";
 import { UserType } from "../models/auth";
 import { apiRequest } from "./api";
@@ -39,6 +40,13 @@ export const createUser = async (data: CreateUpdateUserFields) =>
 
 export const updateUser = async (data: UpdateUserFields, id: string) =>
   apiRequest<UpdateUserFields, void>(
+    "patch",
+    `${apiRoutes.USERS_PREFIX}/${id}`,
+    data
+  );
+
+  export const updateUserPassword = async (data: Omit<UpdatePasswordFields, 'new_password'>, id: string) =>
+  apiRequest<UpdatePasswordFields, void>(
     "patch",
     `${apiRoutes.USERS_PREFIX}/${id}`,
     data

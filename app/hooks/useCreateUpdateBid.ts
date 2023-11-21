@@ -4,11 +4,11 @@ import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 
 export interface CreateUpdateBidFields {
-  bid: number;
+  bid_amount: number;
 }
 
 interface FormData {
-  bid: number;
+  bid_amount: number;
 }
 
 interface Props {
@@ -17,7 +17,7 @@ interface Props {
 
 export const useCreateUpdateBidFields = ({ defaultValues }: Props) => {
   const PlaceBidSchema = Yup.object().shape({
-    bid: Yup.number().required("Bid is required"),
+    bid_amount: Yup.number().required("Bid is required"),
   });
 
   const {
@@ -26,7 +26,7 @@ export const useCreateUpdateBidFields = ({ defaultValues }: Props) => {
     control,
   } = useForm<FormData>({
     defaultValues: {
-      bid: 0,
+      bid_amount: 0,
       ...defaultValues,
     },
     mode: "onSubmit",

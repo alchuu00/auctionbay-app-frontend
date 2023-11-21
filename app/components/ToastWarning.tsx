@@ -1,12 +1,10 @@
-import { on } from "events";
 import React, { useEffect, useState } from "react";
 
 interface Props {
   errorMessage: string | undefined;
-  showErrorMessage: boolean;
 }
 
-const ToastWarning = ({ errorMessage, showErrorMessage }: Props) => {
+const ToastWarning = ({ errorMessage }: Props) => {
   const [showToast, setShowToast] = useState(true);
 
   const handleCloseToast = () => {
@@ -20,7 +18,6 @@ const ToastWarning = ({ errorMessage, showErrorMessage }: Props) => {
   })
 
   return (
-    showErrorMessage &&
     showToast && (
       <div
         id="toast-warning"

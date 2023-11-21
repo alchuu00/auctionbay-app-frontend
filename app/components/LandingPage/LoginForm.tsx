@@ -1,37 +1,26 @@
 "use client";
 
+import { StatusCode } from "@/app/constants/errorConstants";
+import { useLoginForm, LoginUserFields } from "@/app/hooks/useLogin";
+import authStore from "@/app/stores/authStore";
+import { userStorage } from "@/app/stores/userStorage";
 import EyeIcon from "@heroicons/react/outline/EyeIcon";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { Controller } from "react-hook-form";
 import Link from "next/link";
-import { StatusCode } from "../../constants/errorConstants";
-import authStore from "../../stores/authStore";
-import * as API from "../../api/api";
-import Image from "next/image";
-import { useLoginForm, LoginUserFields } from "../../hooks/useLogin";
-import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Controller } from "react-hook-form";
 import ToastWarning from "../ToastWarning";
+import Image from "next/image";
+import * as API from "@/app/api/api";
 
 const LoginForm = () => {
   const [toggleHidden, setToggleHidden] = useState(true);
   const { handleSubmit, errors, control } = useLoginForm();
   const [apiError, setApiError] = useState("");
-  const [showInputErrorMessage, setShowInputErrorMessage] = useState(false);
   const [showResponseErrorMessage, setShowResponseErrorMessage] =
     useState(false);
+
   const router = useRouter();
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setShowResponseErrorMessage(false);
-      setShowInputErrorMessage(false);
-    }, 2000); // Set timeout to 2 seconds
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [showInputErrorMessage, showResponseErrorMessage]);
 
   const handleToggleHidden = () => {
     setToggleHidden(!toggleHidden);
@@ -41,11 +30,14 @@ const LoginForm = () => {
     const response = await API.login(data);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
       setApiError(response.data.message);
+      setShowResponseErrorMessage(true);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
       setApiError(response.data.message);
+      setShowResponseErrorMessage(true);
     } else {
       authStore.login(response.data);
-      router.push("/dashboard");
+      userStorage.setUser(response.data);
+      router.push("/all");
     }
   });
   return (
@@ -57,8 +49,7 @@ const LoginForm = () => {
             alt="Logo"
             width={50}
             height={50}
-            className="rounded-full"
-          ></Image>
+            className="rounded-full"></Image>
         </Link>
       </div>
       <div className="text-center">
@@ -115,21 +106,12 @@ const LoginForm = () => {
           />
           <Link
             href="/forgotPassword"
-            className="font-light text-xs text-right mb-3"
-          >
+            className="font-light text-xs text-right mb-3">
             Forgot password?
           </Link>
           <button
-            onClick={() => {
-              if (apiError) {
-                setShowResponseErrorMessage(true);
-              } else if (errors) {
-                setShowInputErrorMessage(true);
-              }
-            }}
             type="submit"
-            className="bg-fluoro-yellow font-medium px-4 py-2 rounded-2xl"
-          >
+            className="bg-fluoro-yellow font-medium px-4 py-2 rounded-2xl">
             Login
           </button>
         </form>
@@ -141,21 +123,12 @@ const LoginForm = () => {
         </Link>
       </div>
       {(errors.email && (
-        <ToastWarning
-          errorMessage={errors.email?.message}
-          showErrorMessage={showInputErrorMessage}
-        />
+        <ToastWarning errorMessage={errors.email?.message} />
       )) ||
         (errors.password && (
-          <ToastWarning
-            errorMessage={errors.password?.message}
-            showErrorMessage={showInputErrorMessage}
-          />
+          <ToastWarning errorMessage={errors.password?.message} />
         ))}
-      <ToastWarning
-        errorMessage={apiError}
-        showErrorMessage={showResponseErrorMessage}
-      />
+      {apiError && <ToastWarning errorMessage={apiError} />}
     </div>
   );
 };

@@ -2,22 +2,20 @@ import Link from "next/link";
 import React, { FC } from "react";
 import Image from "next/image";
 import { UserType } from "../../models/auth";
+import { userStorage } from "@/app/stores/userStorage";
 
-interface Props {
-  user: UserType | null;
-}
+const Logo: FC = () => {
+  const user = userStorage.getUser();
 
-const Logo: FC<Props> = ({ user }) => {
   return (
     <div>
-      <Link href={user ? "/dashboard" : "/"}>
+      <Link href={user ? "/all" : "/"}>
         <Image
           src="/logo.png"
           alt="Logo"
           width={50}
           height={50}
-          className="rounded-full"
-        ></Image>
+          className="rounded-full"></Image>
       </Link>
     </div>
   );

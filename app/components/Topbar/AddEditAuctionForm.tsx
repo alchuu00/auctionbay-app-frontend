@@ -14,15 +14,15 @@ import Image from "next/image";
 import TrashIcon from "@heroicons/react/outline/TrashIcon";
 
 interface Props {
+  refetchAuctions: () => void;
   defaultValues?: AuctionType;
-  showAddAuctionsForm: boolean;
   setShowAddAuctionsForm: (showAddAuctions: boolean) => void;
   isUpdateAuction: boolean;
 }
 
 const CreateUpdateAuctionForm: FC<Props> = ({
+  refetchAuctions,
   defaultValues,
-  showAddAuctionsForm,
   setShowAddAuctionsForm,
   isUpdateAuction,
 }) => {
@@ -61,6 +61,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({
   const onSubmit = handleSubmit(async (data: CreateUpdateAuctionFields) => {
     if (!defaultValues) await handleAdd(data);
     else await handleUpdate(data);
+    refetchAuctions();
     setShowAddAuctionsForm(false);
   });
 
@@ -90,7 +91,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({
         setApiError(fileResponse.data.message);
         setShowError(true);
       } else {
-        router.push(`${routes.DASHBOARD_PREFIX}`);
+        router.push(`/all`);
       }
     }
   };
@@ -105,7 +106,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({
       setShowError(true);
     } else {
       if (!file) {
-        router.push(`${routes.DASHBOARD_PREFIX}`);
+        router.push(`/all`);
         return;
       }
       // Upload auction image
@@ -124,7 +125,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({
         setApiError(fileResponse.data.message);
         setShowError(true);
       } else {
-        router.push(`${routes.DASHBOARD_PREFIX}`);
+        router.push(`/all`);
       }
     }
   };
@@ -176,8 +177,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({
         <div className="mb-3 flex justify-center items-center bg-background rounded-2xl w-full h-48">
           <label
             htmlFor="image"
-            className="cursor-pointer rounded-2xl w-full h-full flex justify-center items-center relative"
-          >
+            className="cursor-pointer rounded-2xl w-full h-full flex justify-center items-center relative">
             {imagePreview ? (
               <>
                 <Image
@@ -193,8 +193,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({
                     onClick={() => {
                       setImagePreview(null);
                       setFile(null);
-                    }}
-                  >
+                    }}>
                     <TrashIcon className="w-5 h-5" />
                   </div>
                 )}
@@ -295,8 +294,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({
               <div
                 className={`${
                   isUpdateAuction ? "w-full" : "w-1/2"
-                } mb-3 flex flex-col font-light gap-2`}
-              >
+                } mb-3 flex flex-col font-light gap-2`}>
                 <label htmlFor="end_date">End date</label>
                 <input
                   {...field}
@@ -318,15 +316,13 @@ const CreateUpdateAuctionForm: FC<Props> = ({
           {isUpdateAuction ? (
             <button
               onClick={() => setShowAddAuctionsForm(false)}
-              className="px-3 py-2 rounded-2xl bg-gray-blue"
-            >
+              className="px-3 py-2 rounded-2xl bg-gray-blue">
               Discard changes
             </button>
           ) : (
             <button
               onClick={() => setShowAddAuctionsForm(false)}
-              className="px-3 py-2 rounded-2xl bg-gray-blue"
-            >
+              className="px-3 py-2 rounded-2xl bg-gray-blue">
               Cancel
             </button>
           )}
@@ -335,8 +331,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({
               className="w-100 px-3 py-2 rounded-2xl bg-dark-gray text-white"
               type="submit"
               onMouseUp={defaultValues ? undefined : handleFileError}
-              onClick={() => setShowInputErrorMessage(true)}
-            >
+              onClick={() => setShowInputErrorMessage(true)}>
               Edit auction
             </button>
           ) : (
@@ -344,19 +339,17 @@ const CreateUpdateAuctionForm: FC<Props> = ({
               className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
               type="submit"
               onMouseUp={defaultValues ? undefined : handleFileError}
-              onClick={() => setShowInputErrorMessage(true)}
-            >
+              onClick={() => setShowInputErrorMessage(true)}>
               Start auction
             </button>
           )}
         </div>
       </form>
-      <ToastWarning errorMessage={apiError} showErrorMessage={showError} />
+      {apiError && <ToastWarning errorMessage={apiError} />}
       {firstError && (
         <ToastWarning
           key={firstError.field}
           errorMessage={firstError.message}
-          showErrorMessage={showInputErrorMessage}
         />
       )}
     </div>

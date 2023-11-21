@@ -1,10 +1,9 @@
 import { apiRoutes } from "../constants/apiConstatnts";
-import { CreateUpdateBidFields } from "../hooks/useCreateUpdateBid";
 import { BidType } from "../models/bid";
 import { apiRequest } from "./api";
 
-export const placeBid = async (auctionItemId: string, bidderId: string, bidAmount: CreateUpdateBidFields) =>
-  apiRequest<{ bidderId: string; bidAmount: CreateUpdateBidFields }, void>(
+export const placeBid = async (auctionItemId: string, bidderId: string, bidAmount: number) =>
+  apiRequest<{ bidderId: string; bidAmount: number }, void>(
     'post',
     `${apiRoutes.BIDS_PREFIX}/${auctionItemId}`,
     { bidderId, bidAmount },
