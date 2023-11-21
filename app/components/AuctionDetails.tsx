@@ -11,7 +11,7 @@ import { BidType } from "../models/bid";
 import * as API from "../api/api";
 import { StatusCode } from "../constants/errorConstants";
 import ToastWarning from "./ToastWarning";
-import { Controller, set } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { useFetchBidsByAuctionItemId } from "../hooks/useFetchBidsByAuctionItemId";
 import Loading from "./Loading";
 import { userStorage } from "../stores/userStorage";

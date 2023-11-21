@@ -9,6 +9,7 @@ import ProfileSettingsLogout from "../ProfileSettings/ProfileSettingsLogout";
 import Tab from "./Tab";
 import Image from "next/image";
 import { userStorage } from "@/app/stores/userStorage";
+import { useRouter } from "next/navigation";
 
 interface Props {
   refetchAuctions: () => void;
@@ -50,6 +51,8 @@ const Topbar: FC<Props> = ({
 
   const user = userStorage.getUser();
 
+  const router = useRouter();
+
   return (
     <div className="flex flex-col pt-8">
       <div className="flex items-center">
@@ -61,7 +64,7 @@ const Topbar: FC<Props> = ({
                 className={`flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
                   activeTopTab === 1 ? "bg-dark-gray text-white" : ""
                 }`}
-                onClick={() => handleActiveTopTab(1)}>
+                onClick={() => router.push('/all')}>
                 <HomeIcon className="h-5 w-5" />
                 <p>Auctions</p>
               </div>
@@ -69,7 +72,7 @@ const Topbar: FC<Props> = ({
                 className={`flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
                   activeTopTab === 2 ? "bg-dark-gray text-white" : ""
                 }`}
-                onClick={() => handleActiveTopTab(2)}>
+                onClick={() => router.push('/my')}>
                 <UserIcon className="h-5 w-5" />
                 <p>Profile</p>
               </div>
@@ -116,17 +119,17 @@ const Topbar: FC<Props> = ({
                 <div className="w-fit flex justify-center items-center gap-2 p-1 rounded-2xl bg-gray-blue">
                   <Tab
                     active={activeTab === 0}
-                    onClick={() => handleActiveTab(0)}>
+                    onClick={() => router.push('/my')}>
                     My auctions
                   </Tab>
                   <Tab
                     active={activeTab === 1}
-                    onClick={() => handleActiveTab(1)}>
+                    onClick={() => router.push('/bidding')}>
                     Bidding
                   </Tab>
                   <Tab
                     active={activeTab === 2}
-                    onClick={() => handleActiveTab(2)}>
+                    onClick={() => router.push('/won')}>
                     Won
                   </Tab>
                 </div>
