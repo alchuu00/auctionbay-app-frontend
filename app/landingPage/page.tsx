@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "../components/LandingPage/Navbar";
+import Navbar from "./components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -15,7 +15,7 @@ const LandingPage = () => {
           getting a deal on product you want!
         </p>
         <Link
-          href="/login"
+          href="/auth/login"
           className="bg-fluoro-yellow text-md font-medium px-4 py-2 rounded-2xl">
           Start bidding
         </Link>
