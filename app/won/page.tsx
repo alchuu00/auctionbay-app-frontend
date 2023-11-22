@@ -153,14 +153,7 @@ const Bidding = () => {
             setActiveTopTab={setActiveTopTab}
             showAuctionDetails={showAuctionDetails}
           />
-          {showAuctionDetails && selectedAuction ? (
-            <AuctionDetails
-              auction={selectedAuction}
-              defaultValues={{
-                bid_amount: 0,
-              }}
-            />
-          ) : auctionIdsUserBiddedOn.length > 0 &&
+          {auctionIdsUserBiddedOn.length > 0 &&
             hasUserWonAnyAuctions &&
             doneAuctions ? (
             renderAuctions(

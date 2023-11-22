@@ -10,6 +10,7 @@ import { useFetchBidsByBidderId } from "@/app/hooks/useFetchBidsByBidderId";
 import { AuctionType } from "@/app/models/auction";
 import { userStorage } from "@/app/stores/userStorage";
 import { useState, useEffect } from "react";
+import * as API from "../api/api";
 
 // TODO update auction status when user bids on auction AND changes tabs
 
@@ -140,36 +141,27 @@ const All = () => {
   console.log(hasUserWonAnyAuctions);
 
   return (
-<div className="px-6">
-  {isLoading ? (
-    <Loading></Loading>
-  ) : (
-    <>
-      <Topbar
-        refetchAuctions={refetch}
-        activeTab={activeTab !== null ? activeTab : 0}
-        setActiveTab={setActiveTab}
-        activeTopTab={activeTopTab !== null ? activeTopTab : 0}
-        setActiveTopTab={setActiveTopTab}
-        showAuctionDetails={showAuctionDetails}
-      />
-      {showAuctionDetails && selectedAuction ? (
-        <AuctionDetails
-          auction={selectedAuction}
-          defaultValues={{
-            bid_amount: 0,
-          }}
-        />
+    <div className="px-6">
+      {isLoading ? (
+        <Loading></Loading>
       ) : (
-        auctions.length > 0 ? (
-          renderAuctions(() => true)
-        ) : (
-          <NoAuctions />
-        )
+        <>
+          <Topbar
+            refetchAuctions={refetch}
+            activeTab={activeTab !== null ? activeTab : 0}
+            setActiveTab={setActiveTab}
+            activeTopTab={activeTopTab !== null ? activeTopTab : 0}
+            setActiveTopTab={setActiveTopTab}
+            showAuctionDetails={showAuctionDetails}
+          />
+          {auctions.length > 0 ? (
+            renderAuctions(() => true)
+          ) : (
+            <NoAuctions />
+          )}
+        </>
       )}
-    </>
-  )}
-</div>
+    </div>
   );
 };
 

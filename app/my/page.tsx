@@ -153,22 +153,12 @@ const My = () => {
             setActiveTopTab={setActiveTopTab}
             showAuctionDetails={showAuctionDetails}
           />
-          {showAuctionDetails && selectedAuction ? (
-            <AuctionDetails
-              auction={selectedAuction}
-              defaultValues={{
-                bid_amount: 0,
-              }}
-            />
-          ) : (
-            myAuctions.length > 0 ? (
-              renderAuctions(
-                (auction: AuctionType) =>
-                  auction.user.id === currentUserId
-              )
-            ) : (
-              <NoMyAuctions />
+          {myAuctions.length > 0 ? (
+            renderAuctions(
+              (auction: AuctionType) => auction.user.id === currentUserId
             )
+          ) : (
+            <NoMyAuctions />
           )}
         </>
       )}

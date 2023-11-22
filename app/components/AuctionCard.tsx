@@ -10,6 +10,7 @@ import { countdown } from "../utils/countdown";
 import { useFetchBidsByAuctionItemId } from "../hooks/useFetchBidsByAuctionItemId";
 import { useFetchBidsByBidderId } from "../hooks/useFetchBidsByBidderId";
 import { userStorage } from "../stores/userStorage";
+import Link from "next/link";
 
 interface Props {
   refetchAuctions: () => void;
@@ -113,82 +114,84 @@ const AuctionCard: FC<Props> = ({
   }, [activeTab, activeTopTab, auctionInProgress]);
 
   return (
-    <div
-      onClick={onClick}
-      className="flex flex-col bg-white w-56 h-72 rounded-2xl p-3 font-light gap-1">
-      <div className="flex justify-between text-xs">
-        <div
-          className={`rounded-full px-2 py-1 ${
-            bidStatus === "In progress"
-              ? "bg-fluoro-yellow-light"
-              : bidStatus === "Winning"
-              ? "bg-fluoro-green"
-              : bidStatus === "Outbid"
-              ? "bg-red-300"
-              : "bg-dark-gray text-white"
-          }`}>
-          {bidStatus}
-        </div>
-        {countdownValue === null ? null : (
+    <Link href={`/${auction.id}`}>
+      <div
+        onClick={onClick}
+        className="flex flex-col bg-white w-56 h-72 rounded-2xl p-3 font-light gap-1">
+        <div className="flex justify-between text-xs">
           <div
-            className={`flex justify-center items-center gap-1 rounded-full px-2 py-1 ${
-              countdownValue <= 24 ? "bg-red-300" : ""
+            className={`rounded-full px-2 py-1 ${
+              bidStatus === "In progress"
+                ? "bg-fluoro-yellow-light"
+                : bidStatus === "Winning"
+                ? "bg-fluoro-green"
+                : bidStatus === "Outbid"
+                ? "bg-red-300"
+                : "bg-dark-gray text-white"
             }`}>
-            {countdownValue <= 24 ? (
-              <div>{countdownValue}h</div>
-            ) : (
-              <div>{Math.floor(countdownValue / 24)} days</div>
-            )}
-            <div className="w-4 h-4">
-              <ClockIcon />
+            {bidStatus}
+          </div>
+          {countdownValue === null ? null : (
+            <div
+              className={`flex justify-center items-center gap-1 rounded-full px-2 py-1 ${
+                countdownValue <= 24 ? "bg-red-300" : ""
+              }`}>
+              {countdownValue <= 24 ? (
+                <div>{countdownValue}h</div>
+              ) : (
+                <div>{Math.floor(countdownValue / 24)} days</div>
+              )}
+              <div className="w-4 h-4">
+                <ClockIcon />
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="text-lg overflow-hidden">
+          <p className="truncate">{auction.title}</p>
+          <p>...</p>
+        </div>
+        <div className="font-medium">
+          {highestBid ? highestBid : auction.start_price} €
+        </div>
+        <div className="object-cover w-full h-full rounded-2xl">
+          <Image
+            width={300}
+            height={300}
+            src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${auction.image}`}
+            alt={auction.title}
+            className={`object-cover w-full rounded-2xl ${
+              showEditButtons ? "h-36" : "h-40"
+            }`}
+          />
+        </div>
+        {showEditButtons && (
+          <div className="flex justify-between items-center gap-1">
+            <div
+              onClick={() => handleDeleteAuction(auction.id)}
+              className="cursor-pointer bg-white border border-dark-gray px-2 py-1 rounded-xl">
+              <TrashIcon className="w-4 h-4" />
+            </div>
+            <div
+              onClick={handleUpdateAuctionForm}
+              className="cursor-pointer flex justify-center items-center gap-1 bg-dark-gray text-white px-2 py-1 rounded-xl w-full">
+              <div>
+                <PencilIcon className="w-4 h-4" />
+              </div>
+              <div>Edit</div>
             </div>
           </div>
         )}
+        {showAddAuctionsForm && (
+          <AddEditAuctionForm
+            refetchAuctions={refetchAuctions}
+            defaultValues={auction}
+            setShowAddAuctionsForm={setShowAddAuctionsForm}
+            isUpdateAuction={isUpdateAuction}
+          />
+        )}
       </div>
-      <div className="text-lg overflow-hidden">
-        <p className="truncate">{auction.title}</p>
-        <p>...</p>
-      </div>
-      <div className="font-medium">
-        {highestBid ? highestBid : auction.start_price} €
-      </div>
-      <div className="object-cover w-full h-full rounded-2xl">
-        <Image
-          width={300}
-          height={300}
-          src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${auction.image}`}
-          alt={auction.title}
-          className={`object-cover w-full rounded-2xl ${
-            showEditButtons ? "h-36" : "h-40"
-          }`}
-        />
-      </div>
-      {showEditButtons && (
-        <div className="flex justify-between items-center gap-1">
-          <div
-            onClick={() => handleDeleteAuction(auction.id)}
-            className="cursor-pointer bg-white border border-dark-gray px-2 py-1 rounded-xl">
-            <TrashIcon className="w-4 h-4" />
-          </div>
-          <div
-            onClick={handleUpdateAuctionForm}
-            className="cursor-pointer flex justify-center items-center gap-1 bg-dark-gray text-white px-2 py-1 rounded-xl w-full">
-            <div>
-              <PencilIcon className="w-4 h-4" />
-            </div>
-            <div>Edit</div>
-          </div>
-        </div>
-      )}
-      {showAddAuctionsForm && (
-        <AddEditAuctionForm
-          refetchAuctions={refetchAuctions}
-          defaultValues={auction}
-          setShowAddAuctionsForm={setShowAddAuctionsForm}
-          isUpdateAuction={isUpdateAuction}
-        />
-      )}
-    </div>
+    </Link>
   );
 };
 

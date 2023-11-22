@@ -1,3 +1,4 @@
+
 import { apiRoutes } from "../constants/apiConstatnts"
 import { CreateUpdateAuctionFields } from "../hooks/useCreateUpdateAuction"
 import { AuctionType } from "../models/auction"
@@ -36,5 +37,11 @@ export const updateAuction = async (
 export const deleteAuction = async (id: string) =>
   apiRequest<string, AuctionType>(
     'delete',
+    `${apiRoutes.AUCTIONS_PREFIX}/${id}`,
+  )
+
+  export const fetchAuctionById = async (id: string) =>
+  apiRequest<string, AuctionType>(
+    'get',
     `${apiRoutes.AUCTIONS_PREFIX}/${id}`,
   )

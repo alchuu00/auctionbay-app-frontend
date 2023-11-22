@@ -1,38 +1,64 @@
-import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import { AuctionType } from "../models/auction";
-import { countdown } from "../utils/countdown";
+"use client";
+
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
-import {
-  CreateUpdateBidFields,
-  useCreateUpdateBidFields,
-} from "../hooks/useCreateUpdateBid";
-import { BidType } from "../models/bid";
-import * as API from "../api/api";
-import { StatusCode } from "../constants/errorConstants";
-import ToastWarning from "./ToastWarning";
+import { useState, useRef, useEffect } from "react";
 import { Controller } from "react-hook-form";
+import Loading from "../components/Loading";
+import ToastWarning from "../components/ToastWarning";
+import { StatusCode } from "../constants/errorConstants";
+import {
+  useCreateUpdateBidFields,
+  CreateUpdateBidFields,
+} from "../hooks/useCreateUpdateBid";
 import { useFetchBidsByAuctionItemId } from "../hooks/useFetchBidsByAuctionItemId";
-import Loading from "./Loading";
-import { userStorage } from "../stores/userStorage";
 import { useFetchBidsByBidderId } from "../hooks/useFetchBidsByBidderId";
+import { BidType } from "../models/bid";
+import { userStorage } from "../stores/userStorage";
+import { countdown } from "../utils/countdown";
+import Image from "next/image";
+import * as API from "../api/api";
+import { AuctionType } from "../models/auction";
+import { useParams} from "next/navigation";
+import Topbar from "../components/Topbar/Topbar";
+
+// TODO Add Topbar here
 
 interface Props {
   defaultValues: BidType;
   auction: AuctionType;
 }
 
-const AuctionDetails: React.FC<Props> = ({ defaultValues, auction }) => {
+const AuctionDetails: React.FC<Props> = () => {
   const [apiError, setApiError] = useState("");
-  const [highestBid, setHighestBid] = useState(auction.start_price);
+  const [highestBid, setHighestBid] = useState(0);
   const [bidStatus, setBidStatus] = useState<string | null>(null);
-  const { handleSubmit, errors, control } = useCreateUpdateBidFields({
-    defaultValues,
-  });
+  const [activeTopTab, setActiveTopTab] = useState<number | null>(1);
+  const [activeTab, setActiveTab] = useState<number | null>(0);
+  const [showAuctionDetails, setShowAuctionDetails] = useState(false);
+
+  const defaultValues = { bid_amount: 0 };
+
+  const { handleSubmit, errors, control } = useCreateUpdateBidFields({defaultValues});
+
+  const params = useParams();
+  const auctionId: string = params.id;
+
+  const [auction, setAuction] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await API.fetchAuctionById(auctionId);
+      setAuction(response.data);
+    };
+
+    console.log('auction', auction)
+  
+    fetchData();
+  }, [auctionId]);
 
   const user = userStorage.getUser();
 
-  const { bids, refetch } = useFetchBidsByAuctionItemId(auction.id);
+  const { bids, refetch } = useFetchBidsByAuctionItemId(auctionId);
 
   // Pagination for bids
   const currentPage = useRef(1);
@@ -47,7 +73,7 @@ const AuctionDetails: React.FC<Props> = ({ defaultValues, auction }) => {
       const end = start + pageSize;
       setPaginatedBids(sortedBids.slice(start, end));
     }
-  }, [auction.id, bids, trigger]);
+  }, [auction?.id, bids, trigger]);
 
   const totalPages =
     bids && bids?.data ? Math.ceil(bids?.data.length / pageSize) : 0;
@@ -97,13 +123,13 @@ const AuctionDetails: React.FC<Props> = ({ defaultValues, auction }) => {
         )
       );
     }
-  }, [auction.id, bids]);
+  }, [auction?.id, bids]);
 
-  const countdownValue = countdown(auction);
+  const countdownValue = auction ? countdown(auction) : null
 
   const currentDate = new Date();
 
-  const auctionDone = new Date(auction.end_date) < currentDate;
+  const auctionDone = new Date(auction?.end_date) < currentDate;
 
   const bidsByBidderId = useFetchBidsByBidderId(user.user.id);
 
@@ -132,7 +158,8 @@ const AuctionDetails: React.FC<Props> = ({ defaultValues, auction }) => {
 
   return (
     <div className="flex w-full gap-4 py-4">
-      {bids && bids?.data && auction && auction.image ? (
+
+      {bids && auction ? (
         <>
           <div className="rounded-2xl w-1/2">
             <Image

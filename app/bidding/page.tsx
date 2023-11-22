@@ -149,28 +149,19 @@ const Bidding = () => {
             setActiveTopTab={setActiveTopTab}
             showAuctionDetails={showAuctionDetails}
           />
-          {showAuctionDetails && selectedAuction ? (
-            <AuctionDetails
-              auction={selectedAuction}
-              defaultValues={{
-                bid_amount: 0,
-              }}
-            />
-          ) : (
-            auctionIdsUserBiddedOn.length > 0 &&
+          {auctionIdsUserBiddedOn.length > 0 &&
             auctions.some(
               (auction: AuctionType) =>
-              auctionIdsUserBiddedOn.includes(auction.id) &&
+                auctionIdsUserBiddedOn.includes(auction.id) &&
                 new Date(auction.end_date) > new Date()
             ) ? (
-              renderAuctions(
-                (auction: AuctionType) =>
+            renderAuctions(
+              (auction: AuctionType) =>
                 auctionIdsUserBiddedOn.includes(auction.id) &&
-                  new Date(auction.end_date) > new Date()
-              )
-            ) : (
-              <NoMyBids />
+                new Date(auction.end_date) > new Date()
             )
+          ) : (
+            <NoMyBids />
           )}
         </>
       )}
