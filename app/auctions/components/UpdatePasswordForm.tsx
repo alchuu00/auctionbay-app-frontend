@@ -3,12 +3,12 @@ import { Controller } from "react-hook-form";
 import {
   UpdatePasswordFields,
   usePasswordForm,
-} from "../../hooks/useUpdatePassword";
+} from "../../../src/hooks/useUpdatePassword";
 import EyeIcon from "@heroicons/react/outline/EyeIcon";
-import { StatusCode } from "../../constants/errorConstants";
-import { userStorage } from "../../stores/userStorage";
-import * as API from "../../api/api";
+import * as API from "../../../src/api/api";
 import ToastWarning from "../../components/ToastWarning";
+import { StatusCode } from "@/src/constants/errorConstants";
+import { userStorage } from "@/src/stores/userStorage";
 
 interface Props {
   toggleForm: () => void;

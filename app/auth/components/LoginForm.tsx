@@ -1,18 +1,17 @@
 "use client";
 
-import { StatusCode } from "@/app/constants/errorConstants";
-import { useLoginForm, LoginUserFields } from "@/app/hooks/useLogin";
-import authStore from "@/app/stores/authStore";
-import { userStorage } from "@/app/stores/userStorage";
 import EyeIcon from "@heroicons/react/outline/EyeIcon";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller } from "react-hook-form";
 import ToastWarning from "../../components/ToastWarning";
-import Image from "next/image";
-import * as API from "@/app/api/api";
-import Logo from "../../components/Topbar/Logo";
+import * as API from "@/src/api/api";
+import Logo from "@/app/components/Logo";
+import { StatusCode } from "@/src/constants/errorConstants";
+import { useLoginForm, LoginUserFields } from "@/src/hooks/useLogin";
+import authStore from "@/src/stores/authStore";
+import { userStorage } from "@/src/stores/userStorage";
 
 const LoginForm = () => {
   const [toggleHidden, setToggleHidden] = useState(true);

@@ -5,20 +5,20 @@ import { useState, useRef, useEffect } from "react";
 import { Controller } from "react-hook-form";
 import Loading from "../components/Loading";
 import ToastWarning from "../../components/ToastWarning";
-import { StatusCode } from "../../constants/errorConstants";
 import {
   useCreateUpdateBidFields,
   CreateUpdateBidFields,
-} from "../../hooks/useCreateUpdateBid";
-import { useFetchBidsByAuctionItemId } from "../../hooks/useFetchBidsByAuctionItemId";
-import { useFetchBidsByBidderId } from "../../hooks/useFetchBidsByBidderId";
-import { BidType } from "../../models/bid";
-import { userStorage } from "../../stores/userStorage";
-import { countdown } from "../../utils/countdown";
+} from "../../../src/hooks/useCreateUpdateBid";
+import { useFetchBidsByAuctionItemId } from "../../../src/hooks/useFetchBidsByAuctionItemId";
+import { useFetchBidsByBidderId } from "../../../src/hooks/useFetchBidsByBidderId";
+import { countdown } from "../../../src/utils/countdown";
 import Image from "next/image";
-import * as API from "../../api/api";
-import { AuctionType } from "../../models/auction";
+import * as API from "../../../src/api/api";
 import { useParams } from "next/navigation";
+import { StatusCode } from "@/src/constants/errorConstants";
+import { AuctionType } from "@/src/models/auction";
+import { BidType } from "@/src/models/bid";
+import { userStorage } from "@/src/stores/userStorage";
 
 // TODO Add Topbar here
 
@@ -31,9 +31,6 @@ const AuctionDetails: React.FC<Props> = () => {
   const [apiError, setApiError] = useState("");
   const [highestBid, setHighestBid] = useState(0);
   const [bidStatus, setBidStatus] = useState<string | null>(null);
-  const [activeTopTab, setActiveTopTab] = useState<number | null>(1);
-  const [activeTab, setActiveTab] = useState<number | null>(0);
-  const [showAuctionDetails, setShowAuctionDetails] = useState(false);
 
   const defaultValues = { bid_amount: 0 };
 
@@ -159,7 +156,7 @@ const AuctionDetails: React.FC<Props> = () => {
 
   return (
     <div className="flex w-full gap-4 py-4">
-      {bids && auction ? (
+      {bids && auction?.image ? (
         <>
           <div className="rounded-2xl w-1/2">
             <Image

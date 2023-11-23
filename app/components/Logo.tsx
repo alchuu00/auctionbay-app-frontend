@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React, { FC } from "react";
 import Image from "next/image";
-import { userStorage } from "@/app/stores/userStorage";
+import { userStorage } from "@/src/stores/userStorage";
 
 const Logo: FC = () => {
   const user = userStorage.getUser();

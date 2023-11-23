@@ -7,9 +7,9 @@ import AddAuctionsForm from "./AddEditAuctionForm";
 import ProfileSettingsLogout from "./ProfileSettingsLogout";
 import Tab from "./Tab";
 import Image from "next/image";
-import { userStorage } from "@/app/stores/userStorage";
 import { useRouter } from "next/navigation";
 import Logo from "@/app/components/Logo";
+import { userStorage } from "@/src/stores/userStorage";
 
 interface Props {
   refetchAuctions: () => void;

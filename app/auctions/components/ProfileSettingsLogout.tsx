@@ -1,11 +1,10 @@
 import React, { useState, FC, useEffect, useRef } from "react";
 import CogIcon from "@heroicons/react/outline/CogIcon";
-import * as API from "../../api/api";
+import * as API from "../../../src/api/api";
 import ProfileSettingsForm from "./ProfileSettingsForm";
-import { StatusCode } from "../../constants/errorConstants";
-import authStore from "../../stores/authStore";
 import { useRouter } from "next/navigation";
-import { UserType } from "../../models/auth";
+import { StatusCode } from "@/src/constants/errorConstants";
+import authStore from "@/src/stores/authStore";
 
 interface Props {
   showProfileSettings: boolean;

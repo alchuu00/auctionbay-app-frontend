@@ -4,12 +4,11 @@ import AuctionCard from "@/app/auctions/components/AuctionCard";
 import NoAuctions from "@/app/auctions/components/NoAuctions";
 import Loading from "@/app/auctions/components/Loading";
 import Topbar from "@/app/auctions/components/Topbar";
-import { useAuctions } from "@/app/hooks/useFetchAuctions";
-import { useFetchBidsByBidderId } from "@/app/hooks/useFetchBidsByBidderId";
-import { AuctionType } from "@/app/models/auction";
-import { userStorage } from "@/app/stores/userStorage";
+import { useAuctions } from "@/src/hooks/useFetchAuctions";
+import { useFetchBidsByBidderId } from "@/src/hooks/useFetchBidsByBidderId";
+import { AuctionType } from "@/src/models/auction";
+import { userStorage } from "@/src/stores/userStorage";
 import { useState, useEffect } from "react";
-import * as API from "../../api/api";
 
 // TODO update auction status when user bids on auction AND changes tabs
 

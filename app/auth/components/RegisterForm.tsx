@@ -5,12 +5,15 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Controller, set } from "react-hook-form";
 import Link from "next/link";
-import { StatusCode } from "../../constants/errorConstants";
-import { useRegisterForm, RegisterUserFields } from "../../hooks/useRegister";
-import authStore from "../../stores/authStore";
-import * as API from "../../api/api";
+import {
+  useRegisterForm,
+  RegisterUserFields,
+} from "../../../src/hooks/useRegister";
+import * as API from "../../../src/api/api";
 import ToastWarning from "../../components/ToastWarning";
-import Logo from "../../components/Topbar/Logo";
+import { StatusCode } from "@/src/constants/errorConstants";
+import Logo from "@/app/components/Logo";
+import authStore from "@/src/stores/authStore";
 
 const RegisterForm = () => {
   const [toggleHiddenPassword, setToggleHiddenPassword] = useState(true);

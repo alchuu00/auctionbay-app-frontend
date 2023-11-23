@@ -6,16 +6,18 @@ import React, {
   useRef,
   useState,
 } from "react";
-import * as API from "../../api/api";
-import { StatusCode } from "../../constants/errorConstants";
-import ToastWarning from "../../components/ToastWarning";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { Controller, set } from "react-hook-form";
+import * as API from "../../../src/api/api";
+import { Controller } from "react-hook-form";
 import UserCircleIcon from "@heroicons/react/outline/UserCircleIcon";
-import { userStorage } from "../../stores/userStorage";
-import { UpdateUserFields, useUpdateUserForm } from "../../hooks/useUpdateUser";
+import {
+  UpdateUserFields,
+  useUpdateUserForm,
+} from "../../../src/hooks/useUpdateUser";
 import UpdatePasswordForm from "./UpdatePasswordForm";
+import ToastWarning from "@/app/components/ToastWarning";
+import { StatusCode } from "@/src/constants/errorConstants";
+import { userStorage } from "@/src/stores/userStorage";
+import Image from "next/image";
 
 interface Props {
   profileSettingsForm: boolean;

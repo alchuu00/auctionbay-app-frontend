@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import AuthHero from "../components/AuthHero";
 import { AuthLayout } from "../AuthLayout";
-import Logo from "../../components/Topbar/Logo";
+import Logo from "@/app/components/Logo";
 
 const ForgotPassword = () => {
   return (

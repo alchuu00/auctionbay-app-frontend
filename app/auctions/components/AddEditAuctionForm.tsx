@@ -1,17 +1,13 @@
 import React, { FC, useState, ChangeEvent, useEffect } from "react";
 import { Controller } from "react-hook-form";
-import { StatusCode } from "../../constants/errorConstants";
-import { routes } from "../../constants/routesConstants";
-import {
-  useCreateUpdateAuctionForm,
-  CreateUpdateAuctionFields,
-} from "../../hooks/useCreateUpdateAuction";
-import { AuctionType } from "../../models/auction";
-import * as API from "../../api/api";
+import * as API from "../../../src/api/api";
 import { useRouter } from "next/navigation";
 import ToastWarning from "../../components/ToastWarning";
 import Image from "next/image";
 import TrashIcon from "@heroicons/react/outline/TrashIcon";
+import { StatusCode } from "@/src/constants/errorConstants";
+import { useCreateUpdateAuctionForm, CreateUpdateAuctionFields } from "@/src/hooks/useCreateUpdateAuction";
+import { AuctionType } from "@/src/models/auction";
 
 interface Props {
   refetchAuctions: () => void;

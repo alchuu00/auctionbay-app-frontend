@@ -1,15 +1,14 @@
 "use client";
 
 import AuctionCard from "@/app/auctions/components/AuctionCard";
-import AuctionDetails from "@/app/auctions/components/AuctionDetails";
 import NoWonBids from "@/app/auctions/components/NoWonBids";
 import Loading from "@/app/auctions/components/Loading";
 import Topbar from "@/app/auctions/components/Topbar";
-import { useFetchBidsByBidderId } from "@/app/hooks/useFetchBidsByBidderId";
+import { useFetchBidsByBidderId } from "@/src/hooks/useFetchBidsByBidderId";
 import { useState, useEffect } from "react";
-import { useAuctions } from "../../hooks/useFetchAuctions";
-import { AuctionType } from "../../models/auction";
-import { userStorage } from "../../stores/userStorage";
+import { useAuctions } from "../../../src/hooks/useFetchAuctions";
+import { AuctionType } from "@/src/models/auction";
+import { userStorage } from "@/src/stores/userStorage";
 
 const Bidding = () => {
   const [pageNumber, setPageNumber] = useState(1);

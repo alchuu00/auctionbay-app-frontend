@@ -1,16 +1,16 @@
 import React, { FC, useEffect, useState } from "react";
-import { AuctionType } from "../../models/auction";
 import Image from "next/image";
 import TrashIcon from "@heroicons/react/outline/TrashIcon";
 import PencilIcon from "@heroicons/react/outline/PencilIcon";
 import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import AddEditAuctionForm from "./AddEditAuctionForm";
-import * as API from "../../api/api";
-import { countdown } from "../../utils/countdown";
-import { useFetchBidsByAuctionItemId } from "../../hooks/useFetchBidsByAuctionItemId";
-import { useFetchBidsByBidderId } from "../../hooks/useFetchBidsByBidderId";
-import { userStorage } from "../../stores/userStorage";
+import * as API from "../../../src/api/api";
+import { countdown } from "../../../src/utils/countdown";
+import { useFetchBidsByAuctionItemId } from "../../../src/hooks/useFetchBidsByAuctionItemId";
+import { useFetchBidsByBidderId } from "../../../src/hooks/useFetchBidsByBidderId";
 import Link from "next/link";
+import { AuctionType } from "@/src/models/auction";
+import { userStorage } from "@/src/stores/userStorage";
 
 interface Props {
   refetchAuctions: () => void;
