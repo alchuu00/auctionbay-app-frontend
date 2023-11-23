@@ -19,8 +19,7 @@ import { StatusCode } from "@/src/constants/errorConstants";
 import { AuctionType } from "@/src/models/auction";
 import { BidType } from "@/src/models/bid";
 import { userStorage } from "@/src/stores/userStorage";
-
-// TODO Add Topbar here
+import Topbar from "../components/Topbar";
 
 interface Props {
   defaultValues: BidType;
@@ -29,14 +28,10 @@ interface Props {
 
 const AuctionDetails: React.FC<Props> = () => {
   const [apiError, setApiError] = useState("");
-  const [highestBid, setHighestBid] = useState(0);
   const [bidStatus, setBidStatus] = useState<string | null>(null);
-
-  const defaultValues = { bid_amount: 0 };
-
-  const { handleSubmit, errors, control } = useCreateUpdateBidFields({
-    defaultValues,
-  });
+  const [activeTopTab, setActiveTopTab] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const params = useParams();
   const auctionId: string = params.id;
@@ -48,15 +43,16 @@ const AuctionDetails: React.FC<Props> = () => {
       const response = await API.fetchAuctionById(auctionId);
       setAuction(response.data);
     };
-
-    console.log("auction", auction);
-
     fetchData();
   }, [auctionId]);
 
   const user = userStorage.getUser();
 
-  const { bids, refetch } = useFetchBidsByAuctionItemId(auctionId);
+  const { bids: auctionBids, refetch } = useFetchBidsByAuctionItemId(auctionId);
+
+  const { handleSubmit, errors, control } = useCreateUpdateBidFields({
+    defaultValues: auction?.start_price,
+  });
 
   // Pagination for bids
   const currentPage = useRef(1);
@@ -65,31 +61,33 @@ const AuctionDetails: React.FC<Props> = () => {
   const [trigger, setTrigger] = useState(0);
 
   useEffect(() => {
-    if (bids && bids?.data) {
-      const sortedBids = bids?.data.sort((a, b) => b.bid_amount - a.bid_amount);
+    if (auctionBids && auctionBids?.data) {
+      const sortedBids = auctionBids?.data.sort((a, b) => b.bid_amount - a.bid_amount);
       const start = (currentPage.current - 1) * pageSize;
       const end = start + pageSize;
       setPaginatedBids(sortedBids.slice(start, end));
     }
-  }, [auction?.id, bids, trigger]);
+  }, [auction?.id, auctionBids, trigger]);
 
   const totalPages =
-    bids && bids?.data ? Math.ceil(bids?.data.length / pageSize) : 0;
+    auctionBids && auctionBids?.data ? Math.ceil(auctionBids?.data.length / pageSize) : 0;
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  const [highestBid, setHighestBid] = useState(auction?.start_price);
 
   // Handle add bid
   const handleAddBid = async (data: CreateUpdateBidFields) => {
-    const auctionItemId = auction.id;
+    const auctionItemId = auction?.id;
     const bidderId = user?.user.id;
     const bidAmount = data.bid_amount;
 
     const highestBid =
-      bids?.data.length > 0
+      auctionBids?.data.length > 0
         ? Math.max(
-            auction.start_price,
-            ...bids?.data.map((bid: BidType) => bid.bid_amount)
+            auction?.start_price,
+            ...auctionBids?.data.map((bid: BidType) => bid.bid_amount)
           )
-        : auction.start_price;
+        : auction?.start_price;
 
     if (bidAmount <= highestBid) {
       setApiError("Your bid must be higher than the current highest bid.");
@@ -101,27 +99,24 @@ const AuctionDetails: React.FC<Props> = () => {
     const response = await API.placeBid(auctionItemId, bidderId, bidAmount);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
       setApiError(response.data.message);
-    } else {
+    } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
       setApiError(response.data.message);
+    } else {
+      setBidStatus('Winning');
     }
   };
 
-  const onSubmit = handleSubmit(async (data: CreateUpdateBidFields) => {
-    await handleAddBid(data);
-    refetch();
-  });
-
   // Set highest bid
   useEffect(() => {
-    if (bids && bids?.data[0] && Array.isArray(bids?.data)) {
+    if (auctionBids && auctionBids?.data[0] && Array.isArray(auctionBids?.data)) {
       setHighestBid(
-        bids?.data.reduce(
+        auctionBids?.data.reduce(
           (max, bid) => Math.max(max, bid.bid_amount),
-          bids?.data[0].bid_amount
+          auctionBids?.data[0].bid_amount
         )
       );
     }
-  }, [auction?.id, bids]);
+  }, [auction?.id, auctionBids]);
 
   const countdownValue = auction ? countdown(auction) : null;
 
@@ -129,39 +124,59 @@ const AuctionDetails: React.FC<Props> = () => {
 
   const auctionDone = new Date(auction?.end_date) < currentDate;
 
-  const bidsByBidderId = useFetchBidsByBidderId(user.user.id);
+  const {bids:bidsByBidderId, fetchBids} = useFetchBidsByBidderId(user?.user.id);
 
   // display status of auction
-  useEffect(() => {
-    if (
-      bidsByBidderId &&
-      bidsByBidderId.data &&
-      Array.isArray(bidsByBidderId.data)
-    ) {
-      const userBidsForThisAuction = bidsByBidderId.data.filter(
-        (bid) => bid.auction_item.id === auction.id
-      );
+useEffect(() => {
+  if (
+    bidsByBidderId &&
+    bidsByBidderId.data &&
+    Array.isArray(bidsByBidderId.data)
+  ) {
+    const userBidsForThisAuction = bidsByBidderId.data.filter(
+      (bid) => bid.auction_item.id === auction?.id
+    );
 
-      if (auctionDone) {
-        setBidStatus("Done");
-      } else if (userBidsForThisAuction.length === 0) {
-        setBidStatus("In progress");
-      } else {
-        setBidStatus(
-          userBidsForThisAuction[userBidsForThisAuction.length - 1].status
-        );
-      }
+    if (auctionDone) {
+      setBidStatus("Done");
+    } else if (userBidsForThisAuction.length === 0) {
+      setBidStatus("In progress");
+    } else {
+      setBidStatus(userBidsForThisAuction[0].status);
     }
-  }, [bidsByBidderId]);
+  }
+}, [bidsByBidderId, activeTopTab, activeTab, auctionDone, auction?.id, bidStatus]);
+
+  useEffect(() => {
+    if (user && auction) {
+      setIsLoading(false);
+    }
+  }, [user, auction, auctionBids]);
+
+  const onSubmit = handleSubmit(async (data: CreateUpdateBidFields) => {
+    await handleAddBid(data);
+    refetch();
+    fetchBids()
+  });
 
   return (
-    <div className="flex w-full gap-4 py-4">
-      {bids && auction?.image ? (
-        <>
+    <div className="flex flex-col w-full gap-4 px-6">
+      <Topbar
+        refetchAuctions={refetch}
+        activeTab={null}
+        setActiveTab={setActiveTab}
+        activeTopTab={null}
+        setActiveTopTab={setActiveTopTab}
+        showAuctionDetails={true}
+      />
+      {isLoading ? (
+        <Loading></Loading>
+      ) : (
+        <div className="flex gap-4">
           <div className="rounded-2xl w-1/2">
             <Image
-              src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${auction.image}`}
-              alt={auction.title}
+              src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${auction?.image}`}
+              alt={auction?.title}
               height={1000}
               width={1000}
               className="rounded-2xl object-cover w-full"
@@ -198,8 +213,8 @@ const AuctionDetails: React.FC<Props> = () => {
                   </div>
                 )}
               </div>
-              <div className="font-bold text-4xl">{auction.title}</div>
-              <div>{auction.description}</div>
+              <div className="font-bold text-4xl">{auction?.title}</div>
+              <div>{auction?.description}</div>
               <div className="flex gap-10">
                 <div className="w-full flex justify-end">
                   <form
@@ -213,13 +228,12 @@ const AuctionDetails: React.FC<Props> = () => {
                           <label htmlFor="bid">Bid:</label>
                           <input
                             {...field}
-                            name="bid"
+                            name="bid_amount"
                             id="bid"
                             type="number"
                             aria-label="Bid"
                             aria-describedby="Bid"
                             className="rounded-2xl w-24"
-                            value={highestBid}
                             onChange={(e) => {
                               field.onChange(e);
                               setHighestBid(Number(e.target.value));
@@ -239,11 +253,11 @@ const AuctionDetails: React.FC<Props> = () => {
             </div>
             <div className="flex flex-col bg-white rounded-2xl p-4 w-full h-full">
               <div className="font-bold text-2xl w-full mb-4">
-                Bidding history({bids && bids?.data && bids?.data.length})
+                Bidding history({auctionBids && auctionBids?.data && auctionBids?.data.length})
               </div>
-              {bids && bids?.data && (
+              {auctionBids && auctionBids?.data && (
                 <div>
-                  {bids?.data.length !== 0 ? (
+                  {auctionBids?.data.length !== 0 ? (
                     <div className="w-full flex flex-col">
                       {paginatedBids?.map((bid, index) => (
                         <div
@@ -316,9 +330,7 @@ const AuctionDetails: React.FC<Props> = () => {
             </div>
           </div>
           {apiError && <ToastWarning errorMessage={apiError} />}
-        </>
-      ) : (
-        <Loading></Loading>
+        </div>
       )}
     </div>
   );

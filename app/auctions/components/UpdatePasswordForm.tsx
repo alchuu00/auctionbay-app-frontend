@@ -50,8 +50,6 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
   };
 
   const onSubmit = handleSubmit(async (data: UpdatePasswordFields) => {
-    console.log("submitting data:", data);
-    console.log("Calling handleUpdate...");
     await handleUpdatePassword(data);
   });
 

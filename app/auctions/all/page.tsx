@@ -10,8 +10,6 @@ import { AuctionType } from "@/src/models/auction";
 import { userStorage } from "@/src/stores/userStorage";
 import { useState, useEffect } from "react";
 
-// TODO update auction status when user bids on auction AND changes tabs
-
 // TODO add forbidden response handling
 
 const All = () => {
@@ -38,7 +36,7 @@ const All = () => {
 
   let auctionIdsUserBiddedOn: string[] = [];
 
-  const bids = useFetchBidsByBidderId(currentUserId);
+  const {bids} = useFetchBidsByBidderId(currentUserId);
   if (bids && bids?.data && Array.isArray(bids?.data)) {
     const auctionIds = bids?.data.map((bid) => bid.auction_item.id);
 
@@ -136,7 +134,6 @@ const All = () => {
           bid.bid_amount === highestBid
       )
   );
-  console.log(hasUserWonAnyAuctions);
 
   return (
     <div className="px-6">

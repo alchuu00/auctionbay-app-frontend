@@ -33,6 +33,9 @@ const AuctionCard: FC<Props> = ({
   const [highestBid, setHighestBid] = useState<number | null>(null);
   const [bidStatus, setBidStatus] = useState<string | null>(null);
 
+    // TODO add edit buttons to auction cards
+    // TODO handle card click to display details only if auction is in progress
+
   const user = userStorage.getUser();
 
   const currentDate = new Date();
@@ -48,7 +51,7 @@ const AuctionCard: FC<Props> = ({
 
   const { bids } = useFetchBidsByAuctionItemId(auction.id);
 
-  const bidsByBidderId = useFetchBidsByBidderId(user.user.id);
+  const {bids:bidsByBidderId} = useFetchBidsByBidderId(user.user.id);
 
   // display status of auction
   useEffect(() => {
@@ -67,19 +70,11 @@ const AuctionCard: FC<Props> = ({
         setBidStatus("In progress");
       } else {
         setBidStatus(
-          userBidsForThisAuction[userBidsForThisAuction.length - 1].status
+          userBidsForThisAuction[0].status
         );
       }
-
-      if (activeTopTab === 2 && activeTab === 0) {
-        if (auctionInProgress) {
-          setBidStatus("In progress");
-        } else {
-          setBidStatus("Done");
-        }
-      }
     }
-  }, [bidsByBidderId, activeTopTab, activeTab, auctionDone, auctionInProgress]);
+  }, [bidsByBidderId, activeTopTab, activeTab, auctionDone, auctionInProgress, auction.id, bidStatus]);
 
   // set highest bid to display item price in card
   useEffect(() => {

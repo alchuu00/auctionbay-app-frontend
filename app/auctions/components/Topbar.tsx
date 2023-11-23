@@ -13,9 +13,9 @@ import { userStorage } from "@/src/stores/userStorage";
 
 interface Props {
   refetchAuctions: () => void;
-  activeTab: number;
+  activeTab: number | null;
   setActiveTab: (index: number) => void;
-  activeTopTab: number;
+  activeTopTab: number | null;
   setActiveTopTab: (index: number) => void;
   showAuctionDetails: boolean;
 }

@@ -4,10 +4,11 @@ interface AuctionsLayoutProps {
   children: ReactNode;
 }
 
+// TODO add Topbar component
+
 export const AuctionsLayout: React.FC<AuctionsLayoutProps> = ({ children }) => {
   return (
     <div>
-      {/* Your main layout here */}
       {children}
     </div>
   );

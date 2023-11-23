@@ -136,8 +136,7 @@ const My = () => {
           bid.bid_amount === highestBid
       )
   );
-  console.log(hasUserWonAnyAuctions);
-
+  
   return (
     <div className="px-6">
       {isLoading ? (

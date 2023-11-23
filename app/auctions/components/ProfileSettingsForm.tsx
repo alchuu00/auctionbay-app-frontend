@@ -39,10 +39,6 @@ const ProfileSettingsForm: FC<Props> = ({
 
   const user = useMemo(() => userStorage.getUser(), []);
 
-  useEffect(() => {
-    console.log("user", user);
-  }, [user]);
-
   const { handleSubmit, control } = useUpdateUserForm({
     defaultValues: user?.user,
   });
@@ -108,15 +104,11 @@ const ProfileSettingsForm: FC<Props> = ({
   };
 
   const onSubmit = handleSubmit(async (data: UpdateUserFields) => {
-    console.log("submitting data:", data);
-    console.log("Calling handleUpdate...");
     try {
       await handleUpdate(data);
-      console.log("handleUpdate called");
     } catch (error) {
       console.error("Error in handleUpdate:", error);
     }
-    console.log("Finished onSubmit");
   });
 
   return (
