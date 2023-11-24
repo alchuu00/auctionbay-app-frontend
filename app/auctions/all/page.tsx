@@ -10,8 +10,6 @@ import { AuctionType } from "@/src/models/auction";
 import { userStorage } from "@/src/stores/userStorage";
 import { useState, useEffect } from "react";
 
-// TODO add forbidden response handling
-
 const All = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [activeTopTab, setActiveTopTab] = useState<number | null>(1);

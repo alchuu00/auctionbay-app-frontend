@@ -87,7 +87,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({
         setApiError(fileResponse.data.message);
         setShowError(true);
       } else {
-        router.push(`/auctions/all`);
+        router.push(`/auctions/my`);
       }
     }
   };
@@ -102,7 +102,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({
       setShowError(true);
     } else {
       if (!file) {
-        router.push(`/all`);
+        router.push(`/auctions/my`);
         return;
       }
       // Upload auction image
@@ -121,7 +121,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({
         setApiError(fileResponse.data.message);
         setShowError(true);
       } else {
-        router.push(`/all`);
+        router.push(`/auctions/my`);
       }
     }
   };
