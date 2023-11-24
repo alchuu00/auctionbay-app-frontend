@@ -17,6 +17,7 @@ const My = () => {
   const [showAuctionDetails, setShowAuctionDetails] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [highestBid, setHighestBid] = useState<number | null>(null);
+  const [winningBidderId, setWinningBidderId] = useState<string | null>(null);
   const [selectedAuction, setSelectedAuction] = useState<AuctionType | null>(
     null
   );
@@ -91,10 +92,11 @@ const My = () => {
           .map((auction: AuctionType, index: number) => (
             <div key={index}>
               <AuctionCard
+                setWinningBidderId={setWinningBidderId}
                 refetchAuctions={refetch}
-                activeTopTab={activeTopTab}
+                activeTopTab={2}
                 auction={auction}
-                activeTab={activeTab !== null ? activeTab : 0}
+                activeTab={0}
                 onClick={() => {
                   if (
                     (activeTopTab === 1 ||
@@ -116,7 +118,7 @@ const My = () => {
 
   // set highest bid for each auction
   useEffect(() => {
-    if (bids && bids.data[0] && Array.isArray(bids.data)) {
+    if (bids && Array.isArray(bids.data)) {
       setHighestBid(
         bids.data.reduce(
           (max, bid) => Math.max(max, bid.bid_amount),
@@ -125,17 +127,6 @@ const My = () => {
       );
     }
   }, [bids]);
-
-  const hasUserWonAnyAuctions = auctions.some(
-    (auction) =>
-      auction.end_date < Date() &&
-      bids?.data.some(
-        (bid) =>
-          bid.auction_item.id === auction.id &&
-          bid.status === "Winning" &&
-          bid.bid_amount === highestBid
-      )
-  );
   
   return (
     <div className="px-6">
@@ -146,9 +137,7 @@ const My = () => {
           <Topbar
             refetchAuctions={refetch}
             activeTab={0}
-            setActiveTab={setActiveTab}
             activeTopTab={2}
-            setActiveTopTab={setActiveTopTab}
             showAuctionDetails={showAuctionDetails}
           />
           {myAuctions.length > 0 ? (

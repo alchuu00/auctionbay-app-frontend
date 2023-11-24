@@ -19,6 +19,7 @@ const All = () => {
   const [showAuctionDetails, setShowAuctionDetails] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [highestBid, setHighestBid] = useState<number | null>(null);
+  const [winningBidderId, setWinningBidderId] = useState<string | null>(null);
   const [selectedAuction, setSelectedAuction] = useState<AuctionType | null>(
     null
   );
@@ -89,10 +90,11 @@ const All = () => {
           .map((auction: AuctionType, index: number) => (
             <div key={index}>
               <AuctionCard
+                setWinningBidderId={setWinningBidderId}
                 refetchAuctions={refetch}
-                activeTopTab={activeTopTab}
+                activeTopTab={1}
                 auction={auction}
-                activeTab={activeTab !== null ? activeTab : 0}
+                activeTab={0}
                 onClick={() => {
                   if (
                     (activeTopTab === 1 ||
@@ -124,17 +126,6 @@ const All = () => {
     }
   }, [bids]);
 
-  const hasUserWonAnyAuctions = auctions.some(
-    (auction) =>
-      auction.end_date < Date() &&
-      bids?.data.some(
-        (bid) =>
-          bid.auction_item.id === auction.id &&
-          bid.status === "Winning" &&
-          bid.bid_amount === highestBid
-      )
-  );
-
   return (
     <div className="px-6">
       {isLoading ? (
@@ -144,9 +135,7 @@ const All = () => {
           <Topbar
             refetchAuctions={refetch}
             activeTab={activeTab !== null ? activeTab : 0}
-            setActiveTab={setActiveTab}
             activeTopTab={activeTopTab !== null ? activeTopTab : 0}
-            setActiveTopTab={setActiveTopTab}
             showAuctionDetails={showAuctionDetails}
           />
           {auctions.length > 0 ? renderAuctions(() => true) : <NoAuctions />}

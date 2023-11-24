@@ -87,7 +87,7 @@ const CreateUpdateAuctionForm: FC<Props> = ({
         setApiError(fileResponse.data.message);
         setShowError(true);
       } else {
-        router.push(`/all`);
+        router.push(`/auctions/all`);
       }
     }
   };

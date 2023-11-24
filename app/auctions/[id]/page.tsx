@@ -164,9 +164,7 @@ useEffect(() => {
       <Topbar
         refetchAuctions={refetch}
         activeTab={null}
-        setActiveTab={setActiveTab}
         activeTopTab={null}
-        setActiveTopTab={setActiveTopTab}
         showAuctionDetails={true}
       />
       {isLoading ? (

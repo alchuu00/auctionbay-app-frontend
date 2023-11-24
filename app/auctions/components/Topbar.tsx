@@ -14,32 +14,20 @@ import { userStorage } from "@/src/stores/userStorage";
 interface Props {
   refetchAuctions: () => void;
   activeTab: number | null;
-  setActiveTab: (index: number) => void;
   activeTopTab: number | null;
-  setActiveTopTab: (index: number) => void;
   showAuctionDetails: boolean;
 }
 
 const Topbar: FC<Props> = ({
   refetchAuctions,
   activeTab,
-  setActiveTab,
   activeTopTab,
-  setActiveTopTab,
   showAuctionDetails,
 }) => {
   const [showAddAuctionsForm, setShowAddAuctionsForm] =
     useState<boolean>(false);
   const [showProfileSettings, setShowProfileSettings] =
     useState<boolean>(false);
-
-  const handleActiveTopTab = (index: number) => {
-    setActiveTopTab(index);
-  };
-
-  const handleActiveTab = (index: number) => {
-    setActiveTab(index);
-  };
 
   const handleAddAuctionsClick = () => {
     setShowAddAuctionsForm(true);

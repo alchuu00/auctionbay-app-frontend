@@ -17,9 +17,14 @@ const Bidding = () => {
   const [showAuctionDetails, setShowAuctionDetails] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [highestBid, setHighestBid] = useState<number | null>(null);
+  const [winningBidderId, setWinningBidderId] = useState<string | null>(null);
+  const [isCurrentUserWinningBidder, setIsCurrentUserWinningBidder] =
+    useState(false);
   const [selectedAuction, setSelectedAuction] = useState<AuctionType | null>(
     null
   );
+
+  // TODO won auctions dont render properly
 
   const user = userStorage.getUser();
 
@@ -36,13 +41,20 @@ const Bidding = () => {
 
   const currentDate = new Date();
 
+  const { bids } = useFetchBidsByBidderId(currentUserId);
   let auctionIdsUserBiddedOn: string[] = [];
+  let auctionsUserBiddedOn: AuctionType[] = [];
 
-  const bids = useFetchBidsByBidderId(currentUserId);
   if (bids && bids?.data && Array.isArray(bids?.data)) {
     const auctionIds = bids?.data.map((bid) => bid.auction_item.id);
-
     auctionIdsUserBiddedOn = Array.from(new Set(auctionIds));
+
+    // Filter the auctions that the user has bid on and that have expired
+    auctionsUserBiddedOn = auctions.filter(
+      (auction) =>
+        auctionIdsUserBiddedOn.includes(auction.id) &&
+        new Date(auction.end_date) < new Date()
+    );
   }
 
   useEffect(() => {
@@ -58,10 +70,12 @@ const Bidding = () => {
   }, [user, auctions, bids]);
 
   useEffect(() => {
-    if (typeof refetch === "function") {
-      refetch();
+    if (winningBidderId?.data === currentUserId) {
+      return setIsCurrentUserWinningBidder(true);
+    } else {
+      return setIsCurrentUserWinningBidder(false);
     }
-  }, [activeTab, activeTopTab]);
+  }, [winningBidderId, currentUserId]);
 
   const renderAuctions = (filterFunc: (auction: AuctionType) => boolean) => (
     <div className="w-full flex justify-start items-center">
@@ -91,10 +105,11 @@ const Bidding = () => {
           .map((auction: AuctionType, index: number) => (
             <div key={index}>
               <AuctionCard
+                setWinningBidderId={setWinningBidderId}
                 refetchAuctions={refetch}
-                activeTopTab={activeTopTab}
+                activeTopTab={2}
                 auction={auction}
-                activeTab={activeTab !== null ? activeTab : 0}
+                activeTab={2}
                 onClick={() => {
                   if (
                     (activeTopTab === 1 ||
@@ -116,7 +131,7 @@ const Bidding = () => {
 
   // set highest bid for each auction
   useEffect(() => {
-    if (bids && bids.data[0] && Array.isArray(bids.data)) {
+    if (bids && Array.isArray(bids.data)) {
       setHighestBid(
         bids.data.reduce(
           (max, bid) => Math.max(max, bid.bid_amount),
@@ -126,16 +141,10 @@ const Bidding = () => {
     }
   }, [bids]);
 
-  const hasUserWonAnyAuctions = auctions.some(
-    (auction) =>
-      auction.end_date < Date() &&
-      bids?.data.some(
-        (bid) =>
-          bid.auction_item.id === auction.id &&
-          bid.status === "Winning" &&
-          bid.bid_amount === highestBid
-      )
-  );
+  console.log("auctionsUserBiddedOn", auctionsUserBiddedOn);
+  console.log("doneAuctions", doneAuctions);
+  console.log("winningBidderId", winningBidderId);
+  console.log('isCurrentUserWinningBidder', isCurrentUserWinningBidder)
 
   return (
     <div className="px-6">
@@ -146,18 +155,14 @@ const Bidding = () => {
           <Topbar
             refetchAuctions={refetch}
             activeTab={2}
-            setActiveTab={setActiveTab}
             activeTopTab={2}
-            setActiveTopTab={setActiveTopTab}
             showAuctionDetails={showAuctionDetails}
           />
-          {auctionIdsUserBiddedOn.length > 0 &&
-          hasUserWonAnyAuctions &&
-          doneAuctions ? (
+          {auctionsUserBiddedOn.length > 0 &&
+          doneAuctions.length > 0 &&
+          isCurrentUserWinningBidder ? (
             renderAuctions(
-              (auction: AuctionType) =>
-                new Date(auction.end_date) < new Date() &&
-                auctionIdsUserBiddedOn.includes(auction.id)
+              (auction: AuctionType) => new Date(auction.end_date) < new Date()
             )
           ) : (
             <NoWonBids />
