@@ -10,4 +10,5 @@ export enum apiRoutes {
     UPLOAD_AUCTION_IMAGE = '/auctionItems/upload',
     AUCTIONS_PREFIX = '/auctionItems',
     BIDS_PREFIX = '/bids',
+    RESET_PASSWORD = '/reset-password'
   }

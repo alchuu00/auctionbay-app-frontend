@@ -10,7 +10,7 @@ import { useAuctions } from "../../../src/hooks/useFetchAuctions";
 import { AuctionType } from "@/src/models/auction";
 import { userStorage } from "@/src/stores/userStorage";
 
-const Bidding = () => {
+const Won = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [activeTopTab, setActiveTopTab] = useState<number | null>(1);
   const [activeTab, setActiveTab] = useState<number | null>(0);
@@ -18,13 +18,12 @@ const Bidding = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [highestBid, setHighestBid] = useState<number | null>(null);
   const [winningBidderId, setWinningBidderId] = useState<string | null>(null);
-  const [isCurrentUserWinningBidder, setIsCurrentUserWinningBidder] =
-    useState(false);
   const [selectedAuction, setSelectedAuction] = useState<AuctionType | null>(
     null
   );
 
-  // TODO won auctions dont render properly
+  // FIXME now it's displaying all auctions that user has bidded on
+  // i want to display only the ones that user has won
 
   const user = userStorage.getUser();
 
@@ -68,14 +67,6 @@ const Bidding = () => {
       setIsLoading(false);
     }
   }, [user, auctions, bids]);
-
-  useEffect(() => {
-    if (winningBidderId?.data === currentUserId) {
-      return setIsCurrentUserWinningBidder(true);
-    } else {
-      return setIsCurrentUserWinningBidder(false);
-    }
-  }, [winningBidderId, currentUserId]);
 
   const renderAuctions = (filterFunc: (auction: AuctionType) => boolean) => (
     <div className="w-full flex justify-start items-center">
@@ -144,7 +135,6 @@ const Bidding = () => {
   console.log("auctionsUserBiddedOn", auctionsUserBiddedOn);
   console.log("doneAuctions", doneAuctions);
   console.log("winningBidderId", winningBidderId);
-  console.log('isCurrentUserWinningBidder', isCurrentUserWinningBidder)
 
   return (
     <div className="px-6">
@@ -159,10 +149,9 @@ const Bidding = () => {
             showAuctionDetails={showAuctionDetails}
           />
           {auctionsUserBiddedOn.length > 0 &&
-          doneAuctions.length > 0 &&
-          isCurrentUserWinningBidder ? (
+          doneAuctions.length > 0 ? (
             renderAuctions(
-              (auction: AuctionType) => new Date(auction.end_date) < new Date()
+              (auction: AuctionType) => new Date(auction.end_date) < new Date() && auctionIdsUserBiddedOn.includes(auction.id)
             )
           ) : (
             <NoWonBids />
@@ -173,4 +162,4 @@ const Bidding = () => {
   );
 };
 
-export default Bidding;
+export default Won;

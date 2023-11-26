@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import AuthHero from "../components/AuthHero";
 import { AuthLayout } from "../AuthLayout";
 import Logo from "@/app/components/Logo";
+import * as API from '@/src/api/api';
+
+// TODO go through reset password pipeline
 
 const ForgotPassword = () => {
+  const [email, setEmail] = useState(''); // manage the state of the email input field
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      // call your API function to send the password reset email
+      await API.sendPasswordResetEmail(email);
+      alert('Password reset email sent');
+    } catch (error) {
+      alert('Failed to send password reset email');
+    }
+  };
+
   return (
     <AuthLayout>
       <AuthHero />
@@ -18,7 +34,7 @@ const ForgotPassword = () => {
           </p>
         </div>
         <div className="w-4/5">
-          <form action="" className="flex flex-col gap-2 mb-40">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-2 mb-40">
             <label htmlFor="email" className=" font-light">
               E-mail:
             </label>
@@ -27,8 +43,9 @@ const ForgotPassword = () => {
               type="text"
               placeholder="Placeholder"
               className="border w-full font-light py-2 px-4 rounded-2xl"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
-            {/* TODO: submit form and send password reset email */}
             <button
               type="submit"
               value="Submit"
