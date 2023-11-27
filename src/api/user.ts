@@ -7,8 +7,8 @@ import { UpdateUserFields } from "../hooks/useUpdateUser";
 import { UserType } from "../models/auth";
 import { apiRequest } from "./api";
 
-export const fetchUser = async () =>
-  apiRequest<undefined, UserType>("get", apiRoutes.FETCH_USER);
+export const fetchUser = async (id: string) =>
+  apiRequest<string, UserType>("get", `${apiRoutes.FETCH_USERS}/${id}`);
 
 export const fetchUsers = async (pageNumber: number) =>
   apiRequest<number, UserType[]>(
