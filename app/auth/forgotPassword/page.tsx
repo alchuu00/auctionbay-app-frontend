@@ -7,8 +7,6 @@ import { AuthLayout } from "../AuthLayout";
 import Logo from "@/app/components/Logo";
 import * as API from '@/src/api/api';
 
-// TODO go through reset password pipeline
-
 const ForgotPassword = () => {
   const [email, setEmail] = useState(''); // manage the state of the email input field
 

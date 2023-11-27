@@ -5,13 +5,13 @@ import * as Yup from "yup";
 
 export interface ResetPasswordFields {
   confirm_password?: Yup.Maybe<string>;
-  new_password?: Yup.Maybe<string>;
+  password?: Yup.Maybe<string>;
 }
 
 export const useResetPasswordForm = () => {
-  const UpdatePasswordSchema = Yup.object().shape({
+  const ResetPasswordSchema = Yup.object().shape({
     confirm_password: Yup.string().required(),
-    new_password: Yup.string().required(),
+    password: Yup.string().required(),
   });
 
   const {
@@ -21,10 +21,10 @@ export const useResetPasswordForm = () => {
   } = useForm({
     defaultValues: {
       confirm_password: "",
-      new_password: "",
+      password: "",
     },
     mode: "onSubmit",
-    resolver: yupResolver(UpdatePasswordSchema),
+    resolver: yupResolver(ResetPasswordSchema),
   });
 
   return {

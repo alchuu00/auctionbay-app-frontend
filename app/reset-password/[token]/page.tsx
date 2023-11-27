@@ -42,10 +42,10 @@ const DefaultResetPassword: React.FC = () => {
   const { handleSubmit, errors, control } = useResetPasswordForm();
 
 
-  const handleUpdatePassword = async (data: ResetPasswordFields) => {
-    const response = await API.updateUserPassword(
-      { password: data.new_password, confirm_password: data.confirm_password },
-      user?.data.id as string
+  const handleResetPassword = async (data: ResetPasswordFields) => {
+    const response = await API.resetUserPassword(
+      { password: data.password, confirm_password: data.confirm_password },
+      user?.data.id as string, token as string
     );
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
       setApiError(response.data.message);
@@ -57,7 +57,7 @@ const DefaultResetPassword: React.FC = () => {
   };
 
   const onSubmit = handleSubmit(async (data: ResetPasswordFields) => {
-    await handleUpdatePassword(data);
+    await handleResetPassword(data);
   });
 
   const handleToggleHiddenNew = () => {
@@ -80,7 +80,7 @@ const DefaultResetPassword: React.FC = () => {
         <div className="w-4/5">
           <form onSubmit={onSubmit} className="flex flex-col gap-2 mb-40">
             <Controller
-              name="new_password"
+              name="password"
               control={control}
               render={({ field }) => (
                 <div className="mb-3 w-full">
