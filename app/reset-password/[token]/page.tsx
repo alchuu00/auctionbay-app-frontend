@@ -57,6 +57,8 @@ const DefaultResetPassword: React.FC = () => {
   };
 
   const onSubmit = handleSubmit(async (data: ResetPasswordFields) => {
+    console.log('onSubmit has been called')
+    console.log('data', data)
     await handleResetPassword(data);
   });
 
@@ -133,7 +135,6 @@ const DefaultResetPassword: React.FC = () => {
             />
             <button
               type="submit"
-              value="Submit"
               className="bg-fluoro-yellow font-medium px-4 py-2 rounded-2xl">
               Submit
             </button>

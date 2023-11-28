@@ -15,7 +15,6 @@ interface Props {
 }
 
 const UpdatePasswordForm = ({ toggleForm }: Props) => {
-  const { handleSubmit, errors, control, isValid } = usePasswordForm();
   const [apiError, setApiError] = useState("");
   const [toggleHiddenCurrent, setToggleHiddenCurrent] = useState(true);
   const [toggleHiddenNew, setToggleHiddenNew] = useState(true);
@@ -34,6 +33,8 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
   const handleToggleHiddenConfirm = () => {
     setToggleHiddenConfirm(!toggleHiddenConfirm);
   };
+
+  const { handleSubmit, errors, control, isValid } = usePasswordForm();
 
   const handleUpdatePassword = async (data: UpdatePasswordFields) => {
     const response = await API.updateUserPassword(
@@ -142,8 +143,7 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
         </button>
         <button
           type="submit"
-          className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
-          onClick={toggleForm}>
+          className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow">
           Save changes
         </button>
       </div>
