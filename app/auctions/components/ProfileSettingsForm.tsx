@@ -37,11 +37,13 @@ const ProfileSettingsForm: FC<Props> = ({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const user = useMemo(() => userStorage.getUser(), []);
+  const user = userStorage.getUser();
 
   const { handleSubmit, control } = useUpdateUserForm({
     defaultValues: user?.user,
   });
+
+  console.log('user', user)
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
@@ -64,6 +66,16 @@ const ProfileSettingsForm: FC<Props> = ({
         formData,
         user?.user.id as string
       );
+      if (response.status === 200) {
+        // get the user data from local storage
+        let userData = userStorage.getUser()
+      
+        // update the avatar URL in the user data
+        userData.avatar = formData;
+      
+        // save the updated user data back to local storage
+        userStorage.setUser(userData);
+      }
     }
   };
 
@@ -83,7 +95,6 @@ const ProfileSettingsForm: FC<Props> = ({
   }, []);
 
   const handleUpdate = async (data) => {
-    // Exclude avatar from data so it prevents calling API.updateUser
     const { avatar, ...rest } = data;
 
     const response = await API.updateUser(rest, user?.user.id as string);
