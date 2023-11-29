@@ -67,13 +67,8 @@ const ProfileSettingsForm: FC<Props> = ({
         user?.user.id as string
       );
       if (response.status === 200) {
-        // get the user data from local storage
         let userData = userStorage.getUser()
-      
-        // update the avatar URL in the user data
         userData.avatar = formData;
-      
-        // save the updated user data back to local storage
         userStorage.setUser(userData);
       }
     }
