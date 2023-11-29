@@ -1,47 +1,46 @@
-
-import { apiRoutes } from "../constants/apiConstatnts"
-import { CreateUpdateAuctionFields } from "../hooks/useCreateUpdateAuction"
-import { AuctionType } from "../models/auction"
-import { apiRequest } from "./api"
+import { apiRoutes } from "../constants/apiConstatnts";
+import { CreateUpdateAuctionFields } from "../hooks/useCreateUpdateAuction";
+import { AuctionType } from "../models/auction";
+import { apiRequest } from "./api";
 
 export const fetchAuctions = async (pageNumber: number) =>
   apiRequest<undefined, AuctionType[]>(
-    'get',
-    `${apiRoutes.AUCTIONS_PREFIX}?page=${pageNumber}`,
-  )
+    "get",
+    `${apiRoutes.AUCTIONS_PREFIX}?page=${pageNumber}`
+  );
+
+export const fetchWon = async (userId: string) =>
+  apiRequest<string, AuctionType[]>("get", `${apiRoutes.AUCTIONS_PREFIX}/won/${userId}`);
 
 export const createAuction = async (data: CreateUpdateAuctionFields) =>
   apiRequest<CreateUpdateAuctionFields, AuctionType>(
-    'post',
+    "post",
     apiRoutes.AUCTIONS_PREFIX,
-    data,
-  )
+    data
+  );
 
 export const uploadAuctionImage = async (formData: FormData, id: string) =>
   apiRequest<FormData, void>(
-    'post',
+    "post",
     `${apiRoutes.UPLOAD_AUCTION_IMAGE}/${id}`,
-    formData,
-  )
+    formData
+  );
 
 export const updateAuction = async (
   data: CreateUpdateAuctionFields,
-  id: string,
+  id: string
 ) =>
   apiRequest<CreateUpdateAuctionFields, AuctionType>(
-    'patch',
+    "patch",
     `${apiRoutes.AUCTIONS_PREFIX}/${id}`,
-    data,
-  )
+    data
+  );
 
 export const deleteAuction = async (id: string) =>
   apiRequest<string, AuctionType>(
-    'delete',
-    `${apiRoutes.AUCTIONS_PREFIX}/${id}`,
-  )
+    "delete",
+    `${apiRoutes.AUCTIONS_PREFIX}/${id}`
+  );
 
-  export const fetchAuctionById = async (id: string) =>
-  apiRequest<string, AuctionType>(
-    'get',
-    `${apiRoutes.AUCTIONS_PREFIX}/${id}`,
-  )
+export const fetchAuctionById = async (id: string) =>
+  apiRequest<string, AuctionType>("get", `${apiRoutes.AUCTIONS_PREFIX}/${id}`);

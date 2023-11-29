@@ -16,7 +16,6 @@ const Bidding = () => {
   const [activeTab, setActiveTab] = useState<number | null>(0);
   const [showAuctionDetails, setShowAuctionDetails] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [highestBid, setHighestBid] = useState<number | null>(null);
   const [winningBidderId, setWinningBidderId] = useState<string | null>(null);
   const [selectedAuction, setSelectedAuction] = useState<AuctionType | null>(
     null
@@ -110,29 +109,6 @@ const Bidding = () => {
           ))}
       </div>
     </div>
-  );
-
-  // set highest bid for each auction
-  useEffect(() => {
-    if (bids && Array.isArray(bids.data)) {
-      setHighestBid(
-        bids.data.reduce(
-          (max, bid) => Math.max(max, bid.bid_amount),
-          bids.data[0].bid_amount
-        )
-      );
-    }
-  }, [bids]);
-
-  const hasUserWonAnyAuctions = auctions.some(
-    (auction) =>
-      auction.end_date < Date() &&
-      bids?.data.some(
-        (bid) =>
-          bid.auction_item.id === auction.id &&
-          bid.status === "Winning" &&
-          bid.bid_amount === highestBid
-      )
   );
 
   return (

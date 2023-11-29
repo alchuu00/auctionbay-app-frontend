@@ -15,7 +15,7 @@ import { useGetHighestBidder } from "@/src/hooks/useFetchWinningBid";
 
 interface Props {
   setWinningBidderId: React.Dispatch<React.SetStateAction<string | null>>;
-  refetchAuctions: () => void;
+  refetchAuctions: any;
   activeTopTab: number | null;
   auction: AuctionType;
   activeTab: number;
