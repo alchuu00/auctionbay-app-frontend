@@ -16,10 +16,6 @@ const Bidding = () => {
   const [activeTab, setActiveTab] = useState<number | null>(0);
   const [showAuctionDetails, setShowAuctionDetails] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [winningBidderId, setWinningBidderId] = useState<string | null>(null);
-  const [selectedAuction, setSelectedAuction] = useState<AuctionType | null>(
-    null
-  );
 
   const user = userStorage.getUser();
 
@@ -35,8 +31,8 @@ const Bidding = () => {
   let auctionIdsUserBiddedOn: string[] = [];
 
   const {bids} = useFetchBidsByBidderId(currentUserId);
-  if (bids && bids?.data && Array.isArray(bids?.data)) {
-    const auctionIds = bids?.data.map((bid) => bid.auction_item.id);
+  if (bids) {
+    const auctionIds = bids?.map((bid) => bid.auction_item.id);
 
     auctionIdsUserBiddedOn = Array.from(new Set(auctionIds));
   }
@@ -87,7 +83,6 @@ const Bidding = () => {
           .map((auction: AuctionType, index: number) => (
             <div key={index}>
               <AuctionCard
-                setWinningBidderId={setWinningBidderId}
                 refetchAuctions={refetch}
                 activeTopTab={2}
                 auction={auction}
@@ -98,7 +93,6 @@ const Bidding = () => {
                       (activeTopTab === 2 && activeTab === 1)) &&
                     new Date(auction.end_date) > currentDate
                   ) {
-                    setSelectedAuction(auction);
                     setShowAuctionDetails(true);
                     setActiveTab(null);
                     setActiveTopTab(null);

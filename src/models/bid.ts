@@ -8,5 +8,6 @@ export type BidType = {
   created_at: string
   id: string
   updated_at: string
+  status: string
   };
   

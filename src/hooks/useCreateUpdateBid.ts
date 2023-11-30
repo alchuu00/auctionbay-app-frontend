@@ -12,7 +12,7 @@ interface FormData {
 }
 
 interface Props {
-  defaultValues?: CreateUpdateBidFields;
+  defaultValues?: number;
 }
 
 export const useCreateUpdateBidFields = ({ defaultValues }: Props) => {
@@ -27,7 +27,6 @@ export const useCreateUpdateBidFields = ({ defaultValues }: Props) => {
   } = useForm<FormData>({
     defaultValues: {
       bid_amount: 0,
-      ...defaultValues,
     },
     mode: "onSubmit",
     resolver: yupResolver(PlaceBidSchema),

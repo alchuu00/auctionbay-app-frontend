@@ -89,10 +89,9 @@ const ProfileSettingsForm: FC<Props> = ({
     };
   }, []);
 
-  const handleUpdate = async (data) => {
-    const { avatar, ...rest } = data;
+  const handleUpdate = async (data: UpdateUserFields) => {
 
-    const response = await API.updateUser(rest, user?.user.id as string);
+    const response = await API.updateUser(data, user?.user.id as string);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
       setApiError(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {

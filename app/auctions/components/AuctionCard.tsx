@@ -11,10 +11,9 @@ import { useFetchBidsByBidderId } from "../../../src/hooks/useFetchBidsByBidderI
 import Link from "next/link";
 import { AuctionType } from "@/src/models/auction";
 import { userStorage } from "@/src/stores/userStorage";
-import { useGetHighestBidder } from "@/src/hooks/useFetchWinningBid";
+
 
 interface Props {
-  setWinningBidderId: React.Dispatch<React.SetStateAction<string | null>>;
   refetchAuctions: any;
   activeTopTab: number | null;
   auction: AuctionType;
@@ -23,7 +22,6 @@ interface Props {
 }
 
 const AuctionCard: FC<Props> = ({
-  setWinningBidderId,
   refetchAuctions,
   activeTopTab,
   auction,
@@ -51,25 +49,25 @@ const AuctionCard: FC<Props> = ({
 
   const { bids } = useFetchBidsByAuctionItemId(auction.id);
 
-  const { bids: bidsByBidderId } = useFetchBidsByBidderId(user.user.id);
+  const { bids: bidsByBidderId, fetchBids } = useFetchBidsByBidderId(user.user.id);
 
   // display status of auction
   useEffect(() => {
     if (
-      bidsByBidderId &&
-      bidsByBidderId.data &&
-      Array.isArray(bidsByBidderId.data)
+      bidsByBidderId
     ) {
-      const userBidsForThisAuction = bidsByBidderId.data.filter(
+      const userBidsForThisAuction = bidsByBidderId.filter(
         (bid) => bid.auction_item.id === auction.id
       );
+
+      console.log('userBidsForThisAuction', userBidsForThisAuction);
 
       if (auctionDone) {
         setBidStatus("Done");
       } else if (userBidsForThisAuction.length === 0) {
         setBidStatus("In progress");
       } else {
-        setBidStatus(userBidsForThisAuction[0].status);
+        setBidStatus(userBidsForThisAuction[userBidsForThisAuction.length-1].status);
       }
     }
   }, [
@@ -84,15 +82,15 @@ const AuctionCard: FC<Props> = ({
 
   // set highest bid to display item price in card
   useEffect(() => {
-    if (bids && bids.data[0] && Array.isArray(bids.data)) {
+    if (bids && bids.length > 0) {
       setHighestBid(
-        bids.data.reduce(
+        bids.reduce(
           (max, bid) => Math.max(max, bid.bid_amount),
-          bids.data[0].bid_amount
+          bids[0].bid_amount
         )
       );
     }
-  }, [auction.id, bids]);
+  }, [auction.id, bids, fetchBids]);
 
   // handle delete auction
   const handleDeleteAuction = async (id: string) => {
@@ -103,17 +101,6 @@ const AuctionCard: FC<Props> = ({
       console.error("Failed to delete auction:", error);
     }
   };
-
-  const highestBidderId = useGetHighestBidder(auction?.id);
-  useEffect(() => {
-    if (highestBidderId) {
-      console.log("highestBidderId", highestBidderId);
-      setWinningBidderId(highestBidderId);
-    }
-  }, [highestBidderId, setWinningBidderId]);
-
-  console.log("activetab", activeTab);
-  console.log("activetoptab", activeTopTab);
 
   useEffect(() => {
     if (activeTopTab === 2 && activeTab === 0 && auctionInProgress) {

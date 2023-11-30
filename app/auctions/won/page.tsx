@@ -4,12 +4,9 @@ import AuctionCard from "@/app/auctions/components/AuctionCard";
 import NoWonBids from "@/app/auctions/components/NoWonBids";
 import Loading from "@/app/auctions/components/Loading";
 import Topbar from "@/app/auctions/components/Topbar";
-import { useFetchBidsByBidderId } from "@/src/hooks/useFetchBidsByBidderId";
 import { useState, useEffect } from "react";
-import { useAuctions } from "../../../src/hooks/useFetchAuctions";
 import { AuctionType } from "@/src/models/auction";
 import { userStorage } from "@/src/stores/userStorage";
-import { fetchWon } from "@/src/api/auctionItems";
 import { useFetchWon } from "@/src/hooks/useFetchWon";
 
 const Won = () => {
@@ -18,11 +15,6 @@ const Won = () => {
   const [activeTab, setActiveTab] = useState<number | null>(0);
   const [showAuctionDetails, setShowAuctionDetails] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [highestBid, setHighestBid] = useState<number | null>(null);
-  const [winningBidderId, setWinningBidderId] = useState<string | null>(null);
-  const [selectedAuction, setSelectedAuction] = useState<AuctionType | null>(
-    null
-  );
 
   const user = userStorage.getUser();
 
@@ -47,7 +39,6 @@ const Won = () => {
           .map((auction: AuctionType, index: number) => (
             <div key={index}>
               <AuctionCard
-                setWinningBidderId={setWinningBidderId}
                 refetchAuctions={refetch}
                 activeTopTab={2}
                 auction={auction}
@@ -57,7 +48,6 @@ const Won = () => {
                     (activeTopTab === 1 ||
                       (activeTopTab === 2 && activeTab === 1))
                   ) {
-                    setSelectedAuction(auction);
                     setShowAuctionDetails(true);
                     setActiveTab(null);
                     setActiveTopTab(null);
