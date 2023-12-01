@@ -57,7 +57,7 @@ const RegisterForm = () => {
     }
   });
   return (
-    <div className="flex flex-col justify-between items-center h-screen py-10 bg-white lg:w-1/3 w-full text-md">
+    <div className="flex flex-col lg:justify-between justify-around items-center h-screen py-10 bg-white lg:w-1/3 w-full text-md">
       <Logo />
       <div className="text-center mb-5">
         <h1 className="font-bold text-4xl">Hello!</h1>
