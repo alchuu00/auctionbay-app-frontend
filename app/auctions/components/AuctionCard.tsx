@@ -60,8 +60,6 @@ const AuctionCard: FC<Props> = ({
         (bid) => bid.auction_item.id === auction.id
       );
 
-      console.log('userBidsForThisAuction', userBidsForThisAuction);
-
       if (auctionDone) {
         setBidStatus("Done");
       } else if (userBidsForThisAuction.length === 0) {

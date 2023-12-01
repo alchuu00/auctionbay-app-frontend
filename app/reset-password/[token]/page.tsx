@@ -29,10 +29,8 @@ const DefaultResetPassword: React.FC = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const userIdFromApi = await API.getUserFromToken(token as string);
-      console.log("userIdFromApi", userIdFromApi.data);
       setUserId(userIdFromApi.data);
       const userFromApi = await API.fetchUser(userIdFromApi.data as string);
-      console.log("userFromApi", userFromApi);
       setUser(userFromApi);
     };
 
@@ -57,8 +55,6 @@ const DefaultResetPassword: React.FC = () => {
   };
 
   const onSubmit = handleSubmit(async (data: ResetPasswordFields) => {
-    console.log('onSubmit has been called')
-    console.log('data', data)
     await handleResetPassword(data);
   });
 

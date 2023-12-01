@@ -43,8 +43,6 @@ const ProfileSettingsForm: FC<Props> = ({
     defaultValues: user?.user,
   });
 
-  console.log('user', user)
-
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
     if (target.files && target.files.length > 0) {
