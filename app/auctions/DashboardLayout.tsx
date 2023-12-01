@@ -4,12 +4,8 @@ interface AuctionsLayoutProps {
   children: ReactNode;
 }
 
-// TODO add Topbar component
-
-export const AuctionsLayout: React.FC<AuctionsLayoutProps> = ({ children }) => {
-  return (
-    <div>
-      {children}
-    </div>
-  );
+export const DashboardLayout: React.FC<AuctionsLayoutProps> = ({
+  children,
+}) => {
+  return <div className="px-6 w-screen flex flex-col justify-center">{children}</div>;
 };

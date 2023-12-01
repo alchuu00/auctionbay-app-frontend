@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { AuctionType } from "@/src/models/auction";
 import { userStorage } from "@/src/stores/userStorage";
 import { useFetchWon } from "@/src/hooks/useFetchWon";
+import { DashboardLayout } from "../DashboardLayout";
 
 const Won = () => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -60,10 +61,8 @@ const Won = () => {
     </div>
   );
 
-  console.log('auctions', auctions)
-
   return (
-    <div className="px-6">
+    <DashboardLayout>
       {isLoading ? (
         <Loading></Loading>
       ) : (
@@ -83,7 +82,7 @@ const Won = () => {
           )}
         </>
       )}
-    </div>
+    </DashboardLayout>
   );
 };
 

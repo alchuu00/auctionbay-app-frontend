@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { useAuctions } from "../../../src/hooks/useFetchAuctions";
 import { AuctionType } from "@/src/models/auction";
 import { userStorage } from "@/src/stores/userStorage";
+import { DashboardLayout } from "../DashboardLayout";
 
 const My = () => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -123,7 +124,7 @@ const My = () => {
   }, [bids]);
   
   return (
-    <div className="px-6">
+    <DashboardLayout>
       {isLoading ? (
         <Loading></Loading>
       ) : (
@@ -143,7 +144,7 @@ const My = () => {
           )}
         </>
       )}
-    </div>
+    </DashboardLayout>
   );
 };
 

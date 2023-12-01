@@ -9,6 +9,7 @@ import { useFetchBidsByBidderId } from "@/src/hooks/useFetchBidsByBidderId";
 import { AuctionType } from "@/src/models/auction";
 import { userStorage } from "@/src/stores/userStorage";
 import { useState, useEffect } from "react";
+import { DashboardLayout } from "../DashboardLayout";
 
 const All = () => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -17,6 +18,13 @@ const All = () => {
   const [showAuctionDetails, setShowAuctionDetails] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [highestBid, setHighestBid] = useState<number | null>(null);
+
+  // TODO add dashboard cards: earnings, posted auctions, currently bidding, currently winning
+  // TODO add toast notifications for when auction is created, deleted, updated
+  // TODO add toast notifications for when user details are updated
+  // TODO add a notifications container that shows bid status updates and auction expired notifications
+
+  // TODO responsive design: you set lg breakpoints first 
 
   const user = userStorage.getUser();
 
@@ -31,7 +39,7 @@ const All = () => {
 
   let auctionIdsUserBiddedOn: string[] = [];
 
-  const {bids} = useFetchBidsByBidderId(currentUserId);
+  const { bids } = useFetchBidsByBidderId(currentUserId);
   if (bids) {
     const auctionIds = bids?.map((bid) => bid.auction_item.id);
 
@@ -119,7 +127,7 @@ const All = () => {
   }, [bids]);
 
   return (
-    <div className="px-6">
+    <DashboardLayout>
       {isLoading ? (
         <Loading></Loading>
       ) : (
@@ -133,7 +141,7 @@ const All = () => {
           {auctions.length > 0 ? renderAuctions(() => true) : <NoAuctions />}
         </>
       )}
-    </div>
+    </DashboardLayout>
   );
 };
 
