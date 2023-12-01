@@ -38,7 +38,7 @@ const Won = () => {
       <div className="flex flex-wrap justify-start gap-5 w-screen mb-5">
         {auctions
           .map((auction: AuctionType, index: number) => (
-            <div key={index}>
+            <div key={index} className="w-full lg:w-fit">
               <AuctionCard
                 refetchAuctions={refetch}
                 activeTopTab={2}

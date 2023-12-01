@@ -143,10 +143,10 @@ const AuctionDetails: React.FC<Props> = () => {
   }, [bidsByBidderId, auctionDone, auction?.id, bidStatus]);
 
   useEffect(() => {
-    if (user && auction && highestBid && auctionBids) {
+    if (user && auction) {
       setIsLoading(false);
     }
-  }, [user, auction, auctionBids, highestBid]);
+  }, [user, auction]);
 
   // TODO display highest bid as a default value in the input field
 
@@ -172,17 +172,17 @@ const AuctionDetails: React.FC<Props> = () => {
         {isLoading ? (
           <Loading></Loading>
         ) : (
-          <div className="flex gap-4">
-            <div className="rounded-2xl w-1/2">
+          <div className="flex lg:flex-row flex-col gap-4 w-full">
+            <div className="rounded-2xl lg:w-1/2 w-full">
               <Image
                 src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${auction?.image}`}
                 alt={auction?.title}
                 height={1000}
                 width={1000}
-                className="rounded-2xl object-cover w-full"
+                className="rounded-2xl object-cover"
               />
             </div>
-            <div className="flex flex-col w-1/2 gap-4">
+            <div className="flex flex-col lg:w-1/2 gap-4">
               <div className="flex flex-col bg-white w-full rounded-2xl p-4 gap-4">
                 <div className="flex justify-between items-center">
                   <div
@@ -303,7 +303,7 @@ const AuctionDetails: React.FC<Props> = () => {
                     ) : (
                       <div className="flex flex-col justify-center items-center">
                         <div className="font-bold text-lg">No bids? yet!</div>
-                        <div className="font-light text-gray-500">
+                        <div className="font-light text-gray-500 text-center">
                           Place your bid to have a chance to get this item.
                         </div>
                       </div>

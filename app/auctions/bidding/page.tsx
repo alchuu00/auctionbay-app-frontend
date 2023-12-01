@@ -82,7 +82,7 @@ const Bidding = () => {
             }
           })
           .map((auction: AuctionType, index: number) => (
-            <div key={index}>
+            <div key={index} className="w-full lg:w-fit">
               <AuctionCard
                 refetchAuctions={refetch}
                 activeTopTab={2}

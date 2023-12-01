@@ -55,7 +55,7 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
   });
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-2 w-[500px]">
+    <form onSubmit={onSubmit} className="flex flex-col gap-2 lg:w-[500px]">
       <Controller
         name="password"
         control={control}

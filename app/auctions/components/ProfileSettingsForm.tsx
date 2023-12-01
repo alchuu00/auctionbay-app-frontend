@@ -117,7 +117,7 @@ const ProfileSettingsForm: FC<Props> = ({
   return (
     <div>
       <div className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center">
-        <div className="mb-4 bg-white flex flex-col p-6 text-md gap-4 rounded-3xl">
+        <div className="mb-4 bg-white flex flex-col p-6 text-md gap-4 rounded-3xl w-3/4">
           {profileSettingsForm && (
             <>
               {isPasswordChangeForm && (
@@ -140,7 +140,7 @@ const ProfileSettingsForm: FC<Props> = ({
             <>
               <form
                 onSubmit={onSubmit}
-                className="flex flex-col gap-2 w-[500px]">
+                className="flex flex-col gap-2 lg:w-[500px]">
                 <div className="rounded-2xl flex flex-col justify-center items-center relative gap-4">
                   {imagePreview ? (
                     <>
@@ -214,7 +214,7 @@ const ProfileSettingsForm: FC<Props> = ({
             <>
               <form
                 onSubmit={onSubmit}
-                className="flex flex-col gap-2 w-[500px]">
+                className="flex flex-col gap-2 lg:w-[500px]">
                 <div className="flex gap-3">
                   <Controller
                     name="first_name"

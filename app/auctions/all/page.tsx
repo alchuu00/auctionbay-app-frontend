@@ -65,7 +65,7 @@ const All = () => {
   }, [activeTab, activeTopTab]);
 
   const renderAuctions = (filterFunc: (auction: AuctionType) => boolean) => (
-    <div className="w-full flex justify-start items-center">
+    <div className="w-full flex justify-center items-center">
       <div className="flex flex-wrap justify-start gap-5 w-screen mb-5">
         {auctions
           .filter(filterFunc)
@@ -90,7 +90,7 @@ const All = () => {
             }
           })
           .map((auction: AuctionType, index: number) => (
-            <div key={index}>
+            <div key={index} className="w-full lg:w-fit">
               <AuctionCard
                 refetchAuctions={refetch}
                 activeTopTab={1}

@@ -112,7 +112,7 @@ const AuctionCard: FC<Props> = ({
 
   return (
     <div
-      className="flex flex-col justify-between bg-white w-56 h-72 rounded-2xl p-3 font-light gap-1">
+      className="flex flex-col justify-between bg-white lg:w-56 w-full h-72 rounded-2xl p-3 font-light gap-1">
       <Link href={auctionInProgress ? `/auctions/${auction.id}` : ""}>
         <div onClick={onClick}>
           <div className="flex justify-between text-xs">

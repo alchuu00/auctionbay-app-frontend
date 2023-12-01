@@ -42,11 +42,11 @@ const Topbar: FC<Props> = ({
   const router = useRouter();
 
   return (
-    <div className="flex flex-col pt-8">
-      <div className="flex items-center">
-        <div className="flex justify-between items-center w-screen">
+    <div className="flex flex-col pt-8 w-full">
+      <div className="flex justify-between items-center w-full">
+        <div className="flex justify-between items-center w-full">
           <div className="flex gap-6">
-            <Logo />
+          {false && <Logo/>}
             <div className="flex gap-1 bg-white rounded-full p-1">
               <div
                 className={`flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
@@ -96,14 +96,14 @@ const Topbar: FC<Props> = ({
       {!showAuctionDetails && (
         <div className="flex flex-col py-4 gap-4 w-full mt-4">
           {activeTopTab === 1 && (
-            <div className="font-bold text-4xl">Auctions</div>
+            <div className="font-bold lg:text-4xl text-3xl">Auctions</div>
           )}
           {activeTopTab === 2 && (
             <div>
-              <h1 className="font-bold text-4xl">
+              <h1 className="font-bold lg:text-4xl text-3xl">
                 Hello {user?.user.first_name} {user?.user.last_name} !
               </h1>
-              <div className="w-full flex flex-col justify-center items-center">
+              <div className="w-full flex flex-col justify-center items-center md:mt-2">
                 <div className="w-fit flex justify-center items-center gap-2 p-1 rounded-2xl bg-gray-blue">
                   <Tab
                     active={activeTab === 0}

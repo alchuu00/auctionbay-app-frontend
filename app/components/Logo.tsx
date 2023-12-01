@@ -7,7 +7,7 @@ const Logo: FC = () => {
   const user = userStorage.getUser();
 
   return (
-    <div className="hidden lg:block">
+    <div>
       <Link href={user ? "/auctions/all" : "/"}>
         <Image
           src="/logo.png"
