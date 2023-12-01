@@ -41,7 +41,7 @@ const LoginForm = () => {
     }
   });
   return (
-    <div className="flex flex-col justify-between items-center h-screen py-10 bg-white w-1/3 text-md">
+    <div className="flex flex-col justify-between items-center h-screen py-10 bg-white lg:w-1/3 w-full text-md">
       <Logo />
       <div className="text-center">
         <h1 className="font-bold text-4xl">Welcome back!</h1>

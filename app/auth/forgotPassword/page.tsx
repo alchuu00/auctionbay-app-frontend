@@ -24,7 +24,7 @@ const ForgotPassword = () => {
   return (
     <AuthLayout>
       <AuthHero />
-      <div className="flex flex-col justify-between items-center h-screen py-10 bg-white w-1/3">
+      <div className="flex flex-col justify-between items-center h-screen py-10 bg-white lg:w-1/3 w-full">
         <Logo />
         <div className="text-center">
           <h1 className="font-bold text-4xl mb-2">Forgot password?</h1>

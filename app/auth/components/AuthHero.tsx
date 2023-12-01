@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const AuthHero = () => {
   return (
-      <div className="flex justify-center items-center w-2/3">
+      <div className="lg:flex justify-center items-center lg:w-2/3 hidden">
         <Image
           src="/registerImg.png"
           alt="Hero Image"
