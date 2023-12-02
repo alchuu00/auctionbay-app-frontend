@@ -1,4 +1,6 @@
-export const calculateEarnings = (wonAuctions) => {
+import { AuctionType } from "../models/auction";
+
+export const calculateEarnings = (wonAuctions: AuctionType[]) => {
   let totalEarnings = 0;
   if (wonAuctions.length > 0) {
     wonAuctions.forEach((auction) => {
