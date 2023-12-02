@@ -4,24 +4,23 @@ import { useRouter } from "next/navigation";
 import { StatusCode } from "../constants/errorConstants";
 import { AuctionType } from "../models/auction";
 
-export const useFetchAuctionByAuctionItemId = (
-  auctionItemId: string
-): { auction: AuctionType; refetch: () => void } => {
+export const useFetchAuctionBiddedOnByUserId = (
+  userId: string
+): { auctions: AuctionType[]; refetch: () => void } => {
 
-  const [auction, setAuction] = useState<AuctionType>({} as AuctionType);
+  const [auctions, setAustions] = useState<AuctionType[]>([]);
 
   const router = useRouter();
 
-  const fetchAuction = async () => {
+  const fetchAuctions = async () => {
     try {
-      const auctionData = await API.fetchAuctionById(auctionItemId);
+      const auctionData = await API.fetchAuctionBiddedOnByUserId(userId);
       if (auctionData.data?.statusCode === StatusCode.FORBIDDEN) {
         router.push("/");
       } else if (auctionData.data?.statusCode === StatusCode.UNAUTHORIZED) {
         router.push("/");
       } else {
-        console.log("auctionData: ", auctionData);
-        setAuction(auctionData.data);
+        setAustions(auctionData.data);
       }
     } catch (error) {
       console.error("Error fetching bids data: ", error);
@@ -29,8 +28,8 @@ export const useFetchAuctionByAuctionItemId = (
   };
 
   useEffect(() => {
-    fetchAuction();
-  }, [auctionItemId]);
+    fetchAuctions();
+  }, [userId]);
 
-  return { auction, refetch: fetchAuction };
+  return { auctions, refetch: fetchAuctions };
 };

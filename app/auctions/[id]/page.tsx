@@ -43,6 +43,7 @@ const AuctionDetails: React.FC<Props> = () => {
   const auctionId = params.id;
 
   const { auction } = useFetchAuctionByAuctionItemId(auctionId);
+  console.log(auction);
 
   const user = userStorage.getUser();
 

@@ -10,6 +10,11 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Logo from "@/app/components/Logo";
 import { userStorage } from "@/src/stores/userStorage";
+import { useFetchAuctionsByUserId } from "@/src/hooks/useFetchAuctionsByUserId";
+import { useFetchAuctionBiddedOnByUserId } from "@/src/hooks/useFetchAuctionsBiddedonByUserId";
+import { useFetchWinning } from "@/src/hooks/useFetchWinning";
+import { useFetchWon } from "@/src/hooks/useFetchWon";
+import { calculateEarnings } from "@/src/utils/calculateEarnings";
 
 interface Props {
   refetchAuctions: () => void;
@@ -41,12 +46,24 @@ const Topbar: FC<Props> = ({
 
   const router = useRouter();
 
+  const { auctions } = useFetchAuctionsByUserId(user?.user.id);
+
+  const { auctions: biddingOn } = useFetchAuctionBiddedOnByUserId(
+    user?.user.id
+  );
+
+  const { auctions: winningAuctions } = useFetchWinning();
+
+  const { auctions: wonAuctions } = useFetchWon();
+
+  const earnings = calculateEarnings(wonAuctions);
+
   return (
     <div className="flex flex-col pt-8 w-full">
       <div className="flex justify-between items-center w-full">
         <div className="flex justify-between items-center w-full">
           <div className="flex gap-6">
-          {false && <Logo/>}
+            {false && <Logo />}
             <div className="flex gap-1 bg-white rounded-full p-1">
               <div
                 className={`flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
@@ -94,16 +111,46 @@ const Topbar: FC<Props> = ({
         </div>
       </div>
       {!showAuctionDetails && (
-        <div className="flex flex-col py-4 gap-4 w-full mt-4">
+        <div className="flex flex-col py-4 gap-4 mt-4">
           {activeTopTab === 1 && (
             <div className="font-bold lg:text-4xl text-3xl">Auctions</div>
           )}
           {activeTopTab === 2 && (
             <div>
-              <h1 className="font-bold lg:text-4xl text-3xl">
+              <h1 className="font-bold lg:text-4xl text-3xl mb-4">
                 Hello {user?.user.first_name} {user?.user.last_name} !
               </h1>
-              <div className="w-full flex flex-col justify-center items-center md:mt-2">
+              <div className="lg:flex grid grid-cols-2 gap-4">
+                <div className="flex flex-col justify-between bg-dark-gray gap-4 p-4 text-fluoro-yellow rounded-xl w-full h-40">
+                  <div>
+                    <h1 className="text-xl font-bold">Earnings</h1>
+                    <p className="text-xs font-light">All-time</p>
+                  </div>
+                  <div className="lg:text-5xl text-4xl font-bold">{earnings} €</div>
+                </div>
+                <div className="flex flex-col justify-between bg-white gap-4 p-4 rounded-xl w-full h-40">
+                  <div>
+                    <h1 className="text-xl font-bold">Posted auctions</h1>
+                    <p className="text-xs font-light">All time</p>
+                  </div>
+                  <div className="lg:text-5xl text-4xl font-bold">{auctions.length}</div>
+                </div>
+                <div className="flex flex-col justify-between bg-white gap-4 p-4 rounded-xl w-full h-40">
+                  <div>
+                    <h1 className="text-xl font-bold">Currently bidding</h1>
+                  </div>
+                  <div className="lg:text-5xl text-4xl font-bold">{biddingOn.length}</div>
+                </div>
+                <div className="flex flex-col justify-between bg-white gap-4 p-4 rounded-xl w-full h-40">
+                  <div>
+                    <h1 className="text-xl font-bold">Currently winning</h1>
+                  </div>
+                  <div className="lg:text-5xl text-4xl font-bold text-fluoro-green">
+                    {winningAuctions.length}
+                  </div>
+                </div>
+              </div>
+              <div className="w-full flex flex-col justify-center items-center md:mt-4">
                 <div className="w-fit flex justify-center items-center gap-2 p-1 rounded-2xl bg-gray-blue">
                   <Tab
                     active={activeTab === 0}

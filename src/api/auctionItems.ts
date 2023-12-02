@@ -9,8 +9,20 @@ export const fetchAuctions = async (pageNumber: number) =>
     `${apiRoutes.AUCTIONS_PREFIX}?page=${pageNumber}`
   );
 
+  export const fetchAuctionsByUserId = async (userId: string) =>
+  apiRequest<string, AuctionType[]>(
+    "get",
+    `${apiRoutes.AUCTIONS_PREFIX}/${userId}`
+  );
+
+  export const fetchAuctionBiddedOnByUserId = async (userId: string) =>
+  apiRequest<string, AuctionType[]>("get", `${apiRoutes.AUCTIONS_PREFIX}/bidded/${userId}`);
+
 export const fetchWon = async (userId: string) =>
   apiRequest<string, AuctionType[]>("get", `${apiRoutes.AUCTIONS_PREFIX}/won/${userId}`);
+
+export const fetchWinning = async (userId: string) =>
+  apiRequest<string, AuctionType[]>("get", `${apiRoutes.AUCTIONS_PREFIX}/winning/${userId}`);
 
 export const createAuction = async (data: CreateUpdateAuctionFields) =>
   apiRequest<CreateUpdateAuctionFields, AuctionType>(
@@ -43,4 +55,4 @@ export const deleteAuction = async (id: string) =>
   );
 
 export const fetchAuctionById = async (id: string) =>
-  apiRequest<string, AuctionType>("get", `${apiRoutes.AUCTIONS_PREFIX}/${id}`);
+  apiRequest<string, AuctionType>("get", `${apiRoutes.AUCTIONS_PREFIX}/auction/${id}`);

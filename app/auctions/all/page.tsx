@@ -19,7 +19,6 @@ const All = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [highestBid, setHighestBid] = useState<number | null>(null);
 
-  // TODO add dashboard cards: earnings, posted auctions, currently bidding, currently winning
   // TODO add toast notifications for when auction is created, deleted, updated
   // TODO add toast notifications for when user details are updated
   // TODO add a notifications container that shows bid status updates and auction expired notifications
