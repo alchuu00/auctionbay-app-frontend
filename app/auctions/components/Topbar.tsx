@@ -62,8 +62,8 @@ const Topbar: FC<Props> = ({
     <div className="flex flex-col pt-8 w-full">
       <div className="flex justify-between items-center w-full">
         <div className="flex justify-between items-center w-full">
-          <div className="flex gap-6">
-            {false && <Logo />}
+          <div className="flex lg:gap-6 gap-2">
+            <Logo />
             <div className="flex gap-1 bg-white rounded-full p-1">
               <div
                 className={`flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
@@ -71,7 +71,7 @@ const Topbar: FC<Props> = ({
                 }`}
                 onClick={() => router.push("/auctions/all")}>
                 <HomeIcon className="h-5 w-5" />
-                <p>Auctions</p>
+                <p className="hidden lg:block">Auctions</p>
               </div>
               <div
                 className={`flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
@@ -79,7 +79,7 @@ const Topbar: FC<Props> = ({
                 }`}
                 onClick={() => router.push("/auctions/my")}>
                 <UserIcon className="h-5 w-5" />
-                <p>Profile</p>
+                <p className="hidden lg:block">Profile</p>
               </div>
             </div>
           </div>
