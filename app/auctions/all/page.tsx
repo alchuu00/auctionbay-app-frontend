@@ -23,8 +23,6 @@ const All = () => {
   // TODO add toast notifications for when user details are updated
   // TODO add a notifications container that shows bid status updates and auction expired notifications
 
-  // TODO responsive design: you set lg breakpoints first 
-
   const user = userStorage.getUser();
 
   const currentUserId = user?.user.id;

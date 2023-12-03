@@ -15,6 +15,8 @@ import { useFetchAuctionBiddedOnByUserId } from "@/src/hooks/useFetchAuctionsBid
 import { useFetchWinning } from "@/src/hooks/useFetchWinning";
 import { useFetchWon } from "@/src/hooks/useFetchWon";
 import { calculateEarnings } from "@/src/utils/calculateEarnings";
+import BellIcon from "./BellIcon";
+import NotificationsPopup from "./NotificationsPopup";
 
 interface Props {
   refetchAuctions: () => void;
@@ -33,6 +35,7 @@ const Topbar: FC<Props> = ({
     useState<boolean>(false);
   const [showProfileSettings, setShowProfileSettings] =
     useState<boolean>(false);
+  const [showNotifications, setShowNotifications] = useState<boolean>(false);
 
   const handleAddAuctionsClick = () => {
     setShowAddAuctionsForm(true);
@@ -40,6 +43,15 @@ const Topbar: FC<Props> = ({
 
   const handleUpdateProfile = () => {
     setShowProfileSettings(true);
+  };
+
+  const handleShowNotifications = () => {
+    if (showNotifications) {
+      setShowNotifications(false);
+      return;
+    } else {
+      setShowNotifications(true);
+    }
   };
 
   const user = userStorage.getUser();
@@ -86,6 +98,11 @@ const Topbar: FC<Props> = ({
 
           <div className="flex gap-1 bg-white rounded-full justify-center items-center p-1">
             <div
+              className="p-3 rounded-full bg-gray-blue cursor-pointer"
+              onClick={handleShowNotifications}>
+              <BellIcon />
+            </div>
+            <div
               className="p-3 rounded-full bg-fluoro-yellow cursor-pointer"
               onClick={handleAddAuctionsClick}>
               <PlusIcon />
@@ -126,20 +143,26 @@ const Topbar: FC<Props> = ({
                     <h1 className="text-xl font-bold">Earnings</h1>
                     <p className="text-xs font-light">All-time</p>
                   </div>
-                  <div className="lg:text-5xl text-4xl font-bold">{earnings} €</div>
+                  <div className="lg:text-5xl text-4xl font-bold">
+                    {earnings} €
+                  </div>
                 </div>
                 <div className="flex flex-col justify-between bg-white gap-4 p-4 rounded-xl w-full h-40">
                   <div>
                     <h1 className="text-xl font-bold">Posted auctions</h1>
                     <p className="text-xs font-light">All time</p>
                   </div>
-                  <div className="lg:text-5xl text-4xl font-bold">{auctions.length}</div>
+                  <div className="lg:text-5xl text-4xl font-bold">
+                    {auctions.length}
+                  </div>
                 </div>
                 <div className="flex flex-col justify-between bg-white gap-4 p-4 rounded-xl w-full h-40">
                   <div>
                     <h1 className="text-xl font-bold">Currently bidding</h1>
                   </div>
-                  <div className="lg:text-5xl text-4xl font-bold">{biddingOn.length}</div>
+                  <div className="lg:text-5xl text-4xl font-bold">
+                    {biddingOn.length}
+                  </div>
                 </div>
                 <div className="flex flex-col justify-between bg-white gap-4 p-4 rounded-xl w-full h-40">
                   <div>
@@ -187,6 +210,8 @@ const Topbar: FC<Props> = ({
           setShowProfileSettings={setShowProfileSettings}
         />
       )}
+
+      {showNotifications && <NotificationsPopup />}
     </div>
   );
 };
