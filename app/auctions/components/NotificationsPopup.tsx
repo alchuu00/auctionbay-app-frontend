@@ -30,6 +30,16 @@ const NotificationsPopup: FC<Props> = ({ setShowNotifications }) => {
     );
   }, [clearedNotifications]);
 
+  useEffect(() => {
+    // When the component is mounted, add a rule to the body to hide the scrollbar
+    document.body.style.overflow = "hidden";
+
+    // When the component is unmounted, remove the rule from the body to show the scrollbar
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
   return (
     <div
       onClick={(event) => {
@@ -38,7 +48,7 @@ const NotificationsPopup: FC<Props> = ({ setShowNotifications }) => {
         }
       }}
       className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center h-full">
-      <div className="flex flex-col absolute bg-white h-fit w-1/3 rounded-2xl p-4">
+      <div className="flex flex-col absolute bg-white h-fit lg:w-1/3 w-fit rounded-2xl p-4">
         <div className="flex justify-between items-center mb-4">
           <div className="text-xl font-bold">Notifications</div>
           <div
