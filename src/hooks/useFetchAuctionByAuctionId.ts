@@ -20,7 +20,6 @@ export const useFetchAuctionByAuctionItemId = (
       } else if (auctionData.data?.statusCode === StatusCode.UNAUTHORIZED) {
         router.push("/");
       } else {
-        console.log("auctionData: ", auctionData);
         setAuction(auctionData.data);
       }
     } catch (error) {
