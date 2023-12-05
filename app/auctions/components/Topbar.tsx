@@ -18,7 +18,6 @@ import { calculateEarnings } from "@/src/utils/calculateEarnings";
 import BellIcon from "./BellIcon";
 import NotificationsPopup from "./NotificationsPopup";
 import { useFetchNotifications } from "@/src/hooks/useFetchNotifications";
-import { set } from "react-hook-form";
 import { NotificationType } from "@/src/models/notification";
 
 interface Props {
@@ -80,8 +79,6 @@ const Topbar: FC<Props> = ({
           !clearedNotificationsArray.includes(notification.id)
       )
     );
-
-    console.log("notificationsToShow", notificationsToShow);
   }, [fetchedNotifications.notifications, showNotifications]);
 
   const { auctions: biddingOn } = useFetchAuctionBiddedOnByUserId(
@@ -188,7 +185,7 @@ const Topbar: FC<Props> = ({
                     <h1 className="text-xl font-bold">Currently bidding</h1>
                   </div>
                   <div className="lg:text-5xl text-4xl font-bold">
-                    {biddingOn.length}
+                  {biddingOn.filter((auction) => new Date(auction.end_date) > new Date()).length}
                   </div>
                 </div>
                 <div className="flex flex-col justify-between bg-white gap-4 p-4 rounded-xl w-full h-40">
