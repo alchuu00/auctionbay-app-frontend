@@ -238,7 +238,7 @@ const Topbar: FC<Props> = ({
         />
       )}
 
-      {showNotifications && <NotificationsPopup />}
+      {showNotifications && <NotificationsPopup setShowNotifications={setShowNotifications}/>}
     </div>
   );
 };
