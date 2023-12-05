@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ToastWarning from "@/app/components/ToastWarning";
 import { useParams, useRouter } from "next/navigation";
 import * as API from "@/src/api/api";
 import { Controller } from "react-hook-form";
@@ -13,6 +12,7 @@ import Link from "next/link";
 import { UpdatePasswordFields } from "@/src/hooks/useUpdatePassword";
 import { StatusCode } from "@/src/constants/errorConstants";
 import { ResetPasswordFields, useResetPasswordForm } from "@/src/hooks/useResetPassword";
+import { toast } from "react-toastify";
 
 const DefaultResetPassword: React.FC = () => {
   const [apiError, setApiError] = useState("");
@@ -39,6 +39,14 @@ const DefaultResetPassword: React.FC = () => {
 
   const { handleSubmit, errors, control } = useResetPasswordForm();
 
+  useEffect(() => { 
+    const firstError = Object.values(errors)[0];
+
+    if (firstError?.message) {
+      toast.error(firstError.message);
+    }
+}, [errors]);
+
 
   const handleResetPassword = async (data: ResetPasswordFields) => {
     const response = await API.resetUserPassword(
@@ -46,9 +54,9 @@ const DefaultResetPassword: React.FC = () => {
       user?.data.id as string, token as string
     );
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else {
       router.push("/auth/login");
     }
@@ -142,7 +150,6 @@ const DefaultResetPassword: React.FC = () => {
           </form>
         </div>
       </div>
-      {apiError && <ToastWarning errorMessage={apiError} />}
     </AuthLayout>
   );
 };

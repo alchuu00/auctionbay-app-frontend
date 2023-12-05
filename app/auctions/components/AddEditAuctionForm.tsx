@@ -2,7 +2,6 @@ import React, { FC, useState, ChangeEvent, useEffect } from "react";
 import { Controller } from "react-hook-form";
 import * as API from "../../../src/api/api";
 import { useRouter } from "next/navigation";
-import ToastWarning from "../../components/ToastWarning";
 import Image from "next/image";
 import TrashIcon from "@heroicons/react/outline/TrashIcon";
 import { StatusCode } from "@/src/constants/errorConstants";
@@ -11,6 +10,8 @@ import {
   CreateUpdateAuctionFields,
 } from "@/src/hooks/useCreateUpdateAuction";
 import { AuctionType } from "@/src/models/auction";
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
 
 interface Props {
   refetchAuctions: () => void;
@@ -28,33 +29,19 @@ const CreateUpdateAuctionForm: FC<Props> = ({
   const { handleSubmit, errors, control } = useCreateUpdateAuctionForm({
     defaultValues,
   });
-  const [apiError, setApiError] = useState("");
-  const [showInputErrorMessage, setShowInputErrorMessage] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const errorFields = [
-    { field: "title", message: errors.title?.message },
-    { field: "description", message: errors.description?.message },
-    { field: "start_price", message: errors.start_price?.message },
-    { field: "end_date", message: errors.end_date?.message },
-    { field: "image", message: fileError ? "Please select an image" : "" },
-  ];
+useEffect(() => { 
+    const firstError = Object.values(errors)[0];
+
+    if (firstError?.message) {
+      toast.error(firstError.message);
+    }
+}, [errors]);
 
   const router = useRouter();
-
-  const firstError = errorFields.find((errorField) => errorField.message);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setShowInputErrorMessage(false);
-    }, 2000); // Set timeout to 2 seconds
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [showInputErrorMessage]);
 
   const onSubmit = handleSubmit(async (data: CreateUpdateAuctionFields) => {
     if (!defaultValues) await handleAdd(data);
@@ -67,9 +54,9 @@ const CreateUpdateAuctionForm: FC<Props> = ({
     if (!file) return null;
     const response = await API.createAuction(data);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else {
       // Upload auction image
       const formData = new FormData();
@@ -79,13 +66,13 @@ const CreateUpdateAuctionForm: FC<Props> = ({
         response.data.id
       );
       if (fileResponse.data?.statusCode === StatusCode.BAD_REQUEST) {
-        setApiError(fileResponse.data.message);
+        toast.error(fileResponse.data.message);
       } else if (
         fileResponse.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR
       ) {
-        setApiError(fileResponse.data.message);
+        toast.error(fileResponse.data.message);
       } else {
-        router.push(`/auctions/my`);
+        toast.success("Auction item created successfully");
       }
     }
   };
@@ -93,10 +80,11 @@ const CreateUpdateAuctionForm: FC<Props> = ({
   const handleUpdate = async (data: CreateUpdateAuctionFields) => {
     const response = await API.updateAuction(data, defaultValues?.id as string);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else {
+      toast.success("Auction item updated successfully");
       if (!file) {
         router.push(`/auctions/my`);
         return;
@@ -109,13 +97,11 @@ const CreateUpdateAuctionForm: FC<Props> = ({
         response.data.id
       );
       if (fileResponse.data?.statusCode === StatusCode.BAD_REQUEST) {
-        setApiError(fileResponse.data.message);
+        toast.error(fileResponse.data.message);
       } else if (
         fileResponse.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR
       ) {
-        setApiError(fileResponse.data.message);
-      } else {
-        router.push(`/auctions/my`);
+        toast.error(fileResponse.data.message);
       }
     }
   };
@@ -322,23 +308,19 @@ const CreateUpdateAuctionForm: FC<Props> = ({
             <button
               className="w-100 px-3 py-2 rounded-2xl bg-dark-gray text-white"
               type="submit"
-              onMouseUp={defaultValues ? undefined : handleFileError}
-              onClick={() => setShowInputErrorMessage(true)}>
+              onMouseUp={defaultValues ? undefined : handleFileError}>
               Edit auction
             </button>
           ) : (
             <button
               className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
               type="submit"
-              onMouseUp={defaultValues ? undefined : handleFileError}
-              onClick={() => setShowInputErrorMessage(true)}>
+              onMouseUp={defaultValues ? undefined : handleFileError}>
               Start auction
             </button>
           )}
         </div>
       </form>
-      {<ToastWarning errorMessage={apiError} />}
-      {<ToastWarning errorMessage={firstError?.message} />}
     </div>
   );
 };

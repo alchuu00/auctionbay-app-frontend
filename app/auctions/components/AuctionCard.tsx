@@ -11,6 +11,7 @@ import { useFetchBidsByBidderId } from "../../../src/hooks/useFetchBidsByBidderI
 import Link from "next/link";
 import { AuctionType } from "@/src/models/auction";
 import { userStorage } from "@/src/stores/userStorage";
+import { toast } from "react-toastify";
 
 interface Props {
   refetchAuctions: any;
@@ -99,6 +100,7 @@ const AuctionCard: FC<Props> = ({
   const handleDeleteAuction = async (id: string) => {
     try {
       await API.deleteAuction(id);
+      toast.success("Auction item deleted successfully");
       refetchAuctions();
     } catch (error) {
       console.error("Failed to delete auction:", error);

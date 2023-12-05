@@ -1,15 +1,16 @@
+import { NotificationType } from "@/src/models/notification";
 import React, { useEffect, useRef, useState } from "react";
 
 interface Props {
-  errorMessage: string | undefined;
+  notifyMessage: NotificationType;
 }
 
-const ToastWarning = ({ errorMessage }: Props) => {
+const ToastNotify = ({ notifyMessage }: Props) => {
   const [showToast, setShowToast] = useState(false);
   const timeoutId = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (errorMessage) {
+    if (notifyMessage) {
       setShowToast(true);
       timeoutId.current = setTimeout(() => {
         setShowToast(false);
@@ -21,7 +22,7 @@ const ToastWarning = ({ errorMessage }: Props) => {
         clearTimeout(timeoutId.current);
       }
     };
-  }, [errorMessage]);
+  }, [notifyMessage]);
 
   const handleCloseToast = () => {
     setShowToast(false);
@@ -30,38 +31,40 @@ const ToastWarning = ({ errorMessage }: Props) => {
   return (
     showToast && (
       <div
-        id="toast-warning"
+        id="toast-success"
         className="flex fixed bottom-5 left-5 items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
-        role="alert"
-      >
-        <div className="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-orange-500 bg-orange-100 rounded-lg dark:bg-orange-700 dark-text-orange-200">
+        role="alert">
+        <div className="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-yellow-500 bg-orange-100 rounded-lg dark:bg-yellow-700 dark:text-orange-200">
           <svg
-            className="w-5 h-5"
-            aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z" />
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            className="w-6 h-6">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5"
+            />
           </svg>
+
           <span className="sr-only">Warning icon</span>
         </div>
-        <div className="ml-3 text-sm font-normal">{errorMessage}</div>
+        <div className="ml-3 text-sm font-normal">{notifyMessage.message}</div>
         <button
           onClick={handleCloseToast}
           type="button"
           className="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus-ring-2 focus-ring-gray-300 p-1.5 hover-bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark-text-gray-500 dark-hover-text-white dark-bg-gray-800 dark-hover-bg-gray-700"
           data-dismiss-target="#toast-warning"
-          aria-label="Close"
-        >
+          aria-label="Close">
           <span className="sr-only">Close</span>
           <svg
             className="w-3 h-3"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
-            viewBox="0 0 14 14"
-          >
+            viewBox="0 0 14 14">
             <path
               stroke="currentColor"
               strokeLinecap="round"
@@ -76,4 +79,4 @@ const ToastWarning = ({ errorMessage }: Props) => {
   );
 };
 
-export default ToastWarning;
+export default ToastNotify;

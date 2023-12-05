@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+'use client';
+
+import React, { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import {
   UpdatePasswordFields,
@@ -6,16 +8,15 @@ import {
 } from "../../../src/hooks/useUpdatePassword";
 import EyeIcon from "@heroicons/react/outline/EyeIcon";
 import * as API from "../../../src/api/api";
-import ToastWarning from "../../components/ToastWarning";
 import { StatusCode } from "@/src/constants/errorConstants";
 import { userStorage } from "@/src/stores/userStorage";
+import { toast } from "react-toastify";
 
 interface Props {
   toggleForm: () => void;
 }
 
 const UpdatePasswordForm = ({ toggleForm }: Props) => {
-  const [apiError, setApiError] = useState("");
   const [toggleHiddenCurrent, setToggleHiddenCurrent] = useState(true);
   const [toggleHiddenNew, setToggleHiddenNew] = useState(true);
   const [toggleHiddenConfirm, setToggleHiddenConfirm] = useState(true);
@@ -34,7 +35,15 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
     setToggleHiddenConfirm(!toggleHiddenConfirm);
   };
 
-  const { handleSubmit, errors, control, isValid } = usePasswordForm();
+  const { handleSubmit, errors, control } = usePasswordForm();
+
+  useEffect(() => { 
+    const firstError = Object.values(errors)[0];
+
+    if (firstError?.message) {
+      toast.error(firstError.message);
+    }
+}, [errors]);
 
   const handleUpdatePassword = async (data: UpdatePasswordFields) => {
     const response = await API.updateUserPassword(
@@ -42,9 +51,9 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
       user?.user.id as string
     );
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else {
       toggleForm();
     }
@@ -147,7 +156,6 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
           Save changes
         </button>
       </div>
-      {apiError && <ToastWarning errorMessage={apiError} />}
     </form>
   );
 };

@@ -2,7 +2,6 @@ import React, {
   ChangeEvent,
   FC,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -14,10 +13,10 @@ import {
   useUpdateUserForm,
 } from "../../../src/hooks/useUpdateUser";
 import UpdatePasswordForm from "./UpdatePasswordForm";
-import ToastWarning from "@/app/components/ToastWarning";
 import { StatusCode } from "@/src/constants/errorConstants";
 import { userStorage } from "@/src/stores/userStorage";
 import Image from "next/image";
+import { toast } from "react-toastify";
 
 interface Props {
   profileSettingsForm: boolean;
@@ -28,7 +27,6 @@ const ProfileSettingsForm: FC<Props> = ({
   profileSettingsForm,
   setProfileSettingsForm,
 }) => {
-  const [apiError, setApiError] = useState("");
   const [isPasswordChangeForm, setIsPasswordChangeForm] = useState(false);
   const [isProfilePictureChangeForm, setIsProfilePictureChangeForm] =
     useState(false);
@@ -68,6 +66,7 @@ const ProfileSettingsForm: FC<Props> = ({
         let userData = userStorage.getUser()
         userData.avatar = formData;
         userStorage.setUser(userData);
+        toast.success("User avatar updated successfully");
       }
     }
   };
@@ -91,9 +90,9 @@ const ProfileSettingsForm: FC<Props> = ({
 
     const response = await API.updateUser(data, user?.user.id as string);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else {
       const newUserData = {
         ...user,
@@ -102,6 +101,7 @@ const ProfileSettingsForm: FC<Props> = ({
         },
       };
       userStorage.setUser(newUserData);
+      toast.success("User details updated successfully");
       setProfileSettingsForm(false);
     }
   };
@@ -110,7 +110,7 @@ const ProfileSettingsForm: FC<Props> = ({
     try {
       await handleUpdate(data);
     } catch (error) {
-      console.error("Error in handleUpdate:", error);
+      console.log(error);
     }
   });
 
@@ -300,7 +300,6 @@ const ProfileSettingsForm: FC<Props> = ({
           )}
         </div>
       </div>
-      {apiError && <ToastWarning errorMessage={apiError} />}
     </div>
   );
 };

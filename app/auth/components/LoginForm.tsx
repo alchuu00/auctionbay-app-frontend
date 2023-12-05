@@ -3,22 +3,27 @@
 import EyeIcon from "@heroicons/react/outline/EyeIcon";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
-import ToastWarning from "../../components/ToastWarning";
 import * as API from "@/src/api/api";
 import Logo from "@/app/components/Logo";
 import { StatusCode } from "@/src/constants/errorConstants";
 import { useLoginForm, LoginUserFields } from "@/src/hooks/useLogin";
 import authStore from "@/src/stores/authStore";
 import { userStorage } from "@/src/stores/userStorage";
+import { toast } from "react-toastify";
 
 const LoginForm = () => {
   const [toggleHidden, setToggleHidden] = useState(true);
+
   const { handleSubmit, errors, control } = useLoginForm();
-  const [apiError, setApiError] = useState("");
-  const [showResponseErrorMessage, setShowResponseErrorMessage] =
-    useState(false);
+
+  useEffect(() => {
+    const firstError = Object.values(errors)[0];
+    if (firstError?.message) {
+      toast.error(firstError.message);
+    }
+  }, [errors]);
 
   const router = useRouter();
 
@@ -29,11 +34,9 @@ const LoginForm = () => {
   const onSubmit = handleSubmit(async (data: LoginUserFields) => {
     const response = await API.login(data);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
-      setShowResponseErrorMessage(true);
+      toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
-      setShowResponseErrorMessage(true);
+      toast.error(response.data.message);
     } else {
       authStore.login(response.data);
       userStorage.setUser(response.data);
@@ -113,13 +116,6 @@ const LoginForm = () => {
           Sign Up
         </Link>
       </div>
-      {(errors.email && (
-        <ToastWarning errorMessage={errors.email?.message} />
-      )) ||
-        (errors.password && (
-          <ToastWarning errorMessage={errors.password?.message} />
-        ))}
-      {apiError && <ToastWarning errorMessage={apiError} />}
     </div>
   );
 };

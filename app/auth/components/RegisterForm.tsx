@@ -10,31 +10,26 @@ import {
   RegisterUserFields,
 } from "../../../src/hooks/useRegister";
 import * as API from "../../../src/api/api";
-import ToastWarning from "../../components/ToastWarning";
 import { StatusCode } from "@/src/constants/errorConstants";
 import Logo from "@/app/components/Logo";
 import authStore from "@/src/stores/authStore";
+import { toast } from "react-toastify";
 
 const RegisterForm = () => {
   const [toggleHiddenPassword, setToggleHiddenPassword] = useState(true);
   const [toggleHiddenConfirmPassword, setToggleHiddenConfirmPassword] =
     useState(true);
+
   const { handleSubmit, errors, control } = useRegisterForm();
-  const [showInputErrorMessage, setShowInputErrorMessage] = useState(false);
-  const [showResponseErrorMessage, setShowResponseErrorMessage] =
-    useState(false);
-  const [apiError, setApiError] = useState("");
+
   const router = useRouter();
 
-  const errorFields = [
-    { field: "first_name", message: errors.first_name?.message },
-    { field: "last_name", message: errors.last_name?.message },
-    { field: "email", message: errors.email?.message },
-    { field: "password", message: errors.password?.message },
-    { field: "confirm_password", message: errors.confirm_password?.message },
-  ];
-
-  const firstError = errorFields.find((errorField) => errorField.message);
+useEffect(() => {
+  const firstError = Object.values(errors)[0];
+  if (firstError?.message) {
+    toast.error(firstError.message);
+  }
+}, [errors]);
 
   const handleToggleHiddenPassword = () => {
     setToggleHiddenPassword(!toggleHiddenPassword);
@@ -48,9 +43,9 @@ const RegisterForm = () => {
     const response = await API.register(data);
 
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else {
       authStore.login(response.data);
       router.push("/auctions/all");
@@ -197,8 +192,6 @@ const RegisterForm = () => {
           Log In
         </Link>
       </div>
-      {firstError && <ToastWarning errorMessage={firstError.message} />}
-      {apiError && <ToastWarning errorMessage={apiError} />}
     </div>
   );
 };

@@ -4,7 +4,6 @@ import ClockIcon from "@heroicons/react/outline/ClockIcon";
 import { useState, useRef, useEffect } from "react";
 import { Controller } from "react-hook-form";
 import Loading from "../components/Loading";
-import ToastWarning from "../../components/ToastWarning";
 import {
   useCreateUpdateBidFields,
   CreateUpdateBidFields,
@@ -22,6 +21,7 @@ import { userStorage } from "@/src/stores/userStorage";
 import Topbar from "../components/Topbar";
 import { useFetchAuctionByAuctionItemId } from "@/src/hooks/useFetchAuctionByAuctionId";
 import { DashboardLayout } from "../DashboardLayout";
+import { toast } from "react-toastify";
 
 interface Props {
   defaultValues: BidType;
@@ -34,7 +34,6 @@ interface RouteParams {
 }
 
 const AuctionDetails: React.FC<Props> = () => {
-  const [apiError, setApiError] = useState("");
   const [bidStatus, setBidStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [highestBid, setHighestBid] = useState<number>();
@@ -85,7 +84,7 @@ const AuctionDetails: React.FC<Props> = () => {
         : auction?.start_price;
 
     if (bidAmount <= highestBid) {
-      setApiError("Your bid must be higher than the current highest bid.");
+      toast.error("Your bid must be higher than the current highest bid.");
       return;
     } else {
       setHighestBid(highestBid);
@@ -93,9 +92,9 @@ const AuctionDetails: React.FC<Props> = () => {
 
     const response = await API.placeBid(auctionItemId, bidderId, bidAmount);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else {
       setBidStatus("Winning");
     }
@@ -333,7 +332,6 @@ const AuctionDetails: React.FC<Props> = () => {
                 )}
               </div>
             </div>
-            {apiError && <ToastWarning errorMessage={apiError} />}
           </div>
         )}
       </div>
