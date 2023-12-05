@@ -62,9 +62,11 @@ const ProfileSettingsForm: FC<Props> = ({
         formData,
         user?.user.id as string
       );
-      if (response.status === 200) {
+      if (response.status >= 200 && response.status <= 300) {
         let userData = userStorage.getUser()
-        userData.avatar = formData;
+        console.log('response', response)
+        console.log('formdata', formData)
+        userData.avatar = response.data.avatar;
         userStorage.setUser(userData);
         toast.success("User avatar updated successfully");
       }
@@ -87,6 +89,12 @@ const ProfileSettingsForm: FC<Props> = ({
   }, []);
 
   const handleUpdate = async (data: UpdateUserFields) => {
+
+    const user = userStorage.getUser()
+    const avatar = user.avatar
+    console.log('user', user)
+
+    data.avatar = avatar
 
     const response = await API.updateUser(data, user?.user.id as string);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {

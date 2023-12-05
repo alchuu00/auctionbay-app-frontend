@@ -7,6 +7,7 @@ export interface UpdateUserFields {
   first_name?: Yup.Maybe<string>;
   last_name?: Yup.Maybe<string>;
   email?: Yup.Maybe<string>;
+  avatar?: Yup.Maybe<string>;
 }
 
 interface Props {
