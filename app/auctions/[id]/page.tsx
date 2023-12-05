@@ -136,7 +136,11 @@ const AuctionDetails: React.FC<Props> = () => {
         setBidStatus("In progress");
       } else {
         setBidStatus(
-          userBidsForThisAuction[userBidsForThisAuction.length - 1].status
+          userBidsForThisAuction.sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+          )[0].status
         );
       }
     }

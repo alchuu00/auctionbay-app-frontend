@@ -12,7 +12,6 @@ import Link from "next/link";
 import { AuctionType } from "@/src/models/auction";
 import { userStorage } from "@/src/stores/userStorage";
 
-
 interface Props {
   refetchAuctions: any;
   activeTopTab: number | null;
@@ -49,13 +48,13 @@ const AuctionCard: FC<Props> = ({
 
   const { bids } = useFetchBidsByAuctionItemId(auction.id);
 
-  const { bids: bidsByBidderId, fetchBids } = useFetchBidsByBidderId(user.user.id);
+  const { bids: bidsByBidderId, fetchBids } = useFetchBidsByBidderId(
+    user.user.id
+  );
 
   // display status of auction
   useEffect(() => {
-    if (
-      bidsByBidderId
-    ) {
+    if (bidsByBidderId) {
       const userBidsForThisAuction = bidsByBidderId.filter(
         (bid) => bid.auction_item.id === auction.id
       );
@@ -65,7 +64,13 @@ const AuctionCard: FC<Props> = ({
       } else if (userBidsForThisAuction.length === 0) {
         setBidStatus("In progress");
       } else {
-        setBidStatus(userBidsForThisAuction[userBidsForThisAuction.length-1].status);
+        setBidStatus(
+          userBidsForThisAuction.sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+          )[0].status
+        );
       }
     }
   }, [
@@ -111,8 +116,7 @@ const AuctionCard: FC<Props> = ({
   }, [activeTab, activeTopTab, auctionInProgress]);
 
   return (
-    <div
-      className="flex flex-col justify-between bg-white lg:w-56 w-full h-72 rounded-2xl p-3 font-light gap-1">
+    <div className="flex flex-col justify-between bg-white lg:w-56 w-full h-72 rounded-2xl p-3 font-light gap-1">
       <Link href={auctionInProgress ? `/auctions/${auction.id}` : ""}>
         <div onClick={onClick}>
           <div className="flex justify-between text-xs">
