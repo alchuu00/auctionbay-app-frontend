@@ -1,25 +1,80 @@
-import React, { FC } from "react";
+"use client";
+
+import { useFetchNotifications } from "@/src/hooks/useFetchNotifications";
+import React, { FC, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 
 const NotificationsPopup: FC = () => {
+  const [clearedNotifications, setClearedNotifications] = useState<string[]>(
+    () => JSON.parse(localStorage.getItem("clearedNotifications") || "[]")
+  );
+
+  const { notifications } = useFetchNotifications();
+
+  const unclearedNotifications = useMemo(
+    () =>
+      notifications.filter(
+        (notification) => !clearedNotifications.includes(notification.id)
+      ),
+    [notifications, clearedNotifications]
+  );
+
+  useEffect(() => {
+    localStorage.setItem(
+      "clearedNotifications",
+      JSON.stringify(clearedNotifications)
+    );
+  }, [clearedNotifications]);
+
   return (
-    <div className="flex flex-col absolute right-5 top-24 bg-white h-2/5 w-1/3 rounded-2xl p-4">
-      <div className="flex w-full justify-between items-center mb-4">
+    <div className="flex flex-col absolute right-5 top-24 bg-white h-fit w-1/3 rounded-2xl p-4">
+      <div className="flex justify-between items-center mb-4">
         <div className="text-xl font-bold">Notifications</div>
-        <div className="text-sm hover:cursor-pointer">Clear all</div>
+        <div
+          className="text-sm hover:cursor-pointer"
+          onClick={() => {
+            setClearedNotifications([
+              ...clearedNotifications,
+              ...notifications.map((n) => n.id),
+            ]);
+          }}>
+          Clear all
+        </div>
       </div>
-      <div className="flex justify-between items-center w-full">
-        <div className="flex items-center gap-2">
-          <div>image</div>
-          <div>
-            <div>Item name</div>
-            <div>notification date</div>
+      {unclearedNotifications.length === 0 && <div>No notifications.</div>}
+      {unclearedNotifications &&
+        unclearedNotifications.length > 0 &&
+        unclearedNotifications.map((notification, index) => (
+          <div key={index} className="flex justify-between items-center">
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center">
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${notification.auctionItemImage}`}
+                  alt={notification.auctionItemTitle}
+                  height={30}
+                  width={30}
+                  className="rounded-md object-cover"
+                />
+                <div className="w-80">
+                  <p className="truncate">{notification.message}</p>
+                  <div className="font-extralight text-xs">
+                    {new Date(notification.created_at).toLocaleDateString(
+                      undefined,
+                      { year: "numeric", month: "2-digit", day: "2-digit" }
+                    )}{" "}
+                    {new Date(notification.created_at).toLocaleTimeString(
+                      undefined,
+                      { hour: "2-digit", minute: "2-digit", hour12: false }
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="rounded-full px-2 py-1 bg-dark-gray text-white font-light text-sm">
+                {notification.bidAmount} €
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <div>status</div>
-          <div>price</div>
-        </div>
-      </div>
+        ))}
     </div>
   );
 };

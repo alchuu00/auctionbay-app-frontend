@@ -21,7 +21,6 @@ const All = () => {
 
   // TODO add toast notifications for when auction is created, deleted, updated
   // TODO add toast notifications for when user details are updated
-  // TODO add a notifications container that shows bid status updates and auction expired notifications
 
   const user = userStorage.getUser();
 

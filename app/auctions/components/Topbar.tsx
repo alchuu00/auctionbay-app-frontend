@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import HomeIcon from "@heroicons/react/outline/HomeIcon";
 import UserIcon from "@heroicons/react/outline/UserIcon";
 import UserCircleIcon from "@heroicons/react/outline/UserCircleIcon";
@@ -17,6 +17,9 @@ import { useFetchWon } from "@/src/hooks/useFetchWon";
 import { calculateEarnings } from "@/src/utils/calculateEarnings";
 import BellIcon from "./BellIcon";
 import NotificationsPopup from "./NotificationsPopup";
+import { useFetchNotifications } from "@/src/hooks/useFetchNotifications";
+import { set } from "react-hook-form";
+import { NotificationType } from "@/src/models/notification";
 
 interface Props {
   refetchAuctions: () => void;
@@ -36,6 +39,9 @@ const Topbar: FC<Props> = ({
   const [showProfileSettings, setShowProfileSettings] =
     useState<boolean>(false);
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
+  const [notificationsToShow, setNotificationsToShow] = useState<
+    NotificationType[]
+  >([]);
 
   const handleAddAuctionsClick = () => {
     setShowAddAuctionsForm(true);
@@ -59,6 +65,24 @@ const Topbar: FC<Props> = ({
   const router = useRouter();
 
   const { auctions } = useFetchAuctionsByUserId(user?.user.id);
+
+  const fetchedNotifications = useFetchNotifications();
+
+  useEffect(() => {
+    const clearedNotifications = localStorage.getItem("clearedNotifications");
+    const clearedNotificationsArray = clearedNotifications
+      ? JSON.parse(clearedNotifications)
+      : [];
+
+    setNotificationsToShow(
+      fetchedNotifications.notifications.filter(
+        (notification: NotificationType) =>
+          !clearedNotificationsArray.includes(notification.id)
+      )
+    );
+
+    console.log("notificationsToShow", notificationsToShow);
+  }, [fetchedNotifications.notifications, showNotifications]);
 
   const { auctions: biddingOn } = useFetchAuctionBiddedOnByUserId(
     user?.user.id
@@ -98,9 +122,12 @@ const Topbar: FC<Props> = ({
 
           <div className="flex gap-1 bg-white rounded-full justify-center items-center p-1">
             <div
-              className="p-3 rounded-full bg-gray-blue cursor-pointer"
+              className="relative p-3 rounded-full bg-gray-blue cursor-pointer"
               onClick={handleShowNotifications}>
               <BellIcon />
+              <span className="absolute top-0 right-0 inline-block bg-red-400 text-white text-xs px-1 rounded-full">
+                {notificationsToShow?.length}
+              </span>
             </div>
             <div
               className="p-3 rounded-full bg-fluoro-yellow cursor-pointer"
