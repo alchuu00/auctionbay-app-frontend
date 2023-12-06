@@ -172,12 +172,12 @@ useEffect(() => {
                       setImagePreview(null);
                       setFile(null);
                     }}>
-                    <TrashIcon className="w-5 h-5" />
+                    <TrashIcon className="w-5 h-5 hover:drop-shadow-md" />
                   </div>
                 )}
               </>
             ) : (
-              <div className="border-2 border-gray-500 px-4 py-2 rounded-2xl">
+              <div className="border-2 border-gray-500 px-4 py-2 rounded-2xl hover:drop-shadow-md">
                 Add image
               </div>
             )}
@@ -294,26 +294,26 @@ useEffect(() => {
           {isUpdateAuction ? (
             <button
               onClick={() => setShowAddAuctionsForm(false)}
-              className="px-3 py-2 rounded-2xl bg-gray-blue">
+              className="px-3 py-2 rounded-2xl bg-gray-blue hover:drop-shadow-md">
               Discard changes
             </button>
           ) : (
             <button
               onClick={() => setShowAddAuctionsForm(false)}
-              className="px-3 py-2 rounded-2xl bg-gray-blue">
+              className="px-3 py-2 rounded-2xl bg-gray-blue hover:drop-shadow-md">
               Cancel
             </button>
           )}
           {isUpdateAuction ? (
             <button
-              className="w-100 px-3 py-2 rounded-2xl bg-dark-gray text-white"
+              className="w-100 px-3 py-2 rounded-2xl bg-dark-gray text-white hover:drop-shadow-md"
               type="submit"
               onMouseUp={defaultValues ? undefined : handleFileError}>
               Edit auction
             </button>
           ) : (
             <button
-              className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
+              className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow hover:drop-shadow-md"
               type="submit"
               onMouseUp={defaultValues ? undefined : handleFileError}>
               Start auction

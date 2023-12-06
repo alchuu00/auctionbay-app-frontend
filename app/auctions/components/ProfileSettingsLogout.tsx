@@ -61,13 +61,13 @@ const ProfileSettingsLogout: FC<Props> = ({
       <div className="mb-4 bg-white flex flex-col justify-center items-center p-10 text-md gap-4 rounded-3xl">
         <div
           onClick={handleProfileSettingsForm}
-          className="flex justify-center items-center gap-2 hover:cursor-pointer">
+          className="flex justify-center items-center gap-2 hover:cursor-pointer hover:drop-shadow-md">
           <CogIcon className="h-5 w-5" />
           Profile settings
         </div>
         <button
           onClick={signout}
-          className="px-10 py-2 border border-dark-gray rounded-full">
+          className="px-10 py-2 border border-dark-gray rounded-full hover:drop-shadow-md">
           Log Out
         </button>
       </div>

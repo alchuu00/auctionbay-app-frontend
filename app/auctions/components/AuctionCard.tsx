@@ -31,6 +31,7 @@ const AuctionCard: FC<Props> = ({
   const [showAddAuctionsForm, setShowAddAuctionsForm] = useState(false);
   const [isUpdateAuction, setIsUpdateAuction] = useState(true);
   const [showEditButtons, setShowEditButtons] = useState(false);
+  const [showDeleteButtons, setShowDeleteButtons] = useState(false);
   const [highestBid, setHighestBid] = useState<number | null>(null);
   const [bidStatus, setBidStatus] = useState<string | null>(null);
 
@@ -108,8 +109,11 @@ const AuctionCard: FC<Props> = ({
   };
 
   useEffect(() => {
-    if (activeTopTab === 2 && activeTab === 0 && auctionInProgress) {
-      setShowEditButtons(true);
+    if (activeTopTab === 2 && activeTab === 0) {
+      setShowDeleteButtons(true);
+      if (auctionInProgress) {
+        setShowEditButtons(true);
+      }
     } else if (activeTopTab === 1 || activeTab === 1) {
       setShowEditButtons(false);
     } else {
@@ -118,8 +122,11 @@ const AuctionCard: FC<Props> = ({
   }, [activeTab, activeTopTab, auctionInProgress]);
 
   return (
-    <div className="flex flex-col justify-between bg-white lg:w-56 w-full h-72 rounded-2xl p-3 font-light gap-1">
-      <Link href={auctionInProgress ? `/auctions/${auction.id}` : ""}>
+    <div
+      className={`flex flex-col justify-between bg-white lg:w-56 w-full h-72 rounded-2xl p-3 font-light gap-1`}>
+      <Link
+        href={auctionInProgress ? `/auctions/${auction.id}` : ""}
+        className={`${bidStatus === "Done" && "hover:cursor-default"}`}>
         <div onClick={onClick}>
           <div className="flex justify-between text-xs">
             <div
@@ -170,29 +177,31 @@ const AuctionCard: FC<Props> = ({
         </div>
       </Link>
 
-      {showEditButtons && (
-        <div className="flex justify-between items-center gap-1">
+      <div className="flex justify-between items-center gap-1">
+        {showDeleteButtons && (
           <div
             onClick={(e) => {
               e.stopPropagation();
               handleDeleteAuction(auction.id);
             }}
-            className="cursor-pointer bg-white border border-dark-gray px-2 py-1 rounded-xl">
+            className="cursor-pointer bg-white border border-dark-gray px-2 py-1 rounded-xl hover:drop-shadow-lg">
             <TrashIcon className="w-4 h-4" />
           </div>
+        )}
+        {showEditButtons && (
           <div
             onClick={(e) => {
               e.stopPropagation();
               handleUpdateAuctionForm();
             }}
-            className="cursor-pointer flex justify-center items-center gap-1 bg-dark-gray text-white px-2 py-1 rounded-xl w-full">
+            className="cursor-pointer flex justify-center items-center gap-1 bg-dark-gray text-white px-2 py-1 rounded-xl w-full hover:drop-shadow-lg">
             <div>
               <PencilIcon className="w-4 h-4" />
             </div>
             <div>Edit</div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {showAddAuctionsForm && (
         <AddEditAuctionForm

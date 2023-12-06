@@ -179,7 +179,7 @@ const ProfileSettingsForm: FC<Props> = ({
 
                   <button
                     type="button"
-                    className="border-2 border-gray-300 px-4 py-2 rounded-2xl hover:cursor-pointer"
+                    className="border-2 border-gray-300 px-4 py-2 rounded-2xl hover:cursor-pointer hover:drop-shadow-md"
                     onClick={(event) => {
                       event.stopPropagation();
                       event.preventDefault();
@@ -203,12 +203,12 @@ const ProfileSettingsForm: FC<Props> = ({
                   <button
                     onClick={toggleForm}
                     type="button"
-                    className="px-3 py-2 rounded-2xl bg-gray-blue">
+                    className="px-3 py-2 rounded-2xl bg-gray-blue hover:drop-shadow-md">
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
+                    className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow hover:drop-shadow-md"
                     onClick={toggleForm}>
                     Save changes
                   </button>
@@ -278,24 +278,24 @@ const ProfileSettingsForm: FC<Props> = ({
                 />
                 <div
                   onClick={() => setIsPasswordChangeForm(true)}
-                  className="hover:cursor-pointer w-fit">
+                  className="hover:cursor-pointer w-fit hover:drop-shadow-md">
                   Change password
                 </div>
                 <div
                   onClick={() => setIsProfilePictureChangeForm(true)}
-                  className="hover:cursor-pointer w-fit">
+                  className="hover:cursor-pointer w-fit hover:drop-shadow-md">
                   Change profile picture
                 </div>
                 <div className="flex gap-3 justify-end mt-5">
                   <button
                     onClick={() => setProfileSettingsForm(false)}
                     type="button"
-                    className="px-3 py-2 rounded-2xl bg-gray-blue">
+                    className="px-3 py-2 rounded-2xl bg-gray-blue hover:drop-shadow-md">
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
+                    className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow hover:drop-shadow-md"
                     onClick={toggleForm}>
                     Save changes
                   </button>

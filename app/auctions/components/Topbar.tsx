@@ -99,7 +99,7 @@ const Topbar: FC<Props> = ({
             <Logo />
             <div className="flex gap-1 bg-white rounded-full p-1">
               <div
-                className={`flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
+                className={`hover:drop-shadow-lg flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
                   activeTopTab === 1 ? "bg-dark-gray text-white" : ""
                 }`}
                 onClick={() => router.push("/auctions/all")}>
@@ -107,7 +107,7 @@ const Topbar: FC<Props> = ({
                 <p className="hidden lg:block">Auctions</p>
               </div>
               <div
-                className={`flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
+                className={`hover:drop-shadow-lg flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
                   activeTopTab === 2 ? "bg-dark-gray text-white" : ""
                 }`}
                 onClick={() => router.push("/auctions/my")}>
@@ -119,7 +119,7 @@ const Topbar: FC<Props> = ({
 
           <div className="flex gap-1 bg-white rounded-full justify-center items-center p-1">
             <div
-              className="relative p-3 rounded-full bg-gray-blue cursor-pointer"
+              className="relative p-3 rounded-full bg-gray-blue cursor-pointer hover:drop-shadow-md"
               onClick={handleShowNotifications}>
               <BellIcon />
               <span className="absolute top-0 right-0 inline-block bg-red-400 text-white text-xs px-1 rounded-full">
@@ -127,13 +127,13 @@ const Topbar: FC<Props> = ({
               </span>
             </div>
             <div
-              className="p-3 rounded-full bg-fluoro-yellow cursor-pointer"
+              className="p-3 rounded-full bg-fluoro-yellow cursor-pointer hover:drop-shadow-md"
               onClick={handleAddAuctionsClick}>
               <PlusIcon />
             </div>
             <div
               onClick={handleUpdateProfile}
-              className="rounded-full cursor-pointer">
+              className="rounded-full cursor-pointer hover:drop-shadow-md">
               {user?.user.avatar ? (
                 <Image
                   alt="avatar"

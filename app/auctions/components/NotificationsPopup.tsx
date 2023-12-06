@@ -52,7 +52,7 @@ const NotificationsPopup: FC<Props> = ({ setShowNotifications }) => {
         <div className="flex justify-between items-center mb-4">
           <div className="text-xl font-bold">Notifications</div>
           <div
-            className="text-sm hover:cursor-pointer"
+            className="text-sm hover:cursor-pointer hover:drop-shadow-md"
             onClick={() => {
               setClearedNotifications([
                 ...clearedNotifications,
