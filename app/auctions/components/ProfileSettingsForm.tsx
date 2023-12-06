@@ -32,6 +32,7 @@ const ProfileSettingsForm: FC<Props> = ({
     useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [avatarFileName, setAvatarFileName] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -63,10 +64,7 @@ const ProfileSettingsForm: FC<Props> = ({
         user?.user.id as string
       );
       if (response.status >= 200 && response.status <= 300) {
-        let userData = userStorage.getUser()
-        userData.avatar = response.data.avatar;
-        userStorage.setUser(userData);
-        toast.success("User avatar updated successfully");
+        setAvatarFileName(response.data.avatar)
       }
     }
   };
@@ -88,10 +86,7 @@ const ProfileSettingsForm: FC<Props> = ({
 
   const handleUpdate = async (data: UpdateUserFields) => {
 
-    const user = userStorage.getUser()
-    const avatar = user.avatar
-
-    data.avatar = avatar
+    data.avatar = avatarFileName;
 
     const response = await API.updateUser(data, user?.user.id as string);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
