@@ -11,11 +11,7 @@ interface FormData {
   bid_amount: number;
 }
 
-interface Props {
-  defaultValues?: number;
-}
-
-export const useCreateUpdateBidFields = ({ defaultValues }: Props) => {
+export const useCreateUpdateBidFields = () => {
   const PlaceBidSchema = Yup.object().shape({
     bid_amount: Yup.number().required("Bid is required"),
   });

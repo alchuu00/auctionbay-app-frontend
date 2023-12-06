@@ -37,6 +37,7 @@ const AuctionDetails: React.FC<Props> = () => {
   const [bidStatus, setBidStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [highestBid, setHighestBid] = useState<number>();
+  const [bidValue, setBidValue] = useState(0);
 
   const params = useParams<RouteParams>();
   const auctionId = params.id;
@@ -100,8 +101,8 @@ const AuctionDetails: React.FC<Props> = () => {
     }
   };
 
-  // Set highest bid
-  useEffect(() => {
+   // Set highest bid
+   useEffect(() => {
     if (auctionBids && auctionBids[0]) {
       setHighestBid(
         auctionBids.reduce(
@@ -146,16 +147,32 @@ const AuctionDetails: React.FC<Props> = () => {
   }, [bidsByBidderId, auctionDone, auction?.id, bidStatus]);
 
   useEffect(() => {
-    if (user && auction) {
+    if (auction && user) {
+      if (highestBid) {  setBidValue(highestBid);
+      } else {
+        setBidValue(auction.start_price);
+      }
       setIsLoading(false);
     }
   }, [user, auction]);
 
+  const handleInputChange = (event) => {
+    setBidValue(event.target.value);
+  };
+
+  console.log("highestbid", highestBid);
+
   // TODO display highest bid as a default value in the input field
 
-  const { handleSubmit, errors, control } = useCreateUpdateBidFields({
-    defaultValues: highestBid ? highestBid : auction?.start_price,
-  });
+  const { handleSubmit, errors, control } = useCreateUpdateBidFields();
+
+  useEffect(() => {
+    const firstError = Object.values(errors)[0];
+
+    if (firstError?.message) {
+      toast.error(firstError.message);
+    }
+  }, [errors]);
 
   const onSubmit = handleSubmit(async (data: CreateUpdateBidFields) => {
     await handleAddBid(data);
@@ -234,12 +251,14 @@ const AuctionDetails: React.FC<Props> = () => {
                               name="bid_amount"
                               id="bid"
                               type="number"
+                              value={bidValue}
                               aria-label="Bid"
                               aria-describedby="Bid"
                               className="rounded-2xl w-24"
                               onChange={(e) => {
                                 field.onChange(e);
                                 setHighestBid(Number(e.target.value));
+                                handleInputChange
                               }}
                             />
                             <button
