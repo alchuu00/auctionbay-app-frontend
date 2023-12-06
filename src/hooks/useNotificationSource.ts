@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NotificationType } from '../models/notification';
 
-// TODO fix fetching real-time notifications
-
 export const useNotificationSource = () => {
   const [data, setData] = useState<NotificationType>();
   const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/notifications`;
@@ -16,7 +14,7 @@ export const useNotificationSource = () => {
     return () => {
       eventSource.close();
     };
-  }, [url]);
+  }, [data, url]);
 
   return data;
 }
