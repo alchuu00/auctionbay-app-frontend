@@ -50,7 +50,7 @@ const AuctionDetails: React.FC<Props> = () => {
 
   // Pagination for bids
   const currentPage = useRef(1);
-  const pageSize = 9;
+  const pageSize = 5;
   const [paginatedBids, setPaginatedBids] = useState<BidType[]>([]);
   const [trigger, setTrigger] = useState(0);
 
@@ -159,8 +159,6 @@ const AuctionDetails: React.FC<Props> = () => {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBidValue(event.target.value);
   };
-
-  console.log("highestbid", highestBid);
 
   const { handleSubmit, errors, control } = useCreateUpdateBidFields();
 
