@@ -47,8 +47,8 @@ const NotificationsPopup: FC<Props> = ({ setShowNotifications }) => {
           setShowNotifications(false);
         }
       }}
-      className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center h-full">
-      <div className="flex flex-col absolute bg-white h-fit lg:w-1/3 w-fit rounded-2xl p-4">
+      className="backdrop-blur-sm bg-dark-gray bg-opacity-10 fixed top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center h-full">
+      <div className="flex flex-col absolute bg-white h-fit lg:w-1/3 md:w-2/3 w-full rounded-2xl p-4">
         <div className="flex justify-between items-center mb-4">
           <div className="text-xl font-bold">Notifications</div>
           <div
@@ -68,7 +68,7 @@ const NotificationsPopup: FC<Props> = ({ setShowNotifications }) => {
           unclearedNotifications.map((notification, index) => (
             <div key={index} className="flex justify-between items-center">
               <div className="flex justify-between items-center w-full">
-                <div className="flex items-center">
+                <div className="flex items-center w-3/4">
                   <Image
                     src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${notification.auctionItemImage}`}
                     alt={notification.auctionItemTitle}
@@ -76,7 +76,7 @@ const NotificationsPopup: FC<Props> = ({ setShowNotifications }) => {
                     width={30}
                     className="rounded-md object-cover"
                   />
-                  <div className="w-80">
+                  <div className="w-full">
                     <p className="truncate">{notification.message}</p>
                     <div className="font-extralight text-xs">
                       {new Date(notification.created_at).toLocaleDateString(
@@ -90,9 +90,10 @@ const NotificationsPopup: FC<Props> = ({ setShowNotifications }) => {
                     </div>
                   </div>
                 </div>
-                <div className="rounded-full px-2 py-1 bg-dark-gray text-white font-light text-sm">
+                <div className="w-1/4 flex justify-end">
+                <div className="rounded-full px-2 py-1 bg-dark-gray text-white text-center w-fit font-light text-sm">
                   {notification.bidAmount} €
-                </div>
+                </div></div>
               </div>
             </div>
           ))}

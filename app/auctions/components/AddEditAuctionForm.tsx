@@ -143,7 +143,7 @@ useEffect(() => {
   }, [defaultValues]);
 
   return (
-    <div className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center">
+    <div className="backdrop-blur-sm bg-dark-gray bg-opacity-10 fixed top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center">
       <form
         onSubmit={onSubmit}
         className="bg-white p-4 rounded-2xl lg:h-fit lg:w-1/3 w-3/4">
