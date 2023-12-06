@@ -37,7 +37,7 @@ const AuctionDetails: React.FC<Props> = () => {
   const [bidStatus, setBidStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [highestBid, setHighestBid] = useState<number>();
-  const [bidValue, setBidValue] = useState(0);
+  const [bidValue, setBidValue] = useState<number | string>();
 
   const params = useParams<RouteParams>();
   const auctionId = params.id;
@@ -156,13 +156,11 @@ const AuctionDetails: React.FC<Props> = () => {
     }
   }, [user, auction]);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBidValue(event.target.value);
   };
 
   console.log("highestbid", highestBid);
-
-  // TODO display highest bid as a default value in the input field
 
   const { handleSubmit, errors, control } = useCreateUpdateBidFields();
 
