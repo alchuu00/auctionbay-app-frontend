@@ -19,9 +19,6 @@ const All = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [highestBid, setHighestBid] = useState<number | null>(null);
 
-  // TODO add toast notifications for when auction is created, deleted, updated
-  // TODO add toast notifications for when user details are updated
-
   const user = userStorage.getUser();
 
   const currentUserId = user?.user.id;

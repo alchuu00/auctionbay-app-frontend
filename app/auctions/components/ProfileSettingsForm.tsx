@@ -64,8 +64,6 @@ const ProfileSettingsForm: FC<Props> = ({
       );
       if (response.status >= 200 && response.status <= 300) {
         let userData = userStorage.getUser()
-        console.log('response', response)
-        console.log('formdata', formData)
         userData.avatar = response.data.avatar;
         userStorage.setUser(userData);
         toast.success("User avatar updated successfully");
@@ -92,7 +90,6 @@ const ProfileSettingsForm: FC<Props> = ({
 
     const user = userStorage.getUser()
     const avatar = user.avatar
-    console.log('user', user)
 
     data.avatar = avatar
 
@@ -124,7 +121,7 @@ const ProfileSettingsForm: FC<Props> = ({
 
   return (
     <div>
-      <div className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center">
+      <div className="backdrop-blur-sm bg-dark-gray bg-opacity-10 fixed top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center">
         <div className="mb-4 bg-white flex flex-col p-6 text-md gap-4 rounded-3xl lg:w-fit w-3/4">
           {profileSettingsForm && (
             <>
