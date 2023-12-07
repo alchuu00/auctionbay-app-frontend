@@ -51,6 +51,3 @@ export const updateUser = async (data: UpdateUserFields, id: string) =>
     `${apiRoutes.USERS_PREFIX}/${id}`,
     data
   );
-
-export const deleteUser = async (id: string) =>
-  apiRequest<string, UserType>("delete", `${apiRoutes.USERS_PREFIX}/${id}`);
