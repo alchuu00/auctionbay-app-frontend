@@ -59,6 +59,7 @@ const DefaultResetPassword: React.FC = () => {
       toast.error(response.data.message);
     } else {
       router.push("/auth/login");
+      toast.success("Password reset successfully");
     }
   };
 
