@@ -15,9 +15,6 @@ const userStorage = {
     const user = userStorage.getUser();
     return user && user.user ? user.user.id : null;
   },
-  setUserId: (userId: string): void => {
-    window.localStorage.setItem(`${user_prefix}_id`, userId);
-  },
   setUser: (user: UserType): void => {
     window.localStorage.setItem(`${user_prefix}`, JSON.stringify(user));
   },
