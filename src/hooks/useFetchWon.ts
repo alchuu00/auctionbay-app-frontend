@@ -13,7 +13,7 @@ export const useFetchWon = () => {
 
   const router = useRouter();
 
-  const fetchData = useRef(async () => {
+  const fetchData = async () => {
     const data = await API.fetchWon(user?.user.id);
     if (data.data?.statusCode === StatusCode.FORBIDDEN) {
       router.push(`${routes.HOME}`);
@@ -22,11 +22,11 @@ export const useFetchWon = () => {
     } else {
       setAuctions(data.data);
     }
-  })
+  }
 
   useEffect(() => {
-    fetchData.current();
+    fetchData;
   }, []);
 
-  return { auctions: auctions ? auctions : [], refetch: ()=>{fetchData.current()} };
+  return { auctions: auctions ? auctions : [], refetch: ()=>{fetchData} };
 };
