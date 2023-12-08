@@ -3,6 +3,7 @@ import * as API from "../api/api";
 import { useRouter } from "next/navigation";
 import { StatusCode } from "../constants/errorConstants";
 import { NotificationType } from "../models/notification";
+import { routes } from "../constants/routesConstants";
 
 export const useFetchNotifications = (): { notifications: NotificationType[]; refetch: () => void } => {
 
@@ -14,9 +15,9 @@ export const useFetchNotifications = (): { notifications: NotificationType[]; re
     try {
       const notificationsData = await API.fetchNotifications();
       if (notificationsData.data?.statusCode === StatusCode.FORBIDDEN) {
-        router.push("/");
+        router.push(`${routes.HOME}`);
       } else if (notificationsData.data?.statusCode === StatusCode.UNAUTHORIZED) {
-        router.push("/");
+        router.push(`${routes.HOME}`);
       } else {
         setNotifications(notificationsData.data);
       }

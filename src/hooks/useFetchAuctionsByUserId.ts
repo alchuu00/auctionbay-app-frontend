@@ -3,6 +3,7 @@ import * as API from "../api/api";
 import { useRouter } from "next/navigation";
 import { StatusCode } from "../constants/errorConstants";
 import { AuctionType } from "../models/auction";
+import { routes } from "../constants/routesConstants";
 
 export const useFetchAuctionsByUserId = (
     userId: string
@@ -16,9 +17,9 @@ export const useFetchAuctionsByUserId = (
     try {
       const auctionsData = await API.fetchAuctionsByUserId(userId);
       if (auctionsData.data?.statusCode === StatusCode.FORBIDDEN) {
-        router.push("/");
+        router.push(`${routes.HOME}`);
       } else if (auctionsData.data?.statusCode === StatusCode.UNAUTHORIZED) {
-        router.push("/");
+        router.push(`${routes.HOME}`);
       } else {
         setAuctions(auctionsData.data);
       }
