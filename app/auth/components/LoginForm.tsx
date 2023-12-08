@@ -12,21 +12,6 @@ import { useLoginForm, LoginUserFields } from "@/src/hooks/useFormLogin";
 import authStore from "@/src/stores/authStore";
 import { toast } from "react-toastify";
 import { routes } from "@/src/constants/routesConstants";
-import { userStorage } from "@/src/stores/userStorage";
-
-// FIXME when i upload auction i get error: error
-// : 
-// "Bad Request"
-// message
-// : 
-// "Multipart: Unexpected end of form"
-// statusCode
-// : 
-// 400
-
-// FIXME findWinning in backend UUID is not working
-
-// FIXME earnings calculation in backend is not working
 
 const LoginForm = () => {
   const [toggleHidden, setToggleHidden] = useState(true);
