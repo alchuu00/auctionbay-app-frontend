@@ -246,7 +246,6 @@ const CreateUpdateAuctionForm: FC<Props> = ({
                   <label htmlFor="start_price">Start price</label>
                   <input
                     {...field}
-                    value={field.value}
                     name="start_price"
                     id="start_price"
                     placeholder="Price"
@@ -277,7 +276,6 @@ const CreateUpdateAuctionForm: FC<Props> = ({
                 <label htmlFor="end_date">End date</label>
                 <input
                   {...field}
-                  value={field.value}
                   name="end_date"
                   id="end_date"
                   type="date"
