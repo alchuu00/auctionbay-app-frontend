@@ -7,6 +7,7 @@ import {
   usePasswordForm,
 } from "../../../src/hooks/useFormUpdatePassword";
 import EyeIcon from "@heroicons/react/outline/EyeIcon";
+import EyeSlashIcon from "@heroicons/react/outline/EyeOffIcon";
 import * as API from "../../../src/api/api";
 import { StatusCode } from "@/src/constants/errorConstants";
 import { userStorage } from "@/src/stores/userStorage";
@@ -82,10 +83,17 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
                 className="border-2 border-gray-blue w-full font-light py-2 px-4 rounded-2xl"
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                <EyeIcon
-                  className="h-5 w-5 text-gray-400 cursor-pointer"
-                  onClick={handleToggleHiddenCurrent}
-                />
+              {toggleHiddenCurrent ? (
+                      <EyeIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenCurrent}
+                      />
+                    ) : (
+                      <EyeSlashIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenCurrent}
+                      />
+                    )}
               </div>
             </div>
           </div>
@@ -108,10 +116,17 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
                 className="border-2 border-gray-blue w-full font-light py-2 px-4 rounded-2xl"
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                <EyeIcon
-                  className="h-5 w-5 text-gray-400 cursor-pointer"
-                  onClick={handleToggleHiddenNew}
-                />
+              {toggleHiddenNew ? (
+                      <EyeIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenNew}
+                      />
+                    ) : (
+                      <EyeSlashIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenNew}
+                      />
+                    )}
               </div>
             </div>
           </div>
@@ -134,10 +149,17 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
                 className="border-2 border-gray-blue w-full font-light py-2 px-4 rounded-2xl"
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                <EyeIcon
-                  className="h-5 w-5 text-gray-400 cursor-pointer"
-                  onClick={handleToggleHiddenConfirm}
-                />
+              {toggleHiddenConfirm ? (
+                      <EyeIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenConfirm}
+                      />
+                    ) : (
+                      <EyeSlashIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenConfirm}
+                      />
+                    )}
               </div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import EyeIcon from "@heroicons/react/outline/EyeIcon";
+import EyeSlashIcon from "@heroicons/react/outline/EyeOffIcon";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -34,9 +35,9 @@ const LoginForm = () => {
   const onSubmit = handleSubmit(async (data: LoginUserFields) => {
     const response = await API.login(data);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      toast.error(response.data.message);
+      toast.error("Invalid email or password");
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      toast.error(response.data.message);
+      toast.error("Something went wrong");
     } else {
       authStore.login(response.data);
       router.push(`${routes.AUCTIONS_ALL}`);
@@ -88,10 +89,17 @@ const LoginForm = () => {
                     className="border w-full font-light py-2 px-4 rounded-2xl"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                    <EyeIcon
-                      className="h-5 w-5 text-gray-400 cursor-pointer"
-                      onClick={handleToggleHidden}
-                    />
+                    {toggleHidden ? (
+                      <EyeIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHidden}
+                      />
+                    ) : (
+                      <EyeSlashIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHidden}
+                      />
+                    )}
                   </div>
                 </div>
               </div>

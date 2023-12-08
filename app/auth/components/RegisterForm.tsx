@@ -1,6 +1,7 @@
 "use client";
 
 import EyeIcon from "@heroicons/react/outline/EyeIcon";
+import EyeSlashIcon from "@heroicons/react/outline/EyeOffIcon";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Controller, set } from "react-hook-form";
@@ -144,10 +145,17 @@ const RegisterForm = () => {
                     className="border w-full font-light py-2 px-4 rounded-2xl"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                    <EyeIcon
-                      className="h-5 w-5 text-gray-400 cursor-pointer"
-                      onClick={handleToggleHiddenPassword}
-                    />
+                    {toggleHiddenPassword ? (
+                      <EyeIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenPassword}
+                      />
+                    ) : (
+                      <EyeSlashIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenPassword}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -171,10 +179,17 @@ const RegisterForm = () => {
                     className="border w-full font-light py-2 px-4 rounded-2xl"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                    <EyeIcon
-                      className="h-5 w-5 text-gray-400 cursor-pointer"
-                      onClick={handleToggleHiddenConfirmPassword}
-                    />
+                  {toggleHiddenConfirmPassword ? (
+                      <EyeIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenConfirmPassword}
+                      />
+                    ) : (
+                      <EyeSlashIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenConfirmPassword}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
