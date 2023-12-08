@@ -8,12 +8,13 @@ import Link from "next/link";
 import {
   useRegisterForm,
   RegisterUserFields,
-} from "../../../src/hooks/useRegister";
+} from "../../../src/hooks/useFormRegister";
 import * as API from "../../../src/api/api";
 import { StatusCode } from "@/src/constants/errorConstants";
 import Logo from "@/app/components/Logo";
 import authStore from "@/src/stores/authStore";
 import { toast } from "react-toastify";
+import { routes } from "@/src/constants/routesConstants";
 
 const RegisterForm = () => {
   const [toggleHiddenPassword, setToggleHiddenPassword] = useState(true);
@@ -24,12 +25,12 @@ const RegisterForm = () => {
 
   const router = useRouter();
 
-useEffect(() => {
-  const firstError = Object.values(errors)[0];
-  if (firstError?.message) {
-    toast.error(firstError.message);
-  }
-}, [errors]);
+  useEffect(() => {
+    const firstError = Object.values(errors)[0];
+    if (firstError?.message) {
+      toast.error(firstError.message);
+    }
+  }, [errors]);
 
   const handleToggleHiddenPassword = () => {
     setToggleHiddenPassword(!toggleHiddenPassword);
@@ -48,7 +49,7 @@ useEffect(() => {
       toast.error(response.data.message);
     } else {
       authStore.login(response.data);
-      router.push("/auctions/all");
+      router.push(`${routes.AUCTIONS_ALL}`);
     }
   });
   return (

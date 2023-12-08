@@ -9,16 +9,14 @@ import { AuthLayout } from "@/app/auth/AuthLayout";
 import AuthHero from "@/app/auth/components/AuthHero";
 import Logo from "@/app/components/Logo";
 import Link from "next/link";
-import { UpdatePasswordFields } from "@/src/hooks/useUpdatePassword";
 import { StatusCode } from "@/src/constants/errorConstants";
-import { ResetPasswordFields, useResetPasswordForm } from "@/src/hooks/useResetPassword";
 import { toast } from "react-toastify";
+import { ResetPasswordFields, useResetPasswordForm } from "@/src/hooks/useFormPasswordReset";
+import { routes } from "@/src/constants/routesConstants";
 
 const DefaultResetPassword: React.FC = () => {
-  const [apiError, setApiError] = useState("");
   const [toggleHiddenNew, setToggleHiddenNew] = useState(true);
   const [toggleHiddenConfirm, setToggleHiddenConfirm] = useState(true);
-  const [userId, setUserId] = useState<string | null>(null);
   const [user, setUser] = useState<any | null>(null);
 
   const router = useRouter();
@@ -29,7 +27,6 @@ const DefaultResetPassword: React.FC = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const userIdFromApi = await API.getUserFromToken(token as string);
-      setUserId(userIdFromApi.data);
       const userFromApi = await API.fetchUser(userIdFromApi.data as string);
       setUser(userFromApi);
     };
@@ -58,7 +55,7 @@ const DefaultResetPassword: React.FC = () => {
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
       toast.error(response.data.message);
     } else {
-      router.push("/auth/login");
+      router.push(`${routes.LOGIN}`);
       toast.success("Password reset successfully");
     }
   };

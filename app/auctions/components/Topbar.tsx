@@ -17,8 +17,9 @@ import { useFetchWon } from "@/src/hooks/useFetchWon";
 import { calculateEarnings } from "@/src/utils/calculateEarnings";
 import BellIcon from "./BellIcon";
 import NotificationsPopup from "./NotificationsPopup";
-import { useFetchNotifications } from "@/src/hooks/useFetchNotifications";
+import { useFetchNotifications } from "@/src/hooks/useFetchSSENotifications";
 import { NotificationType } from "@/src/models/notification";
+import { routes } from "@/src/constants/routesConstants";
 
 interface Props {
   refetchAuctions: () => void;
@@ -102,7 +103,7 @@ const Topbar: FC<Props> = ({
                 className={`hover:drop-shadow-lg flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
                   activeTopTab === 1 ? "bg-dark-gray text-white" : ""
                 }`}
-                onClick={() => router.push("/auctions/all")}>
+                onClick={() => router.push(`${routes.AUCTIONS_ALL}`)}>
                 <HomeIcon className="h-5 w-5" />
                 <p className="hidden lg:block">Auctions</p>
               </div>
@@ -110,7 +111,7 @@ const Topbar: FC<Props> = ({
                 className={`hover:drop-shadow-lg flex gap-1 px-3 py-3 rounded-full cursor-pointer ${
                   activeTopTab === 2 ? "bg-dark-gray text-white" : ""
                 }`}
-                onClick={() => router.push("/auctions/my")}>
+                onClick={() => router.push(`${routes.AUCTIONS_MY}`)}>
                 <UserIcon className="h-5 w-5" />
                 <p className="hidden lg:block">Profile</p>
               </div>
@@ -185,7 +186,11 @@ const Topbar: FC<Props> = ({
                     <h1 className="text-xl font-bold">Currently bidding</h1>
                   </div>
                   <div className="lg:text-5xl text-4xl font-bold">
-                  {biddingOn.filter((auction) => new Date(auction.end_date) > new Date()).length}
+                    {
+                      biddingOn.filter(
+                        (auction) => new Date(auction.end_date) > new Date()
+                      ).length
+                    }
                   </div>
                 </div>
                 <div className="flex flex-col justify-between bg-white gap-4 p-4 rounded-xl w-full h-40">
@@ -201,17 +206,17 @@ const Topbar: FC<Props> = ({
                 <div className="w-fit flex justify-center items-center gap-2 p-1 rounded-2xl bg-gray-blue">
                   <Tab
                     active={activeTab === 0}
-                    onClick={() => router.push("/auctions/my")}>
+                    onClick={() => router.push(`${routes.AUCTIONS_MY}`)}>
                     My auctions
                   </Tab>
                   <Tab
                     active={activeTab === 1}
-                    onClick={() => router.push("/auctions/bidding")}>
+                    onClick={() => router.push(`${routes.AUCTIONS_BIDDING}`)}>
                     Bidding
                   </Tab>
                   <Tab
                     active={activeTab === 2}
-                    onClick={() => router.push("/auctions/won")}>
+                    onClick={() => router.push(`${routes.AUCTIONS_WON}`)}>
                     Won
                   </Tab>
                 </div>
@@ -235,7 +240,9 @@ const Topbar: FC<Props> = ({
         />
       )}
 
-      {showNotifications && <NotificationsPopup setShowNotifications={setShowNotifications}/>}
+      {showNotifications && (
+        <NotificationsPopup setShowNotifications={setShowNotifications} />
+      )}
     </div>
   );
 };

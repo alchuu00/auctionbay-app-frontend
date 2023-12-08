@@ -8,10 +8,25 @@ import { Controller } from "react-hook-form";
 import * as API from "@/src/api/api";
 import Logo from "@/app/components/Logo";
 import { StatusCode } from "@/src/constants/errorConstants";
-import { useLoginForm, LoginUserFields } from "@/src/hooks/useLogin";
+import { useLoginForm, LoginUserFields } from "@/src/hooks/useFormLogin";
 import authStore from "@/src/stores/authStore";
-import { userStorage } from "@/src/stores/userStorage";
 import { toast } from "react-toastify";
+import { routes } from "@/src/constants/routesConstants";
+import { userStorage } from "@/src/stores/userStorage";
+
+// FIXME when i upload auction i get error: error
+// : 
+// "Bad Request"
+// message
+// : 
+// "Multipart: Unexpected end of form"
+// statusCode
+// : 
+// 400
+
+// FIXME findWinning in backend UUID is not working
+
+// FIXME earnings calculation in backend is not working
 
 const LoginForm = () => {
   const [toggleHidden, setToggleHidden] = useState(true);
@@ -39,8 +54,7 @@ const LoginForm = () => {
       toast.error(response.data.message);
     } else {
       authStore.login(response.data);
-      userStorage.setUser(response.data);
-      router.push("/auctions/all");
+      router.push(`${routes.AUCTIONS_ALL}`);
     }
   });
   return (

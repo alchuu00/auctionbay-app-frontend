@@ -5,6 +5,7 @@ import ProfileSettingsForm from "./ProfileSettingsForm";
 import { useRouter } from "next/navigation";
 import { StatusCode } from "@/src/constants/errorConstants";
 import authStore from "@/src/stores/authStore";
+import { routes } from "@/src/constants/routesConstants";
 
 interface Props {
   showProfileSettings: boolean;
@@ -35,7 +36,7 @@ const ProfileSettingsLogout: FC<Props> = ({
       setShowError(true);
     } else {
       authStore.signout();
-      router.push("/");
+      router.push(`${routes.HOME}`);
     }
   };
 
