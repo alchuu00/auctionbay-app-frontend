@@ -192,7 +192,7 @@ const AuctionDetails: React.FC<Props> = () => {
             <div className="rounded-2xl lg:w-1/2 w-full">
               <Image
                 src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${auction?.image}`}
-                alt={auction?.title}
+                alt='Auction item image'
                 height={1000}
                 width={1000}
                 className="rounded-2xl object-cover"
