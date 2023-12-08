@@ -7,7 +7,7 @@ import Loading from "../components/Loading";
 import {
   useCreateUpdateBidFields,
   CreateUpdateBidFields,
-} from "../../../src/hooks/useCreateUpdateBid";
+} from "../../../src/hooks/useFormCreateUpdateBid";
 import { useFetchBidsByAuctionItemId } from "../../../src/hooks/useFetchBidsByAuctionItemId";
 import { useFetchBidsByBidderId } from "../../../src/hooks/useFetchBidsByBidderId";
 import { countdown } from "../../../src/utils/countdown";

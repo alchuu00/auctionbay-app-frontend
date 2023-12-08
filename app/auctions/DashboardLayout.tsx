@@ -1,4 +1,4 @@
-import { useNotificationSource } from "@/src/hooks/useNotificationSource";
+import { useNotificationSource } from "@/src/hooks/useSSENotifications";
 import { ReactNode } from "react";
 import ToastNotify from "../components/ToastNotify";
 

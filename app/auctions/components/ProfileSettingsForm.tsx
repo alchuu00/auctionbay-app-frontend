@@ -1,22 +1,17 @@
-import React, {
-  ChangeEvent,
-  FC,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import * as API from "../../../src/api/api";
 import { Controller } from "react-hook-form";
 import UserCircleIcon from "@heroicons/react/outline/UserCircleIcon";
 import {
   UpdateUserFields,
   useUpdateUserForm,
-} from "../../../src/hooks/useUpdateUser";
+} from "../../../src/hooks/useFormUpdateUser";
 import UpdatePasswordForm from "./UpdatePasswordForm";
 import { StatusCode } from "@/src/constants/errorConstants";
 import { userStorage } from "@/src/stores/userStorage";
 import Image from "next/image";
 import { toast } from "react-toastify";
+import authStore from "@/src/stores/authStore";
 
 interface Props {
   profileSettingsForm: boolean;
@@ -64,7 +59,7 @@ const ProfileSettingsForm: FC<Props> = ({
         user?.user.id as string
       );
       if (response.status >= 200 && response.status <= 300) {
-        setAvatarFileName(response.data.avatar)
+        setAvatarFileName(response.data.avatar);
       }
     }
   };
@@ -85,7 +80,6 @@ const ProfileSettingsForm: FC<Props> = ({
   }, []);
 
   const handleUpdate = async (data: UpdateUserFields) => {
-
     data.avatar = avatarFileName;
 
     const response = await API.updateUser(data, user?.user.id as string);
@@ -100,7 +94,7 @@ const ProfileSettingsForm: FC<Props> = ({
           ...response.data,
         },
       };
-      userStorage.setUser(newUserData);
+      authStore.update(newUserData);
       toast.success("User details updated successfully");
       setProfileSettingsForm(false);
     }

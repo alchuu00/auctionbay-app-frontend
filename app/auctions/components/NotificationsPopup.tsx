@@ -1,6 +1,6 @@
 "use client";
 
-import { useFetchNotifications } from "@/src/hooks/useFetchNotifications";
+import { useFetchNotifications } from "@/src/hooks/useFetchSSENotifications";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 
@@ -91,9 +91,10 @@ const NotificationsPopup: FC<Props> = ({ setShowNotifications }) => {
                   </div>
                 </div>
                 <div className="w-1/4 flex justify-end">
-                <div className="rounded-full px-2 py-1 bg-dark-gray text-white text-center w-fit font-light text-sm">
-                  {notification.bidAmount} €
-                </div></div>
+                  <div className="rounded-full px-2 py-1 bg-dark-gray text-white text-center w-fit font-light text-sm">
+                    {notification.bidAmount} €
+                  </div>
+                </div>
               </div>
             </div>
           ))}

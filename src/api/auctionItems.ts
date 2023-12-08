@@ -1,5 +1,5 @@
 import { apiRoutes } from "../constants/apiConstatnts";
-import { CreateUpdateAuctionFields } from "../hooks/useCreateUpdateAuction";
+import { CreateUpdateAuctionFields } from "../hooks/useFormCreateUpdateAuction";
 import { AuctionType } from "../models/auction";
 import { apiRequest } from "./api";
 
@@ -9,20 +9,29 @@ export const fetchAuctions = async (pageNumber: number) =>
     `${apiRoutes.AUCTIONS_PREFIX}?page=${pageNumber}`
   );
 
-  export const fetchAuctionsByUserId = async (userId: string) =>
+export const fetchAuctionsByUserId = async (userId: string) =>
   apiRequest<string, AuctionType[]>(
     "get",
     `${apiRoutes.AUCTIONS_PREFIX}/${userId}`
   );
 
-  export const fetchAuctionBiddedOnByUserId = async (userId: string) =>
-  apiRequest<string, AuctionType[]>("get", `${apiRoutes.AUCTIONS_PREFIX}/bidded/${userId}`);
+export const fetchAuctionBiddedOnByUserId = async (userId: string) =>
+  apiRequest<string, AuctionType[]>(
+    "get",
+    `${apiRoutes.AUCTIONS_PREFIX}/bidded/${userId}`
+  );
 
 export const fetchWon = async (userId: string) =>
-  apiRequest<string, AuctionType[]>("get", `${apiRoutes.AUCTIONS_PREFIX}/won/${userId}`);
+  apiRequest<string, AuctionType[]>(
+    "get",
+    `${apiRoutes.AUCTIONS_PREFIX}/won/${userId}`
+  );
 
 export const fetchWinning = async (userId: string) =>
-  apiRequest<string, AuctionType[]>("get", `${apiRoutes.AUCTIONS_PREFIX}/winning/${userId}`);
+  apiRequest<string, AuctionType[]>(
+    "get",
+    `${apiRoutes.AUCTIONS_PREFIX}/winning/${userId}`
+  );
 
 export const createAuction = async (data: CreateUpdateAuctionFields) =>
   apiRequest<CreateUpdateAuctionFields, AuctionType>(
@@ -34,7 +43,7 @@ export const createAuction = async (data: CreateUpdateAuctionFields) =>
 export const uploadAuctionImage = async (formData: FormData, id: string) =>
   apiRequest<FormData, void>(
     "post",
-    `${apiRoutes.UPLOAD_AUCTION_IMAGE}/${id}`,
+    `${apiRoutes.UPLOAD_AUCTION_IMAGE_PREFIX}/${id}`,
     formData
   );
 
@@ -55,4 +64,7 @@ export const deleteAuction = async (id: string) =>
   );
 
 export const fetchAuctionById = async (id: string) =>
-  apiRequest<string, AuctionType>("get", `${apiRoutes.AUCTIONS_PREFIX}/auction/${id}`);
+  apiRequest<string, AuctionType>(
+    "get",
+    `${apiRoutes.AUCTIONS_PREFIX}/auction/${id}`
+  );

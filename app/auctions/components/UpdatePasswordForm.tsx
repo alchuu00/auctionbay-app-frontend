@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import {
   UpdatePasswordFields,
   usePasswordForm,
-} from "../../../src/hooks/useUpdatePassword";
+} from "../../../src/hooks/useFormUpdatePassword";
 import EyeIcon from "@heroicons/react/outline/EyeIcon";
 import * as API from "../../../src/api/api";
 import { StatusCode } from "@/src/constants/errorConstants";
@@ -37,13 +37,13 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
 
   const { handleSubmit, errors, control } = usePasswordForm();
 
-  useEffect(() => { 
+  useEffect(() => {
     const firstError = Object.values(errors)[0];
 
     if (firstError?.message) {
       toast.error(firstError.message);
     }
-}, [errors]);
+  }, [errors]);
 
   const handleUpdatePassword = async (data: UpdatePasswordFields) => {
     const response = await API.updateUserPassword(

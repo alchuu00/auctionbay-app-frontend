@@ -3,6 +3,7 @@ import { refreshTokens } from "./user";
 
 const instance = Axios.create();
 
+// response interceptor to refresh token if response status is 401 unauthorized 
 instance.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -16,7 +17,7 @@ instance.interceptors.response.use(
         window.location.href = "/";
         return Promise.reject(error);
       }
-
+ 
       instance.defaults.headers.common["Authorization"] =
         "Bearer " + accessToken;
       return instance(originalRequest);

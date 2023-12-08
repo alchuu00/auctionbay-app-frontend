@@ -8,10 +8,11 @@ import { StatusCode } from "@/src/constants/errorConstants";
 import {
   useCreateUpdateAuctionForm,
   CreateUpdateAuctionFields,
-} from "@/src/hooks/useCreateUpdateAuction";
+} from "@/src/hooks/useFormCreateUpdateAuction";
 import { AuctionType } from "@/src/models/auction";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
+import { routes } from "@/src/constants/routesConstants";
 
 interface Props {
   refetchAuctions: () => void;
@@ -33,13 +34,13 @@ const CreateUpdateAuctionForm: FC<Props> = ({
   const [fileError, setFileError] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-useEffect(() => { 
+  useEffect(() => {
     const firstError = Object.values(errors)[0];
 
     if (firstError?.message) {
       toast.error(firstError.message);
     }
-}, [errors]);
+  }, [errors]);
 
   const router = useRouter();
 
@@ -86,7 +87,7 @@ useEffect(() => {
     } else {
       toast.success("Auction item updated successfully");
       if (!file) {
-        router.push(`/auctions/my`);
+        router.push(`${routes.AUCTIONS_MY}`);
         return;
       }
       // Upload auction image
