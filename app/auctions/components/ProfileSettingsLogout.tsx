@@ -35,8 +35,8 @@ const ProfileSettingsLogout: FC<Props> = ({
       setApiError(response.data.message);
       setShowError(true);
     } else {
-      authStore.signout();
       router.push(`${routes.HOME}`);
+      authStore.signout();
     }
   };
 
