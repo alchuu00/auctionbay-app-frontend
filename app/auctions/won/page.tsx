@@ -19,7 +19,7 @@ const Won = () => {
 
   const user = userStorage.getUser();
 
-  const { auctions, refetch } = useFetchWon();
+  const { auctions, refetch } = useFetchWon(user?.id);
 
   useEffect(() => {
     if (activeTopTab) {

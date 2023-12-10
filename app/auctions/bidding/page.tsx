@@ -20,7 +20,7 @@ const Bidding = () => {
 
   const user = userStorage.getUser();
 
-  const currentUserId = user?.user.id;
+  const currentUserId = user?.id;
 
   const { auctions, refetch } = useAuctions(pageNumber, [
     activeTopTab,

@@ -27,11 +27,12 @@ export const fetchWon = async (userId: string) =>
     `${apiRoutes.AUCTIONS_PREFIX}/won/${userId}`
   );
 
-export const fetchWinning = async (userId: string) =>
-  apiRequest<string, AuctionType[]>(
-    "get",
-    `${apiRoutes.AUCTIONS_PREFIX}/winning/${userId}`
-  );
+  export const fetchWinning = async (userId: string) => {
+    return apiRequest<string, AuctionType[]>(
+      "get",
+      `${apiRoutes.AUCTIONS_PREFIX}/winning/${userId}`
+    );
+  };
 
 export const createAuction = async (data: CreateUpdateAuctionFields) =>
   apiRequest<CreateUpdateAuctionFields, AuctionType>(

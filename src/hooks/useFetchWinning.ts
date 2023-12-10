@@ -6,15 +6,13 @@ import { useRouter } from "next/navigation";
 import { userStorage } from "../stores/userStorage";
 import { routes } from "../constants/routesConstants";
 
-const user = userStorage.getUser();
-
-export const useFetchWinning = () => {
+export const useFetchWinning = (userId: string) => {
   const [auctions, setAuctions] = useState<AuctionType[]>([]);
 
   const router = useRouter();
 
   const fetchData = useRef(async () => {
-    const data = await API.fetchWinning(user?.user.id);
+    const data = await API.fetchWinning(userId);
     if (data.data?.statusCode === StatusCode.FORBIDDEN) {
       router.push(`${routes.HOME}`);
     } else if (data.data?.statusCode === StatusCode.UNAUTHORIZED) {

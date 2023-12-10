@@ -16,6 +16,7 @@ import Logo from "@/app/components/Logo";
 import authStore from "@/src/stores/authStore";
 import { toast } from "react-toastify";
 import { routes } from "@/src/constants/routesConstants";
+import { userStorage } from "@/src/stores/userStorage";
 
 const RegisterForm = () => {
   const [toggleHiddenPassword, setToggleHiddenPassword] = useState(true);
@@ -49,7 +50,7 @@ const RegisterForm = () => {
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
       toast.error(response.data.message);
     } else {
-      authStore.login(response.data);
+      userStorage.setUser(response.data.user);
       router.push(`${routes.AUCTIONS_ALL}`);
     }
   });

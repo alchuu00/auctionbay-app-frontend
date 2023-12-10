@@ -34,7 +34,7 @@ const ProfileSettingsForm: FC<Props> = ({
   const user = userStorage.getUser();
 
   const { handleSubmit, control } = useUpdateUserForm({
-    defaultValues: user?.user,
+    defaultValues: user,
   });
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +56,7 @@ const ProfileSettingsForm: FC<Props> = ({
       // upload file to server
       const response = await API.uploadAvatar(
         formData,
-        user?.user.id as string
+        user?.id as string
       );
       if (response.status >= 200 && response.status <= 300) {
         setAvatarFileName(response.data.avatar);
@@ -82,7 +82,8 @@ const ProfileSettingsForm: FC<Props> = ({
   const handleUpdate = async (data: UpdateUserFields) => {
     data.avatar = avatarFileName;
 
-    const response = await API.updateUser(data, user?.user.id as string);
+    const response = await API.updateUser(data, user?.id as string);
+    // FIXME if i just update user (no avatar) then avatar is null so i need to check if avatar is null then set avatar to user.avatar 
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
       toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
@@ -152,10 +153,10 @@ const ProfileSettingsForm: FC<Props> = ({
                           setFile(null);
                         }}></div>
                     </>
-                  ) : user?.user.avatar ? (
+                  ) : user?.avatar ? (
                     <Image
                       alt="avatar"
-                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${user?.user.avatar}`}
+                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${user?.avatar}`}
                       width={50}
                       height={50}
                       className="object-cover rounded-full w-16 h-16"

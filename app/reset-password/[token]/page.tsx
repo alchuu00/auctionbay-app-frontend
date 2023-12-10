@@ -13,6 +13,7 @@ import { StatusCode } from "@/src/constants/errorConstants";
 import { toast } from "react-toastify";
 import { ResetPasswordFields, useResetPasswordForm } from "@/src/hooks/useFormPasswordReset";
 import { routes } from "@/src/constants/routesConstants";
+import 'react-toastify/dist/ReactToastify.css';
 
 const DefaultResetPassword: React.FC = () => {
   const [toggleHiddenNew, setToggleHiddenNew] = useState(true);

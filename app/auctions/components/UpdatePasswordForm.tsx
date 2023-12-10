@@ -49,7 +49,7 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
   const handleUpdatePassword = async (data: UpdatePasswordFields) => {
     const response = await API.updateUserPassword(
       { password: data.new_password, confirm_password: data.confirm_password },
-      user?.user.id as string
+      user?.id as string
     );
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
       toast.error(response.data.message);

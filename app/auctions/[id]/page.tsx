@@ -73,7 +73,7 @@ const AuctionDetails: React.FC<Props> = () => {
   // Handle add bid
   const handleAddBid = async (data: CreateUpdateBidFields) => {
     const auctionItemId = auction?.id;
-    const bidderId = user?.user.id;
+    const bidderId = user?.id;
     const bidAmount = data.bid_amount;
 
     const highestBid =
@@ -120,7 +120,7 @@ const AuctionDetails: React.FC<Props> = () => {
   const auctionDone = new Date(auction?.end_date) < currentDate;
 
   const { bids: bidsByBidderId, fetchBids } = useFetchBidsByBidderId(
-    user?.user.id
+    user?.id
   );
 
   // display status of auction

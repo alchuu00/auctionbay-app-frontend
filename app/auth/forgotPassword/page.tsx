@@ -6,6 +6,8 @@ import AuthHero from "../components/AuthHero";
 import { AuthLayout } from "../AuthLayout";
 import Logo from "@/app/components/Logo";
 import * as API from '@/src/api/api';
+import {toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState(''); // manage the state of the email input field
@@ -15,9 +17,9 @@ const ForgotPassword = () => {
     try {
       // call your API function to send the password reset email
       await API.sendPasswordResetEmail(email);
-      alert('Password reset email sent');
+      toast.info('Password reset email sent');
     } catch (error) {
-      alert('Failed to send password reset email');
+      toast.error('Failed to send password reset email');
     }
   };
 

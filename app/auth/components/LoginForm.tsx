@@ -13,6 +13,7 @@ import { useLoginForm, LoginUserFields } from "@/src/hooks/useFormLogin";
 import authStore from "@/src/stores/authStore";
 import { toast } from "react-toastify";
 import { routes } from "@/src/constants/routesConstants";
+import { userStorage } from "@/src/stores/userStorage";
 
 const LoginForm = () => {
   const [toggleHidden, setToggleHidden] = useState(true);
@@ -39,7 +40,7 @@ const LoginForm = () => {
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
       toast.error("Something went wrong");
     } else {
-      authStore.login(response.data);
+      authStore.login(response.data.user);
       router.push(`${routes.AUCTIONS_ALL}`);
     }
   });

@@ -21,7 +21,11 @@ const All = () => {
 
   const user = userStorage.getUser();
 
-  const currentUserId = user?.user.id;
+  useEffect(() => {
+    console.log("user in All", user);
+  }, [user])
+
+  const currentUserId = user?.id;
 
   const { auctions, refetch } = useAuctions(pageNumber, [
     activeTopTab,

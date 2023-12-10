@@ -64,7 +64,7 @@ const Topbar: FC<Props> = ({
 
   const router = useRouter();
 
-  const { auctions } = useFetchAuctionsByUserId(user?.user.id);
+  const { auctions } = useFetchAuctionsByUserId(user?.id);
 
   const fetchedNotifications = useFetchNotifications();
 
@@ -83,12 +83,12 @@ const Topbar: FC<Props> = ({
   }, [fetchedNotifications.notifications, showNotifications]);
 
   const { auctions: biddingOn } = useFetchAuctionBiddedOnByUserId(
-    user?.user.id
+    user?.id
   );
 
-  const { auctions: winningAuctions } = useFetchWinning();
+  const { auctions: winningAuctions } = useFetchWinning(user?.id);
 
-  const { auctions: wonAuctions } = useFetchWon();
+  const { auctions: wonAuctions } = useFetchWon(user?.id);
 
   const earnings = calculateEarnings(wonAuctions);
 
@@ -135,10 +135,10 @@ const Topbar: FC<Props> = ({
             <div
               onClick={handleUpdateProfile}
               className="rounded-full cursor-pointer hover:drop-shadow-md">
-              {user?.user.avatar ? (
+              {user?.avatar ? (
                 <Image
                   alt="avatar"
-                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${user?.user.avatar}`}
+                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${user?.avatar}`}
                   width={50}
                   height={50}
                   className="rounded-full"
@@ -160,7 +160,7 @@ const Topbar: FC<Props> = ({
           {activeTopTab === 2 && (
             <div>
               <h1 className="font-bold lg:text-4xl text-3xl mb-4">
-                Hello {user?.user.first_name} {user?.user.last_name} !
+                Hello {user?.first_name} {user?.last_name} !
               </h1>
               <div className="lg:flex grid grid-cols-2 gap-4">
                 <div className="flex flex-col justify-between bg-dark-gray gap-4 p-4 text-fluoro-yellow rounded-xl w-full h-40">
