@@ -6,6 +6,8 @@ import AuthHero from "../components/AuthHero";
 import { AuthLayout } from "../AuthLayout";
 import Logo from "@/app/components/Logo";
 import * as API from '@/src/api/api';
+import {toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState(''); // manage the state of the email input field
@@ -15,16 +17,16 @@ const ForgotPassword = () => {
     try {
       // call your API function to send the password reset email
       await API.sendPasswordResetEmail(email);
-      alert('Password reset email sent');
+      toast.info('Password reset email sent');
     } catch (error) {
-      alert('Failed to send password reset email');
+      toast.error('Failed to send password reset email');
     }
   };
 
   return (
     <AuthLayout>
       <AuthHero />
-      <div className="flex flex-col justify-between items-center h-screen py-10 bg-white w-1/3">
+      <div className="flex flex-col lg:justify-between justify-around items-center h-screen py-10 bg-white lg:w-1/3 w-full">
         <Logo />
         <div className="text-center">
           <h1 className="font-bold text-4xl mb-2">Forgot password?</h1>

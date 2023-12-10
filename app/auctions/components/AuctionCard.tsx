@@ -11,11 +11,10 @@ import { useFetchBidsByBidderId } from "../../../src/hooks/useFetchBidsByBidderI
 import Link from "next/link";
 import { AuctionType } from "@/src/models/auction";
 import { userStorage } from "@/src/stores/userStorage";
-import { useGetHighestBidder } from "@/src/hooks/useFetchWinningBid";
+import { toast } from "react-toastify";
 
 interface Props {
-  setWinningBidderId: React.Dispatch<React.SetStateAction<string | null>>;
-  refetchAuctions: () => void;
+  refetchAuctions: any;
   activeTopTab: number | null;
   auction: AuctionType;
   activeTab: number;
@@ -23,7 +22,6 @@ interface Props {
 }
 
 const AuctionCard: FC<Props> = ({
-  setWinningBidderId,
   refetchAuctions,
   activeTopTab,
   auction,
@@ -33,6 +31,7 @@ const AuctionCard: FC<Props> = ({
   const [showAddAuctionsForm, setShowAddAuctionsForm] = useState(false);
   const [isUpdateAuction, setIsUpdateAuction] = useState(true);
   const [showEditButtons, setShowEditButtons] = useState(false);
+  const [showDeleteButtons, setShowDeleteButtons] = useState(false);
   const [highestBid, setHighestBid] = useState<number | null>(null);
   const [bidStatus, setBidStatus] = useState<string | null>(null);
 
@@ -51,16 +50,14 @@ const AuctionCard: FC<Props> = ({
 
   const { bids } = useFetchBidsByAuctionItemId(auction.id);
 
-  const { bids: bidsByBidderId } = useFetchBidsByBidderId(user.user.id);
+  const { bids: bidsByBidderId, fetchBids } = useFetchBidsByBidderId(
+    user?.id
+  );
 
   // display status of auction
   useEffect(() => {
-    if (
-      bidsByBidderId &&
-      bidsByBidderId.data &&
-      Array.isArray(bidsByBidderId.data)
-    ) {
-      const userBidsForThisAuction = bidsByBidderId.data.filter(
+    if (bidsByBidderId) {
+      const userBidsForThisAuction = bidsByBidderId.filter(
         (bid) => bid.auction_item.id === auction.id
       );
 
@@ -69,7 +66,13 @@ const AuctionCard: FC<Props> = ({
       } else if (userBidsForThisAuction.length === 0) {
         setBidStatus("In progress");
       } else {
-        setBidStatus(userBidsForThisAuction[0].status);
+        setBidStatus(
+          userBidsForThisAuction.sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+          )[0].status
+        );
       }
     }
   }, [
@@ -84,40 +87,33 @@ const AuctionCard: FC<Props> = ({
 
   // set highest bid to display item price in card
   useEffect(() => {
-    if (bids && bids.data[0] && Array.isArray(bids.data)) {
+    if (bids && bids.length > 0) {
       setHighestBid(
-        bids.data.reduce(
+        bids.reduce(
           (max, bid) => Math.max(max, bid.bid_amount),
-          bids.data[0].bid_amount
+          bids[0].bid_amount
         )
       );
     }
-  }, [auction.id, bids]);
+  }, [auction.id, bids, fetchBids]);
 
   // handle delete auction
   const handleDeleteAuction = async (id: string) => {
     try {
       await API.deleteAuction(id);
+      toast.success("Auction item deleted successfully");
       refetchAuctions();
     } catch (error) {
       console.error("Failed to delete auction:", error);
     }
   };
 
-  const highestBidderId = useGetHighestBidder(auction?.id);
   useEffect(() => {
-    if (highestBidderId) {
-      console.log("highestBidderId", highestBidderId);
-      setWinningBidderId(highestBidderId);
-    }
-  }, [highestBidderId, setWinningBidderId]);
-
-  console.log("activetab", activeTab);
-  console.log("activetoptab", activeTopTab);
-
-  useEffect(() => {
-    if (activeTopTab === 2 && activeTab === 0 && auctionInProgress) {
-      setShowEditButtons(true);
+    if (activeTopTab === 2 && activeTab === 0) {
+      setShowDeleteButtons(true);
+      if (auctionInProgress) {
+        setShowEditButtons(true);
+      }
     } else if (activeTopTab === 1 || activeTab === 1) {
       setShowEditButtons(false);
     } else {
@@ -127,8 +123,10 @@ const AuctionCard: FC<Props> = ({
 
   return (
     <div
-      className="flex flex-col justify-between bg-white w-56 h-72 rounded-2xl p-3 font-light gap-1">
-      <Link href={auctionInProgress ? `/auctions/${auction.id}` : ""}>
+      className={`flex flex-col justify-between bg-white lg:w-56 w-full h-72 rounded-2xl p-3 font-light gap-1`}>
+      <Link
+        href={auctionInProgress ? `/auctions/${auction.id}` : ""}
+        className={`${bidStatus === "Done" && "hover:cursor-default"}`}>
         <div onClick={onClick}>
           <div className="flex justify-between text-xs">
             <div
@@ -179,29 +177,31 @@ const AuctionCard: FC<Props> = ({
         </div>
       </Link>
 
-      {showEditButtons && (
-        <div className="flex justify-between items-center gap-1">
+      <div className="flex justify-between items-center gap-1">
+        {showDeleteButtons && (
           <div
             onClick={(e) => {
               e.stopPropagation();
               handleDeleteAuction(auction.id);
             }}
-            className="cursor-pointer bg-white border border-dark-gray px-2 py-1 rounded-xl">
+            className="cursor-pointer bg-white border border-dark-gray px-2 py-1 rounded-xl hover:drop-shadow-lg">
             <TrashIcon className="w-4 h-4" />
           </div>
+        )}
+        {showEditButtons && (
           <div
             onClick={(e) => {
               e.stopPropagation();
               handleUpdateAuctionForm();
             }}
-            className="cursor-pointer flex justify-center items-center gap-1 bg-dark-gray text-white px-2 py-1 rounded-xl w-full">
+            className="cursor-pointer flex justify-center items-center gap-1 bg-dark-gray text-white px-2 py-1 rounded-xl w-full hover:drop-shadow-lg">
             <div>
               <PencilIcon className="w-4 h-4" />
             </div>
             <div>Edit</div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {showAddAuctionsForm && (
         <AddEditAuctionForm

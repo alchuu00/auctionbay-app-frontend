@@ -20,9 +20,3 @@ export const getBidsByBidderId = async (bidderId: string) =>
     'get',
     `${apiRoutes.BIDS_PREFIX}/bidder/${bidderId}`,
   );
-
-export const getHighestBidder = async (auctionItemId: string) =>
-  apiRequest<undefined, BidType>(
-    'get',
-    `${apiRoutes.BIDS_PREFIX}/${auctionItemId}/winning-bid`,
-  );

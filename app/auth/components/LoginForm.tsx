@@ -1,24 +1,31 @@
 "use client";
 
 import EyeIcon from "@heroicons/react/outline/EyeIcon";
+import EyeSlashIcon from "@heroicons/react/outline/EyeOffIcon";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
-import ToastWarning from "../../components/ToastWarning";
 import * as API from "@/src/api/api";
 import Logo from "@/app/components/Logo";
 import { StatusCode } from "@/src/constants/errorConstants";
-import { useLoginForm, LoginUserFields } from "@/src/hooks/useLogin";
+import { useLoginForm, LoginUserFields } from "@/src/hooks/useFormLogin";
 import authStore from "@/src/stores/authStore";
+import { toast } from "react-toastify";
+import { routes } from "@/src/constants/routesConstants";
 import { userStorage } from "@/src/stores/userStorage";
 
 const LoginForm = () => {
   const [toggleHidden, setToggleHidden] = useState(true);
+
   const { handleSubmit, errors, control } = useLoginForm();
-  const [apiError, setApiError] = useState("");
-  const [showResponseErrorMessage, setShowResponseErrorMessage] =
-    useState(false);
+
+  useEffect(() => {
+    const firstError = Object.values(errors)[0];
+    if (firstError?.message) {
+      toast.error(firstError.message);
+    }
+  }, [errors]);
 
   const router = useRouter();
 
@@ -29,19 +36,16 @@ const LoginForm = () => {
   const onSubmit = handleSubmit(async (data: LoginUserFields) => {
     const response = await API.login(data);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
-      setShowResponseErrorMessage(true);
+      toast.error("Invalid email or password");
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
-      setShowResponseErrorMessage(true);
+      toast.error("Something went wrong");
     } else {
-      authStore.login(response.data);
-      userStorage.setUser(response.data);
-      router.push("/auctions/all");
+      authStore.login(response.data.user);
+      router.push(`${routes.AUCTIONS_ALL}`);
     }
   });
   return (
-    <div className="flex flex-col justify-between items-center h-screen py-10 bg-white w-1/3 text-md">
+    <div className="flex flex-col lg:justify-between justify-around items-center h-screen py-10 bg-white lg:w-1/3 w-full text-md">
       <Logo />
       <div className="text-center">
         <h1 className="font-bold text-4xl">Welcome back!</h1>
@@ -86,10 +90,17 @@ const LoginForm = () => {
                     className="border w-full font-light py-2 px-4 rounded-2xl"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                    <EyeIcon
-                      className="h-5 w-5 text-gray-400 cursor-pointer"
-                      onClick={handleToggleHidden}
-                    />
+                    {toggleHidden ? (
+                      <EyeIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHidden}
+                      />
+                    ) : (
+                      <EyeSlashIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHidden}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -113,13 +124,6 @@ const LoginForm = () => {
           Sign Up
         </Link>
       </div>
-      {(errors.email && (
-        <ToastWarning errorMessage={errors.email?.message} />
-      )) ||
-        (errors.password && (
-          <ToastWarning errorMessage={errors.password?.message} />
-        ))}
-      {apiError && <ToastWarning errorMessage={apiError} />}
     </div>
   );
 };

@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { useAuctions } from "../../../src/hooks/useFetchAuctions";
 import { AuctionType } from "@/src/models/auction";
 import { userStorage } from "@/src/stores/userStorage";
+import { DashboardLayout } from "../DashboardLayout";
 
 const My = () => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -17,14 +18,10 @@ const My = () => {
   const [showAuctionDetails, setShowAuctionDetails] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [highestBid, setHighestBid] = useState<number | null>(null);
-  const [winningBidderId, setWinningBidderId] = useState<string | null>(null);
-  const [selectedAuction, setSelectedAuction] = useState<AuctionType | null>(
-    null
-  );
 
   const user = userStorage.getUser();
 
-  const currentUserId = user?.user.id;
+  const currentUserId = user?.id;
 
   const { auctions, refetch } = useAuctions(pageNumber, [
     activeTopTab,
@@ -39,9 +36,9 @@ const My = () => {
 
   let auctionIdsUserBiddedOn: string[] = [];
 
-  const bids = useFetchBidsByBidderId(currentUserId);
-  if (bids && bids?.data && Array.isArray(bids?.data)) {
-    const auctionIds = bids?.data.map((bid) => bid.auction_item.id);
+  const {bids} = useFetchBidsByBidderId(currentUserId);
+  if (bids) {
+    const auctionIds = bids?.map((bid) => bid.auction_item.id);
 
     auctionIdsUserBiddedOn = Array.from(new Set(auctionIds));
   }
@@ -66,7 +63,7 @@ const My = () => {
 
   const renderAuctions = (filterFunc: (auction: AuctionType) => boolean) => (
     <div className="w-full flex justify-start items-center">
-      <div className="flex flex-wrap justify-start gap-5 w-screen mb-5">
+      <div className="flex flex-wrap justify-start gap-5 mb-5">
         {auctions
           .filter(filterFunc)
           .sort((a, b) => {
@@ -90,9 +87,8 @@ const My = () => {
             }
           })
           .map((auction: AuctionType, index: number) => (
-            <div key={index}>
+            <div key={index} className="w-full lg:w-fit">
               <AuctionCard
-                setWinningBidderId={setWinningBidderId}
                 refetchAuctions={refetch}
                 activeTopTab={2}
                 auction={auction}
@@ -103,7 +99,6 @@ const My = () => {
                       (activeTopTab === 2 && activeTab === 1)) &&
                     new Date(auction.end_date) > currentDate
                   ) {
-                    setSelectedAuction(auction);
                     setShowAuctionDetails(true);
                     setActiveTab(null);
                     setActiveTopTab(null);
@@ -118,18 +113,18 @@ const My = () => {
 
   // set highest bid for each auction
   useEffect(() => {
-    if (bids && Array.isArray(bids.data)) {
+    if (bids && bids[0]) {
       setHighestBid(
-        bids.data.reduce(
+        bids.reduce(
           (max, bid) => Math.max(max, bid.bid_amount),
-          bids.data[0].bid_amount
+          bids[0].bid_amount
         )
       );
     }
   }, [bids]);
   
   return (
-    <div className="px-6">
+    <DashboardLayout>
       {isLoading ? (
         <Loading></Loading>
       ) : (
@@ -149,7 +144,7 @@ const My = () => {
           )}
         </>
       )}
-    </div>
+    </DashboardLayout>
   );
 };
 

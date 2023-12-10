@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ToastWarning from "@/app/components/ToastWarning";
 import { useParams, useRouter } from "next/navigation";
 import * as API from "@/src/api/api";
 import { Controller } from "react-hook-form";
@@ -10,15 +9,15 @@ import { AuthLayout } from "@/app/auth/AuthLayout";
 import AuthHero from "@/app/auth/components/AuthHero";
 import Logo from "@/app/components/Logo";
 import Link from "next/link";
-import { UpdatePasswordFields } from "@/src/hooks/useUpdatePassword";
 import { StatusCode } from "@/src/constants/errorConstants";
-import { ResetPasswordFields, useResetPasswordForm } from "@/src/hooks/useResetPassword";
+import { toast } from "react-toastify";
+import { ResetPasswordFields, useResetPasswordForm } from "@/src/hooks/useFormPasswordReset";
+import { routes } from "@/src/constants/routesConstants";
+import 'react-toastify/dist/ReactToastify.css';
 
 const DefaultResetPassword: React.FC = () => {
-  const [apiError, setApiError] = useState("");
   const [toggleHiddenNew, setToggleHiddenNew] = useState(true);
   const [toggleHiddenConfirm, setToggleHiddenConfirm] = useState(true);
-  const [userId, setUserId] = useState<string | null>(null);
   const [user, setUser] = useState<any | null>(null);
 
   const router = useRouter();
@@ -29,10 +28,7 @@ const DefaultResetPassword: React.FC = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const userIdFromApi = await API.getUserFromToken(token as string);
-      console.log("userIdFromApi", userIdFromApi.data);
-      setUserId(userIdFromApi.data);
       const userFromApi = await API.fetchUser(userIdFromApi.data as string);
-      console.log("userFromApi", userFromApi);
       setUser(userFromApi);
     };
 
@@ -41,6 +37,14 @@ const DefaultResetPassword: React.FC = () => {
 
   const { handleSubmit, errors, control } = useResetPasswordForm();
 
+  useEffect(() => { 
+    const firstError = Object.values(errors)[0];
+
+    if (firstError?.message) {
+      toast.error(firstError.message);
+    }
+}, [errors]);
+
 
   const handleResetPassword = async (data: ResetPasswordFields) => {
     const response = await API.resetUserPassword(
@@ -48,17 +52,16 @@ const DefaultResetPassword: React.FC = () => {
       user?.data.id as string, token as string
     );
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else {
-      router.push("/auth/login");
+      router.push(`${routes.LOGIN}`);
+      toast.success("Password reset successfully");
     }
   };
 
   const onSubmit = handleSubmit(async (data: ResetPasswordFields) => {
-    console.log('onSubmit has been called')
-    console.log('data', data)
     await handleResetPassword(data);
   });
 
@@ -73,7 +76,7 @@ const DefaultResetPassword: React.FC = () => {
   return (
     <AuthLayout>
       <AuthHero />
-      <div className="flex flex-col justify-between items-center h-screen py-10 bg-white w-1/3">
+      <div className="flex flex-col lg:justify-between justify-around items-center h-screen py-10 bg-white lg:w-1/3 w-screen">
         <Logo />
         <div className="text-center">
           <h1 className="font-bold text-4xl mb-2">Reset your password</h1>
@@ -146,7 +149,6 @@ const DefaultResetPassword: React.FC = () => {
           </form>
         </div>
       </div>
-      {apiError && <ToastWarning errorMessage={apiError} />}
     </AuthLayout>
   );
 };

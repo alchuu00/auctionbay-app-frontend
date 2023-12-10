@@ -7,9 +7,9 @@ export default function Home() {
     <main className="flex flex-col justify-between items-center h-screen">
       <div className="flex flex-col justify-between items-center h-screen">
         <Navbar />
-        <div className="flex flex-col gap-2 justify-end items-center mt-5">
-          <h1 className="text-6xl font-bold">E-auctions made easy!</h1>
-          <p className="font-light text-md text-center">
+        <div className="flex flex-col gap-2 justify-end items-center text-center mt-5">
+          <h1 className="lg:text-6xl text-5xl font-bold">E-auctions made easy!</h1>
+          <p className="font-light lg:text-md text-center">
             Simple way for selling your unused products, or
             <br />
             getting a deal on product you want!
@@ -20,12 +20,20 @@ export default function Home() {
             Start bidding
           </Link>
         </div>
-
+        <Image
+          src="/landingPageImg-mobile.png"
+          width={800}
+          height={800}
+          alt="Hero Image"
+          className="lg:hidden h-2/5 object-contain"
+        />
         <Image
           src="/landingPageImg.png"
           width={800}
           height={800}
-          alt="Hero Image"></Image>
+          alt="Hero Image"
+          className="lg:block hidden"
+        />
       </div>
     </main>
   );

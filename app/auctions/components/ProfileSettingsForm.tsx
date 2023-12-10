@@ -1,23 +1,17 @@
-import React, {
-  ChangeEvent,
-  FC,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import * as API from "../../../src/api/api";
 import { Controller } from "react-hook-form";
 import UserCircleIcon from "@heroicons/react/outline/UserCircleIcon";
 import {
   UpdateUserFields,
   useUpdateUserForm,
-} from "../../../src/hooks/useUpdateUser";
+} from "../../../src/hooks/useFormUpdateUser";
 import UpdatePasswordForm from "./UpdatePasswordForm";
-import ToastWarning from "@/app/components/ToastWarning";
 import { StatusCode } from "@/src/constants/errorConstants";
 import { userStorage } from "@/src/stores/userStorage";
 import Image from "next/image";
+import { toast } from "react-toastify";
+import authStore from "@/src/stores/authStore";
 
 interface Props {
   profileSettingsForm: boolean;
@@ -28,19 +22,19 @@ const ProfileSettingsForm: FC<Props> = ({
   profileSettingsForm,
   setProfileSettingsForm,
 }) => {
-  const [apiError, setApiError] = useState("");
   const [isPasswordChangeForm, setIsPasswordChangeForm] = useState(false);
   const [isProfilePictureChangeForm, setIsProfilePictureChangeForm] =
     useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [avatarFileName, setAvatarFileName] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const user = useMemo(() => userStorage.getUser(), []);
+  const user = userStorage.getUser();
 
   const { handleSubmit, control } = useUpdateUserForm({
-    defaultValues: user?.user,
+    defaultValues: user,
   });
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -60,10 +54,10 @@ const ProfileSettingsForm: FC<Props> = ({
       formData.append("avatar", myfile);
 
       // upload file to server
-      const response = await API.uploadAvatar(
-        formData,
-        user?.user.id as string
-      );
+      const response = await API.uploadAvatar(formData, user?.id as string);
+      if (response.status >= 200 && response.status <= 300) {
+        setAvatarFileName(response.data.avatar);
+      }
     }
   };
 
@@ -82,23 +76,30 @@ const ProfileSettingsForm: FC<Props> = ({
     };
   }, []);
 
-  const handleUpdate = async (data) => {
-    // Exclude avatar from data so it prevents calling API.updateUser
-    const { avatar, ...rest } = data;
+  const handleUpdate = async (data: UpdateUserFields) => {
+    if (data.avatar === null) {
+      console.log("data.avatar is null", data.avatar);
+      if (avatarFileName === null) {
+        console.log("avatarFileName is null", avatarFileName);
+        data.avatar = user?.avatar;
+      } else {
+        console.log("avatarFileName is not null", avatarFileName);
+        data.avatar = avatarFileName;
+      }
+    }
 
-    const response = await API.updateUser(rest, user?.user.id as string);
+    const response = await API.updateUser(data, user?.id as string);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else {
       const newUserData = {
         ...user,
-        user: {
-          ...response.data,
-        },
+        ...response.data,
       };
-      userStorage.setUser(newUserData);
+      authStore.update(newUserData);
+      toast.success("User details updated successfully");
       setProfileSettingsForm(false);
     }
   };
@@ -107,14 +108,14 @@ const ProfileSettingsForm: FC<Props> = ({
     try {
       await handleUpdate(data);
     } catch (error) {
-      console.error("Error in handleUpdate:", error);
+      console.log(error);
     }
   });
 
   return (
     <div>
-      <div className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center">
-        <div className="mb-4 bg-white flex flex-col p-6 text-md gap-4 rounded-3xl">
+      <div className="backdrop-blur-sm bg-dark-gray bg-opacity-10 fixed top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center">
+        <div className="mb-4 bg-white flex flex-col p-6 text-md gap-4 rounded-3xl lg:w-fit w-3/4">
           {profileSettingsForm && (
             <>
               {isPasswordChangeForm && (
@@ -137,7 +138,7 @@ const ProfileSettingsForm: FC<Props> = ({
             <>
               <form
                 onSubmit={onSubmit}
-                className="flex flex-col gap-2 w-[500px]">
+                className="flex flex-col gap-2 lg:w-[500px]">
                 <div className="rounded-2xl flex flex-col justify-center items-center relative gap-4">
                   {imagePreview ? (
                     <>
@@ -155,10 +156,10 @@ const ProfileSettingsForm: FC<Props> = ({
                           setFile(null);
                         }}></div>
                     </>
-                  ) : user?.user.avatar ? (
+                  ) : user?.avatar ? (
                     <Image
                       alt="avatar"
-                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${user?.user.avatar}`}
+                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${user?.avatar}`}
                       width={50}
                       height={50}
                       className="object-cover rounded-full w-16 h-16"
@@ -171,7 +172,7 @@ const ProfileSettingsForm: FC<Props> = ({
 
                   <button
                     type="button"
-                    className="border-2 border-gray-300 px-4 py-2 rounded-2xl hover:cursor-pointer"
+                    className="border-2 border-gray-300 px-4 py-2 rounded-2xl hover:cursor-pointer hover:drop-shadow-md"
                     onClick={(event) => {
                       event.stopPropagation();
                       event.preventDefault();
@@ -195,12 +196,12 @@ const ProfileSettingsForm: FC<Props> = ({
                   <button
                     onClick={toggleForm}
                     type="button"
-                    className="px-3 py-2 rounded-2xl bg-gray-blue">
+                    className="px-3 py-2 rounded-2xl bg-gray-blue hover:drop-shadow-md">
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
+                    className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow hover:drop-shadow-md"
                     onClick={toggleForm}>
                     Save changes
                   </button>
@@ -211,7 +212,7 @@ const ProfileSettingsForm: FC<Props> = ({
             <>
               <form
                 onSubmit={onSubmit}
-                className="flex flex-col gap-2 w-[500px]">
+                className="flex flex-col gap-2 lg:w-[500px]">
                 <div className="flex gap-3">
                   <Controller
                     name="first_name"
@@ -270,24 +271,24 @@ const ProfileSettingsForm: FC<Props> = ({
                 />
                 <div
                   onClick={() => setIsPasswordChangeForm(true)}
-                  className="hover:cursor-pointer w-fit">
+                  className="hover:cursor-pointer w-fit hover:drop-shadow-md">
                   Change password
                 </div>
                 <div
                   onClick={() => setIsProfilePictureChangeForm(true)}
-                  className="hover:cursor-pointer w-fit">
+                  className="hover:cursor-pointer w-fit hover:drop-shadow-md">
                   Change profile picture
                 </div>
                 <div className="flex gap-3 justify-end mt-5">
                   <button
                     onClick={() => setProfileSettingsForm(false)}
                     type="button"
-                    className="px-3 py-2 rounded-2xl bg-gray-blue">
+                    className="px-3 py-2 rounded-2xl bg-gray-blue hover:drop-shadow-md">
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
+                    className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow hover:drop-shadow-md"
                     onClick={toggleForm}>
                     Save changes
                   </button>
@@ -297,7 +298,6 @@ const ProfileSettingsForm: FC<Props> = ({
           )}
         </div>
       </div>
-      {apiError && <ToastWarning errorMessage={apiError} />}
     </div>
   );
 };

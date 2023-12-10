@@ -8,7 +8,7 @@ const Logo: FC = () => {
 
   return (
     <div>
-      <Link href={user ? "/auctions/all" : "/"}>
+      <Link href={user ? "/auctions/all" : "/"} className="hover:drop-shadow-lg">
         <Image
           src="/logo.png"
           alt="Logo"

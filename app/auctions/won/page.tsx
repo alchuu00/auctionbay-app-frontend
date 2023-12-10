@@ -4,11 +4,11 @@ import AuctionCard from "@/app/auctions/components/AuctionCard";
 import NoWonBids from "@/app/auctions/components/NoWonBids";
 import Loading from "@/app/auctions/components/Loading";
 import Topbar from "@/app/auctions/components/Topbar";
-import { useFetchBidsByBidderId } from "@/src/hooks/useFetchBidsByBidderId";
 import { useState, useEffect } from "react";
-import { useAuctions } from "../../../src/hooks/useFetchAuctions";
 import { AuctionType } from "@/src/models/auction";
 import { userStorage } from "@/src/stores/userStorage";
+import { useFetchWon } from "@/src/hooks/useFetchWon";
+import { DashboardLayout } from "../DashboardLayout";
 
 const Won = () => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -16,45 +16,10 @@ const Won = () => {
   const [activeTab, setActiveTab] = useState<number | null>(0);
   const [showAuctionDetails, setShowAuctionDetails] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [highestBid, setHighestBid] = useState<number | null>(null);
-  const [winningBidderId, setWinningBidderId] = useState<string | null>(null);
-  const [selectedAuction, setSelectedAuction] = useState<AuctionType | null>(
-    null
-  );
-
-  // FIXME now it's displaying all auctions that user has bidded on
-  // i want to display only the ones that user has won
 
   const user = userStorage.getUser();
 
-  const currentUserId = user?.user.id;
-
-  const { auctions, refetch } = useAuctions(pageNumber, [
-    activeTopTab,
-    activeTab,
-  ]);
-
-  const doneAuctions = auctions.filter(
-    (auction) => new Date(auction.end_date) < new Date()
-  );
-
-  const currentDate = new Date();
-
-  const { bids } = useFetchBidsByBidderId(currentUserId);
-  let auctionIdsUserBiddedOn: string[] = [];
-  let auctionsUserBiddedOn: AuctionType[] = [];
-
-  if (bids && bids?.data && Array.isArray(bids?.data)) {
-    const auctionIds = bids?.data.map((bid) => bid.auction_item.id);
-    auctionIdsUserBiddedOn = Array.from(new Set(auctionIds));
-
-    // Filter the auctions that the user has bid on and that have expired
-    auctionsUserBiddedOn = auctions.filter(
-      (auction) =>
-        auctionIdsUserBiddedOn.includes(auction.id) &&
-        new Date(auction.end_date) < new Date()
-    );
-  }
+  const { auctions, refetch } = useFetchWon(user?.id);
 
   useEffect(() => {
     if (activeTopTab) {
@@ -66,37 +31,15 @@ const Won = () => {
     if (user && auctions) {
       setIsLoading(false);
     }
-  }, [user, auctions, bids]);
+  }, [user, auctions]);
 
   const renderAuctions = (filterFunc: (auction: AuctionType) => boolean) => (
     <div className="w-full flex justify-start items-center">
       <div className="flex flex-wrap justify-start gap-5 w-screen mb-5">
         {auctions
-          .filter(filterFunc)
-          .sort((a, b) => {
-            const aEndDate = new Date(a.end_date);
-            const bEndDate = new Date(b.end_date);
-            const currentDate = new Date();
-
-            // Check if either auction has ended
-            const aEnded = aEndDate <= currentDate;
-            const bEnded = bEndDate <= currentDate;
-
-            if (aEnded && !bEnded) {
-              // If a has ended but b hasn't, a should come after b
-              return 1;
-            } else if (!aEnded && bEnded) {
-              // If b has ended but a hasn't, a should come before b
-              return -1;
-            } else {
-              // If both have ended or both haven't ended, sort by end date
-              return aEndDate.getTime() - bEndDate.getTime();
-            }
-          })
           .map((auction: AuctionType, index: number) => (
-            <div key={index}>
+            <div key={index} className="w-full lg:w-fit">
               <AuctionCard
-                setWinningBidderId={setWinningBidderId}
                 refetchAuctions={refetch}
                 activeTopTab={2}
                 auction={auction}
@@ -104,10 +47,8 @@ const Won = () => {
                 onClick={() => {
                   if (
                     (activeTopTab === 1 ||
-                      (activeTopTab === 2 && activeTab === 1)) &&
-                    new Date(auction.end_date) > currentDate
+                      (activeTopTab === 2 && activeTab === 1))
                   ) {
-                    setSelectedAuction(auction);
                     setShowAuctionDetails(true);
                     setActiveTab(null);
                     setActiveTopTab(null);
@@ -120,24 +61,8 @@ const Won = () => {
     </div>
   );
 
-  // set highest bid for each auction
-  useEffect(() => {
-    if (bids && Array.isArray(bids.data)) {
-      setHighestBid(
-        bids.data.reduce(
-          (max, bid) => Math.max(max, bid.bid_amount),
-          bids.data[0].bid_amount
-        )
-      );
-    }
-  }, [bids]);
-
-  console.log("auctionsUserBiddedOn", auctionsUserBiddedOn);
-  console.log("doneAuctions", doneAuctions);
-  console.log("winningBidderId", winningBidderId);
-
   return (
-    <div className="px-6">
+    <DashboardLayout>
       {isLoading ? (
         <Loading></Loading>
       ) : (
@@ -148,17 +73,16 @@ const Won = () => {
             activeTopTab={2}
             showAuctionDetails={showAuctionDetails}
           />
-          {auctionsUserBiddedOn.length > 0 &&
-          doneAuctions.length > 0 ? (
+          {auctions.length > 0 ? (
             renderAuctions(
-              (auction: AuctionType) => new Date(auction.end_date) < new Date() && auctionIdsUserBiddedOn.includes(auction.id)
+              (auction: AuctionType) => new Date(auction.end_date) < new Date()
             )
           ) : (
             <NoWonBids />
           )}
         </>
       )}
-    </div>
+    </DashboardLayout>
   );
 };
 

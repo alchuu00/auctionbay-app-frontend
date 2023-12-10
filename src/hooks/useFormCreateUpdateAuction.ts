@@ -19,7 +19,13 @@ export const useCreateUpdateAuctionForm = ({ defaultValues }: Props) => {
     title: Yup.string().required("Title is required"),
     description: Yup.string().required("Description is required"),
     start_price: Yup.number().required("Start price is required"),
-    end_date: Yup.string().required("End date is required"),
+    end_date: Yup.string()
+      .test("isFuture", "End date can't be in the past", function (value) {
+        const today = new Date();
+        const todayAsString = today.toISOString();
+        return value >= todayAsString;
+      })
+      .required("End date is required"),
   });
 
   const {

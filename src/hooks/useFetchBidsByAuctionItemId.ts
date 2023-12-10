@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 import * as API from "../api/api";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 import { StatusCode } from "../constants/errorConstants";
+import { BidType } from "../models/bid";
+import { routes } from "../constants/routesConstants";
 
-export const useFetchBidsByAuctionItemId = (auctionItemId: string) => {
-  const [bids, setBids] = useState(null);
+export const useFetchBidsByAuctionItemId = (
+  auctionItemId: string
+): { bids: BidType[]; refetch: () => void } => {
+
+  const [bids, setBids] = useState<BidType[]>([]);
 
   const router = useRouter();
 
@@ -12,13 +17,12 @@ export const useFetchBidsByAuctionItemId = (auctionItemId: string) => {
     try {
       const bidsData = await API.getBidsByAuctionItemId(auctionItemId);
       if (bidsData.data?.statusCode === StatusCode.FORBIDDEN) {
-        router.push("/");
+        router.push(`${routes.HOME}`);
       } else if (bidsData.data?.statusCode === StatusCode.UNAUTHORIZED) {
-        router.push("/");
+        router.push(`${routes.HOME}`);
       } else {
-        setBids(bidsData);
+        setBids(bidsData.data);
       }
-      
     } catch (error) {
       console.error("Error fetching bids data: ", error);
     }
@@ -28,5 +32,5 @@ export const useFetchBidsByAuctionItemId = (auctionItemId: string) => {
     fetchBids();
   }, [auctionItemId]);
 
-  return {bids, refetch: fetchBids};
+  return { bids, refetch: fetchBids };
 };

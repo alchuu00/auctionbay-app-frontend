@@ -1,6 +1,7 @@
 "use client";
 
 import EyeIcon from "@heroicons/react/outline/EyeIcon";
+import EyeSlashIcon from "@heroicons/react/outline/EyeOffIcon";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Controller, set } from "react-hook-form";
@@ -8,33 +9,30 @@ import Link from "next/link";
 import {
   useRegisterForm,
   RegisterUserFields,
-} from "../../../src/hooks/useRegister";
+} from "../../../src/hooks/useFormRegister";
 import * as API from "../../../src/api/api";
-import ToastWarning from "../../components/ToastWarning";
 import { StatusCode } from "@/src/constants/errorConstants";
 import Logo from "@/app/components/Logo";
 import authStore from "@/src/stores/authStore";
+import { toast } from "react-toastify";
+import { routes } from "@/src/constants/routesConstants";
+import { userStorage } from "@/src/stores/userStorage";
 
 const RegisterForm = () => {
   const [toggleHiddenPassword, setToggleHiddenPassword] = useState(true);
   const [toggleHiddenConfirmPassword, setToggleHiddenConfirmPassword] =
     useState(true);
+
   const { handleSubmit, errors, control } = useRegisterForm();
-  const [showInputErrorMessage, setShowInputErrorMessage] = useState(false);
-  const [showResponseErrorMessage, setShowResponseErrorMessage] =
-    useState(false);
-  const [apiError, setApiError] = useState("");
+
   const router = useRouter();
 
-  const errorFields = [
-    { field: "first_name", message: errors.first_name?.message },
-    { field: "last_name", message: errors.last_name?.message },
-    { field: "email", message: errors.email?.message },
-    { field: "password", message: errors.password?.message },
-    { field: "confirm_password", message: errors.confirm_password?.message },
-  ];
-
-  const firstError = errorFields.find((errorField) => errorField.message);
+  useEffect(() => {
+    const firstError = Object.values(errors)[0];
+    if (firstError?.message) {
+      toast.error(firstError.message);
+    }
+  }, [errors]);
 
   const handleToggleHiddenPassword = () => {
     setToggleHiddenPassword(!toggleHiddenPassword);
@@ -48,16 +46,16 @@ const RegisterForm = () => {
     const response = await API.register(data);
 
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else {
-      authStore.login(response.data);
-      router.push("/auctions/all");
+      userStorage.setUser(response.data.user);
+      router.push(`${routes.AUCTIONS_ALL}`);
     }
   });
   return (
-    <div className="flex flex-col justify-between items-center h-screen py-10 bg-white w-1/3 text-md">
+    <div className="flex flex-col lg:justify-between justify-around items-center h-screen py-10 bg-white lg:w-1/3 w-full text-md">
       <Logo />
       <div className="text-center mb-5">
         <h1 className="font-bold text-4xl">Hello!</h1>
@@ -148,10 +146,17 @@ const RegisterForm = () => {
                     className="border w-full font-light py-2 px-4 rounded-2xl"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                    <EyeIcon
-                      className="h-5 w-5 text-gray-400 cursor-pointer"
-                      onClick={handleToggleHiddenPassword}
-                    />
+                    {toggleHiddenPassword ? (
+                      <EyeIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenPassword}
+                      />
+                    ) : (
+                      <EyeSlashIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenPassword}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -175,10 +180,17 @@ const RegisterForm = () => {
                     className="border w-full font-light py-2 px-4 rounded-2xl"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                    <EyeIcon
-                      className="h-5 w-5 text-gray-400 cursor-pointer"
-                      onClick={handleToggleHiddenConfirmPassword}
-                    />
+                  {toggleHiddenConfirmPassword ? (
+                      <EyeIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenConfirmPassword}
+                      />
+                    ) : (
+                      <EyeSlashIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenConfirmPassword}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -197,8 +209,6 @@ const RegisterForm = () => {
           Log In
         </Link>
       </div>
-      {firstError && <ToastWarning errorMessage={firstError.message} />}
-      {apiError && <ToastWarning errorMessage={apiError} />}
     </div>
   );
 };

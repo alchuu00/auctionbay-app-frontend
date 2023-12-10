@@ -10,23 +10,25 @@ export interface AuthContextType {
 }
 
 class AuthStore {
-  user?: UserType | null = userStorage.getUser() || null;
-  userId?: string | null = userStorage.getUserId() || null;
+  user?: UserType;
 
   constructor() {
     makeAutoObservable(this);
   }
 
   login(user: UserType) {
-    userStorage.setUser(user);
-    userStorage.setUserId(user.id);
     this.user = user;
+    userStorage.setUser(user);
   }
 
   signout() {
-    userStorage.clearUser();
     this.user = undefined;
-    this.userId = undefined;
+    userStorage.clearUser();
+  }
+
+  update(user: UserType) {
+    this.user = user;
+    userStorage.setUser(user);
   }
 }
 

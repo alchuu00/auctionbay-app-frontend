@@ -2,12 +2,17 @@ import React, { FC, useState, ChangeEvent, useEffect } from "react";
 import { Controller } from "react-hook-form";
 import * as API from "../../../src/api/api";
 import { useRouter } from "next/navigation";
-import ToastWarning from "../../components/ToastWarning";
 import Image from "next/image";
 import TrashIcon from "@heroicons/react/outline/TrashIcon";
 import { StatusCode } from "@/src/constants/errorConstants";
-import { useCreateUpdateAuctionForm, CreateUpdateAuctionFields } from "@/src/hooks/useCreateUpdateAuction";
+import {
+  useCreateUpdateAuctionForm,
+  CreateUpdateAuctionFields,
+} from "@/src/hooks/useFormCreateUpdateAuction";
 import { AuctionType } from "@/src/models/auction";
+import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+import { routes } from "@/src/constants/routesConstants";
 
 interface Props {
   refetchAuctions: () => void;
@@ -25,34 +30,19 @@ const CreateUpdateAuctionForm: FC<Props> = ({
   const { handleSubmit, errors, control } = useCreateUpdateAuctionForm({
     defaultValues,
   });
-  const [apiError, setApiError] = useState("");
-  const [showError, setShowError] = useState(false);
-  const [showInputErrorMessage, setShowInputErrorMessage] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const errorFields = [
-    { field: "title", message: errors.title?.message },
-    { field: "description", message: errors.description?.message },
-    { field: "start_price", message: errors.start_price?.message },
-    { field: "end_date", message: errors.end_date?.message },
-    { field: "image", message: fileError ? "Please select an image" : "" },
-  ];
+  useEffect(() => {
+    const firstError = Object.values(errors)[0];
+
+    if (firstError?.message) {
+      toast.error(firstError.message);
+    }
+  }, [errors]);
 
   const router = useRouter();
-
-  const firstError = errorFields.find((errorField) => errorField.message);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setShowInputErrorMessage(false);
-    }, 2000); // Set timeout to 2 seconds
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [showInputErrorMessage]);
 
   const onSubmit = handleSubmit(async (data: CreateUpdateAuctionFields) => {
     if (!defaultValues) await handleAdd(data);
@@ -62,14 +52,12 @@ const CreateUpdateAuctionForm: FC<Props> = ({
   });
 
   const handleAdd = async (data: CreateUpdateAuctionFields) => {
-    if (!file) return;
+    if (!file) return null;
     const response = await API.createAuction(data);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
-      setShowError(true);
+      toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
-      setShowError(true);
+      toast.error(response.data.message);
     } else {
       // Upload auction image
       const formData = new FormData();
@@ -79,15 +67,13 @@ const CreateUpdateAuctionForm: FC<Props> = ({
         response.data.id
       );
       if (fileResponse.data?.statusCode === StatusCode.BAD_REQUEST) {
-        setApiError(fileResponse.data.message);
-        setShowError(true);
+        toast.error(fileResponse.data.message);
       } else if (
         fileResponse.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR
       ) {
-        setApiError(fileResponse.data.message);
-        setShowError(true);
+        toast.error(fileResponse.data.message);
       } else {
-        router.push(`/auctions/my`);
+        toast.success("Auction item created successfully");
       }
     }
   };
@@ -95,14 +81,13 @@ const CreateUpdateAuctionForm: FC<Props> = ({
   const handleUpdate = async (data: CreateUpdateAuctionFields) => {
     const response = await API.updateAuction(data, defaultValues?.id as string);
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
-      setShowError(true);
+      toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
-      setShowError(true);
+      toast.error(response.data.message);
     } else {
+      toast.success("Auction item updated successfully");
       if (!file) {
-        router.push(`/auctions/my`);
+        router.push(`${routes.AUCTIONS_MY}`);
         return;
       }
       // Upload auction image
@@ -113,15 +98,11 @@ const CreateUpdateAuctionForm: FC<Props> = ({
         response.data.id
       );
       if (fileResponse.data?.statusCode === StatusCode.BAD_REQUEST) {
-        setApiError(fileResponse.data.message);
-        setShowError(true);
+        toast.error(fileResponse.data.message);
       } else if (
         fileResponse.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR
       ) {
-        setApiError(fileResponse.data.message);
-        setShowError(true);
-      } else {
-        router.push(`/auctions/my`);
+        toast.error(fileResponse.data.message);
       }
     }
   };
@@ -163,8 +144,10 @@ const CreateUpdateAuctionForm: FC<Props> = ({
   }, [defaultValues]);
 
   return (
-    <div className="backdrop-blur-sm bg-dark-gray bg-opacity-10 absolute top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center">
-      <form onSubmit={onSubmit} className="bg-white p-4 rounded-2xl w-1/3">
+    <div className="backdrop-blur-sm bg-dark-gray bg-opacity-10 fixed top-0 left-0 right-0 bottom-0 m-auto flex flex-col justify-center items-center">
+      <form
+        onSubmit={onSubmit}
+        className="bg-white p-4 rounded-2xl lg:h-fit lg:w-1/3 w-3/4">
         {isUpdateAuction ? (
           <h1 className="font-bold text-2xl mb-4">Edit auction</h1>
         ) : (
@@ -190,12 +173,12 @@ const CreateUpdateAuctionForm: FC<Props> = ({
                       setImagePreview(null);
                       setFile(null);
                     }}>
-                    <TrashIcon className="w-5 h-5" />
+                    <TrashIcon className="w-5 h-5 hover:drop-shadow-md" />
                   </div>
                 )}
               </>
             ) : (
-              <div className="border-2 border-gray-500 px-4 py-2 rounded-2xl">
+              <div className="border-2 border-gray-500 px-4 py-2 rounded-2xl hover:drop-shadow-md">
                 Add image
               </div>
             )}
@@ -263,7 +246,6 @@ const CreateUpdateAuctionForm: FC<Props> = ({
                   <label htmlFor="start_price">Start price</label>
                   <input
                     {...field}
-                    value={field.value}
                     name="start_price"
                     id="start_price"
                     placeholder="Price"
@@ -294,7 +276,6 @@ const CreateUpdateAuctionForm: FC<Props> = ({
                 <label htmlFor="end_date">End date</label>
                 <input
                   {...field}
-                  value={field.value}
                   name="end_date"
                   id="end_date"
                   type="date"
@@ -312,42 +293,33 @@ const CreateUpdateAuctionForm: FC<Props> = ({
           {isUpdateAuction ? (
             <button
               onClick={() => setShowAddAuctionsForm(false)}
-              className="px-3 py-2 rounded-2xl bg-gray-blue">
+              className="px-3 py-2 rounded-2xl bg-gray-blue hover:drop-shadow-md">
               Discard changes
             </button>
           ) : (
             <button
               onClick={() => setShowAddAuctionsForm(false)}
-              className="px-3 py-2 rounded-2xl bg-gray-blue">
+              className="px-3 py-2 rounded-2xl bg-gray-blue hover:drop-shadow-md">
               Cancel
             </button>
           )}
           {isUpdateAuction ? (
             <button
-              className="w-100 px-3 py-2 rounded-2xl bg-dark-gray text-white"
+              className="w-100 px-3 py-2 rounded-2xl bg-dark-gray text-white hover:drop-shadow-md"
               type="submit"
-              onMouseUp={defaultValues ? undefined : handleFileError}
-              onClick={() => setShowInputErrorMessage(true)}>
+              onMouseUp={defaultValues ? undefined : handleFileError}>
               Edit auction
             </button>
           ) : (
             <button
-              className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow"
+              className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow hover:drop-shadow-md"
               type="submit"
-              onMouseUp={defaultValues ? undefined : handleFileError}
-              onClick={() => setShowInputErrorMessage(true)}>
+              onMouseUp={defaultValues ? undefined : handleFileError}>
               Start auction
             </button>
           )}
         </div>
       </form>
-      {apiError && <ToastWarning errorMessage={apiError} />}
-      {firstError && (
-        <ToastWarning
-          key={firstError.field}
-          errorMessage={firstError.message}
-        />
-      )}
     </div>
   );
 };

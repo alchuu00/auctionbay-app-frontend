@@ -1,5 +1,9 @@
+import { UserType } from "./auth";
+import { BidType } from "./bid";
+
 export type AuctionType = {
-  user: any;
+  bids: BidType[];
+  user: UserType;
   id: string;
   title: string;
   description: string;

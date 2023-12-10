@@ -1,21 +1,23 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import {
   UpdatePasswordFields,
   usePasswordForm,
-} from "../../../src/hooks/useUpdatePassword";
+} from "../../../src/hooks/useFormUpdatePassword";
 import EyeIcon from "@heroicons/react/outline/EyeIcon";
+import EyeSlashIcon from "@heroicons/react/outline/EyeOffIcon";
 import * as API from "../../../src/api/api";
-import ToastWarning from "../../components/ToastWarning";
 import { StatusCode } from "@/src/constants/errorConstants";
 import { userStorage } from "@/src/stores/userStorage";
+import { toast } from "react-toastify";
 
 interface Props {
   toggleForm: () => void;
 }
 
 const UpdatePasswordForm = ({ toggleForm }: Props) => {
-  const [apiError, setApiError] = useState("");
   const [toggleHiddenCurrent, setToggleHiddenCurrent] = useState(true);
   const [toggleHiddenNew, setToggleHiddenNew] = useState(true);
   const [toggleHiddenConfirm, setToggleHiddenConfirm] = useState(true);
@@ -34,17 +36,25 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
     setToggleHiddenConfirm(!toggleHiddenConfirm);
   };
 
-  const { handleSubmit, errors, control, isValid } = usePasswordForm();
+  const { handleSubmit, errors, control } = usePasswordForm();
+
+  useEffect(() => {
+    const firstError = Object.values(errors)[0];
+
+    if (firstError?.message) {
+      toast.error(firstError.message);
+    }
+  }, [errors]);
 
   const handleUpdatePassword = async (data: UpdatePasswordFields) => {
     const response = await API.updateUserPassword(
       { password: data.new_password, confirm_password: data.confirm_password },
-      user?.user.id as string
+      user?.id as string
     );
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
-      setApiError(response.data.message);
+      toast.error(response.data.message);
     } else {
       toggleForm();
     }
@@ -55,7 +65,7 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
   });
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-2 w-[500px]">
+    <form onSubmit={onSubmit} className="flex flex-col gap-2 lg:w-[500px]">
       <Controller
         name="password"
         control={control}
@@ -73,10 +83,17 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
                 className="border-2 border-gray-blue w-full font-light py-2 px-4 rounded-2xl"
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                <EyeIcon
-                  className="h-5 w-5 text-gray-400 cursor-pointer"
-                  onClick={handleToggleHiddenCurrent}
-                />
+              {toggleHiddenCurrent ? (
+                      <EyeIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenCurrent}
+                      />
+                    ) : (
+                      <EyeSlashIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenCurrent}
+                      />
+                    )}
               </div>
             </div>
           </div>
@@ -99,10 +116,17 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
                 className="border-2 border-gray-blue w-full font-light py-2 px-4 rounded-2xl"
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                <EyeIcon
-                  className="h-5 w-5 text-gray-400 cursor-pointer"
-                  onClick={handleToggleHiddenNew}
-                />
+              {toggleHiddenNew ? (
+                      <EyeIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenNew}
+                      />
+                    ) : (
+                      <EyeSlashIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenNew}
+                      />
+                    )}
               </div>
             </div>
           </div>
@@ -125,10 +149,17 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
                 className="border-2 border-gray-blue w-full font-light py-2 px-4 rounded-2xl"
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                <EyeIcon
-                  className="h-5 w-5 text-gray-400 cursor-pointer"
-                  onClick={handleToggleHiddenConfirm}
-                />
+              {toggleHiddenConfirm ? (
+                      <EyeIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenConfirm}
+                      />
+                    ) : (
+                      <EyeSlashIcon
+                        className="h-5 w-5 text-gray-400 cursor-pointer"
+                        onClick={handleToggleHiddenConfirm}
+                      />
+                    )}
               </div>
             </div>
           </div>
@@ -138,16 +169,15 @@ const UpdatePasswordForm = ({ toggleForm }: Props) => {
         <button
           onClick={() => toggleForm()}
           type="button"
-          className="px-3 py-2 rounded-2xl bg-gray-blue">
+          className="px-3 py-2 rounded-2xl bg-gray-blue hover:drop-shadow-md">
           Cancel
         </button>
         <button
           type="submit"
-          className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow">
+          className="w-100 px-3 py-2 rounded-2xl bg-fluoro-yellow hover:drop-shadow-md">
           Save changes
         </button>
       </div>
-      {apiError && <ToastWarning errorMessage={apiError} />}
     </form>
   );
 };
