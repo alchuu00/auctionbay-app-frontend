@@ -20,6 +20,7 @@ import NotificationsPopup from "./NotificationsPopup";
 import { useFetchNotifications } from "@/src/hooks/useFetchSSENotifications";
 import { NotificationType } from "@/src/models/notification";
 import { routes } from "@/src/constants/routesConstants";
+import { UserType } from "@/src/models/auth";
 
 interface Props {
   refetchAuctions: () => void;
@@ -42,7 +43,6 @@ const Topbar: FC<Props> = ({
   const [notificationsToShow, setNotificationsToShow] = useState<
     NotificationType[]
   >([]);
-
   const handleAddAuctionsClick = () => {
     setShowAddAuctionsForm(true);
   };
@@ -60,9 +60,9 @@ const Topbar: FC<Props> = ({
     }
   };
 
-  const user = userStorage.getUser();
-
   const router = useRouter();
+
+  const user = userStorage.getUser();
 
   const { auctions } = useFetchAuctionsByUserId(user?.id);
 

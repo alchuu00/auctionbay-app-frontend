@@ -19,18 +19,16 @@ class AuthStore {
   login(user: UserType) {
     this.user = user;
     userStorage.setUser(user);
-    console.log("login set user", user);
   }
 
   signout() {
-    userStorage.clearUser();
     this.user = undefined;
-    console.log("signout clear user", userStorage.getUser());
+    userStorage.clearUser();
   }
 
   update(user: UserType) {
-    userStorage.setUser(user);
     this.user = user;
+    userStorage.setUser(user);
   }
 }
 

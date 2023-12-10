@@ -54,10 +54,7 @@ const ProfileSettingsForm: FC<Props> = ({
       formData.append("avatar", myfile);
 
       // upload file to server
-      const response = await API.uploadAvatar(
-        formData,
-        user?.id as string
-      );
+      const response = await API.uploadAvatar(formData, user?.id as string);
       if (response.status >= 200 && response.status <= 300) {
         setAvatarFileName(response.data.avatar);
       }
@@ -80,10 +77,18 @@ const ProfileSettingsForm: FC<Props> = ({
   }, []);
 
   const handleUpdate = async (data: UpdateUserFields) => {
-    data.avatar = avatarFileName;
+    if (data.avatar === null) {
+      console.log("data.avatar is null", data.avatar);
+      if (avatarFileName === null) {
+        console.log("avatarFileName is null", avatarFileName);
+        data.avatar = user?.avatar;
+      } else {
+        console.log("avatarFileName is not null", avatarFileName);
+        data.avatar = avatarFileName;
+      }
+    }
 
     const response = await API.updateUser(data, user?.id as string);
-    // FIXME if i just update user (no avatar) then avatar is null so i need to check if avatar is null then set avatar to user.avatar 
     if (response.data?.statusCode === StatusCode.BAD_REQUEST) {
       toast.error(response.data.message);
     } else if (response.data?.statusCode === StatusCode.INTERNAL_SERVER_ERROR) {
@@ -91,9 +96,7 @@ const ProfileSettingsForm: FC<Props> = ({
     } else {
       const newUserData = {
         ...user,
-        user: {
-          ...response.data,
-        },
+        ...response.data,
       };
       authStore.update(newUserData);
       toast.success("User details updated successfully");

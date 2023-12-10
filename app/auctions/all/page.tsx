@@ -21,10 +21,6 @@ const All = () => {
 
   const user = userStorage.getUser();
 
-  useEffect(() => {
-    console.log("user in All", user);
-  }, [user])
-
   const currentUserId = user?.id;
 
   const { auctions, refetch } = useAuctions(pageNumber, [
