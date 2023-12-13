@@ -4,7 +4,7 @@ import { useFetchNotifications } from "@/src/hooks/useFetchSSENotifications";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 
-interface Props {
+type Props = {
   setShowNotifications: (showNotifications: boolean) => void;
 }
 

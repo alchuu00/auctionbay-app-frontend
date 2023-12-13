@@ -14,7 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import { routes } from "@/src/constants/routesConstants";
 
-interface Props {
+type Props = {
   refetchAuctions: () => void;
   defaultValues?: AuctionType;
   setShowAddAuctionsForm: (showAddAuctions: boolean) => void;

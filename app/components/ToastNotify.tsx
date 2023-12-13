@@ -1,7 +1,7 @@
 import { NotificationType } from "@/src/models/notification";
 import React, { useEffect, useRef, useState } from "react";
 
-interface Props {
+type Props = {
   notifyMessage: NotificationType;
 }
 

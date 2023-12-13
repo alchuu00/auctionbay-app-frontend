@@ -13,7 +13,7 @@ import Image from "next/image";
 import { toast } from "react-toastify";
 import authStore from "@/src/stores/authStore";
 
-interface Props {
+type Props = {
   profileSettingsForm: boolean;
   setProfileSettingsForm: (showAddAuctions: boolean) => void;
 }

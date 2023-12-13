@@ -7,7 +7,7 @@ import { StatusCode } from "@/src/constants/errorConstants";
 import authStore from "@/src/stores/authStore";
 import { routes } from "@/src/constants/routesConstants";
 
-interface Props {
+type Props = {
   showProfileSettings: boolean;
   setShowProfileSettings: (showProfileSettings: boolean) => void;
 }

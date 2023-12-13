@@ -13,7 +13,7 @@ import { StatusCode } from "@/src/constants/errorConstants";
 import { userStorage } from "@/src/stores/userStorage";
 import { toast } from "react-toastify";
 
-interface Props {
+type Props = {
   toggleForm: () => void;
 }
 

@@ -13,7 +13,7 @@ export interface CreateUpdateUserFields {
   new_password?: Yup.Maybe<string>;
 }
 
-interface Props {
+type Props = {
   defaultValues?: UserType | null;
 }
 

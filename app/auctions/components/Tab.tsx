@@ -1,6 +1,6 @@
 import React from 'react'
 
-interface Props {
+type Props = {
     active: boolean;
     onClick: () => void;
     children: React.ReactNode;

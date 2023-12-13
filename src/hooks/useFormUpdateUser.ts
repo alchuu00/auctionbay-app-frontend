@@ -10,7 +10,7 @@ export interface UpdateUserFields {
   avatar?: Yup.Maybe<string>;
 }
 
-interface Props {
+type Props = {
   defaultValues?: UpdateUserFields | null;
 }
 

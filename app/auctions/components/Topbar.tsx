@@ -22,7 +22,7 @@ import { NotificationType } from "@/src/models/notification";
 import { routes } from "@/src/constants/routesConstants";
 import { UserType } from "@/src/models/auth";
 
-interface Props {
+type Props = {
   refetchAuctions: () => void;
   activeTab: number | null;
   activeTopTab: number | null;

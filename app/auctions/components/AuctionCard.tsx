@@ -13,7 +13,7 @@ import { AuctionType } from "@/src/models/auction";
 import { userStorage } from "@/src/stores/userStorage";
 import { toast } from "react-toastify";
 
-interface Props {
+type Props = {
   refetchAuctions: any;
   activeTopTab: number | null;
   auction: AuctionType;

@@ -10,7 +10,7 @@ export interface CreateUpdateAuctionFields {
   end_date: string;
 }
 
-interface Props {
+type Props = {
   defaultValues?: AuctionType;
 }
 

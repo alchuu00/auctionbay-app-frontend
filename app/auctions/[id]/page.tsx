@@ -23,7 +23,7 @@ import { useFetchAuctionByAuctionItemId } from "@/src/hooks/useFetchAuctionByAuc
 import { DashboardLayout } from "../DashboardLayout";
 import { toast } from "react-toastify";
 
-interface Props {
+type Props = {
   defaultValues: BidType;
   auction: AuctionType;
 }
