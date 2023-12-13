@@ -6,7 +6,12 @@ const userStorage = {
   getUser: () => {
     if (typeof window !== "undefined") {
       const userString = window.localStorage.getItem(`${USER_PREFIX}`);
-      const user: UserType = userString ? JSON.parse(userString) : null;
+      let user: UserType | null = null;
+      try {
+        user = userString ? JSON.parse(userString) : null;
+      } catch (error) {
+        console.error('Error parsing user from local storage', error);
+      }
       return user;
     }
     return null;
