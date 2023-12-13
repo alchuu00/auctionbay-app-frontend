@@ -23,17 +23,12 @@ import { useFetchAuctionByAuctionItemId } from "@/src/hooks/useFetchAuctionByAuc
 import { DashboardLayout } from "../DashboardLayout";
 import { toast } from "react-toastify";
 
-type Props = {
-  defaultValues: BidType;
-  auction: AuctionType;
-}
-
 interface RouteParams {
   id: string;
   [key: string]: string;
 }
 
-const AuctionDetails: React.FC<Props> = () => {
+const AuctionDetails: React.FC = () => {
   const [bidStatus, setBidStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [highestBid, setHighestBid] = useState<number>();
