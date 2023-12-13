@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 
 export interface ResetPasswordFields {
-  password?: Yup.Maybe<string>;
-  confirm_password?: Yup.Maybe<string>;
+  password?: string;
+  confirm_password?: string;
 }
 
 export const useResetPasswordForm = () => {

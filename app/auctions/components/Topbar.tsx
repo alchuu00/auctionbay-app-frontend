@@ -64,7 +64,7 @@ const Topbar: FC<Props> = ({
 
   const user = userStorage.getUser();
 
-  const { auctions } = useFetchAuctionsByUserId(user?.id);
+  const { auctions } = useFetchAuctionsByUserId(user?.id as string);
 
   const fetchedNotifications = useFetchNotifications();
 
@@ -83,12 +83,12 @@ const Topbar: FC<Props> = ({
   }, [fetchedNotifications.notifications, showNotifications]);
 
   const { auctions: biddingOn } = useFetchAuctionBiddedOnByUserId(
-    user?.id
+    user?.id as string
   );
 
-  const { auctions: winningAuctions } = useFetchWinning(user?.id);
+  const { auctions: winningAuctions } = useFetchWinning(user?.id as string);
 
-  const { auctions: wonAuctions } = useFetchWon(user?.id);
+  const { auctions: wonAuctions } = useFetchWon(user?.id as string);
 
   const earnings = calculateEarnings(wonAuctions);
 

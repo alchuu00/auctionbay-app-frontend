@@ -51,7 +51,7 @@ const AuctionCard: FC<Props> = ({
   const { bids } = useFetchBidsByAuctionItemId(auction.id);
 
   const { bids: bidsByBidderId, fetchBids } = useFetchBidsByBidderId(
-    user?.id
+    user?.id as string
   );
 
   // display status of auction

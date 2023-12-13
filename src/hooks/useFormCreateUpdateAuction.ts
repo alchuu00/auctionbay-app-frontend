@@ -12,7 +12,7 @@ export interface CreateUpdateAuctionFields {
 
 type Props = {
   defaultValues?: AuctionType;
-}
+};
 
 export const useCreateUpdateAuctionForm = ({ defaultValues }: Props) => {
   const CreateUpdateAuctionSchema = Yup.object().shape({
@@ -21,9 +21,12 @@ export const useCreateUpdateAuctionForm = ({ defaultValues }: Props) => {
     start_price: Yup.number().required("Start price is required"),
     end_date: Yup.string()
       .test("isFuture", "End date can't be in the past", function (value) {
+        if (value === undefined) {
+          return false;
+        }
         const today = new Date();
-        const todayAsString = today.toISOString();
-        return value >= todayAsString;
+        const valueDate = new Date(value);
+        return valueDate >= today;
       })
       .required("End date is required"),
   });

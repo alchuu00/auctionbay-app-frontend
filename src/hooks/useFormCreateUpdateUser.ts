@@ -5,12 +5,12 @@ import * as Yup from "yup";
 import { UserType } from "../models/auth";
 
 export interface CreateUpdateUserFields {
-  first_name?: Yup.Maybe<string>;
-  last_name?: Yup.Maybe<string>;
+  first_name?: string;
+  last_name?: string;
   email: string;
   password: string;
   confirm_password: string;
-  new_password?: Yup.Maybe<string>;
+  new_password?: string;
 }
 
 type Props = {

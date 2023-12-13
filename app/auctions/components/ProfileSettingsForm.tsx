@@ -224,6 +224,7 @@ const ProfileSettingsForm: FC<Props> = ({
                         </label>
                         <input
                           {...field}
+                          value={field.value || ""}
                           type="text"
                           aria-label="First Name"
                           aria-describedby="first name"
@@ -242,6 +243,7 @@ const ProfileSettingsForm: FC<Props> = ({
                         </label>
                         <input
                           {...field}
+                          value={field.value || ""}
                           type="text"
                           aria-label="Last Name"
                           aria-describedby="last name"
@@ -261,6 +263,7 @@ const ProfileSettingsForm: FC<Props> = ({
                       </label>
                       <input
                         {...field}
+                        value={field.value || ""}
                         type="text"
                         aria-label="Email"
                         aria-describedby="email"

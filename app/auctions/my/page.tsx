@@ -36,7 +36,7 @@ const My = () => {
 
   let auctionIdsUserBiddedOn: string[] = [];
 
-  const {bids} = useFetchBidsByBidderId(currentUserId);
+  const {bids} = useFetchBidsByBidderId(currentUserId as string);
   if (bids) {
     const auctionIds = bids?.map((bid) => bid.auction_item.id);
 

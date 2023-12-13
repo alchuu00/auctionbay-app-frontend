@@ -22,6 +22,7 @@ import Topbar from "../components/Topbar";
 import { useFetchAuctionByAuctionItemId } from "@/src/hooks/useFetchAuctionByAuctionId";
 import { DashboardLayout } from "../DashboardLayout";
 import { toast } from "react-toastify";
+import { UserType } from "@/src/models/auth";
 
 interface RouteParams {
   id: string;
@@ -39,7 +40,7 @@ const AuctionDetails: React.FC = () => {
 
   const { auction } = useFetchAuctionByAuctionItemId(auctionId);
 
-  const user = userStorage.getUser();
+  const user: UserType | null = userStorage.getUser();
 
   const { bids: auctionBids, refetch } = useFetchBidsByAuctionItemId(auctionId);
 
@@ -68,7 +69,7 @@ const AuctionDetails: React.FC = () => {
   // Handle add bid
   const handleAddBid = async (data: CreateUpdateBidFields) => {
     const auctionItemId = auction?.id;
-    const bidderId = user?.id;
+    const bidderId = user?.id as string;
     const bidAmount = data.bid_amount;
 
     const highestBid =
@@ -115,7 +116,7 @@ const AuctionDetails: React.FC = () => {
   const auctionDone = new Date(auction?.end_date) < currentDate;
 
   const { bids: bidsByBidderId, fetchBids } = useFetchBidsByBidderId(
-    user?.id
+    user?.id as string
   );
 
   // display status of auction
