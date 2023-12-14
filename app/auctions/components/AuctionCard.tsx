@@ -167,7 +167,7 @@ const AuctionCard: FC<Props> = ({
             <Image
               width={300}
               height={300}
-              src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${auction.image}`}
+              src={`${process.env.NEXT_PUBLIC_API_BASE_URL}files/${auction.image}`}
               alt={auction.title}
               className={`object-cover w-full rounded-2xl ${
                 showEditButtons ? "h-36" : "h-40"

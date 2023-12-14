@@ -280,7 +280,7 @@ const AuctionDetails: React.FC = () => {
                             className="flex justify-between items-center py-2 border-b border-gray-blue w-full">
                             <div className="flex justify-start items-center gap-3 w-full">
                               <Image
-                                src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/files/${bid.bidder.avatar}`}
+                                src={`${process.env.NEXT_PUBLIC_API_BASE_URL}files/${bid.bidder.avatar}`}
                                 className="rounded-full"
                                 alt=""
                                 height={30}
