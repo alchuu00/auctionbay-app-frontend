@@ -3,6 +3,6 @@ const nextConfig = {};
 
 module.exports = {
   images: {
-    domains: ["localhost:8080", "localhost", "auctionbay-backend.onrender.com"],
+    domains: ["localhost:8080", "localhost", "auctionbay-backend.onrender.com", "auctionbay.netlify.app"],
   },
 };
